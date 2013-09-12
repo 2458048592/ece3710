@@ -19,81 +19,27 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module RegFile(
-	 input CLK, CLR, selectImm,
-	 input [15:0] data,
-	 input [7:0] Imm,
-	 input [3:0] selectA, selectB, selectWrite,
-	 output [15:0] A, B
+	 input CLK,
+	 input [15:0] r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in, r11in, r12in, r13in, r14in, r15in, enWrite, reset,
+	 output [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out
     );
 	 
-	 reg [15:0] reset;
-	 reg [15:0] enWrite;
-	 
-	 wire [15:0] r0out;
-	 wire [15:0] r1out;
-	 wire [15:0] r2out;
-	 wire [15:0] r3out;
-	 wire [15:0] r4out;
-	 wire [15:0] r5out;
-	 wire [15:0] r6out;
-	 wire [15:0] r7out;
-	 wire [15:0] r8out;
-	 wire [15:0] r9out;
-	 wire [15:0] r10out;
-	 wire [15:0] r11out;
-	 wire [15:0] r12out;
-	 wire [15:0] r13out;
-	 wire [15:0] r14out;
-	 wire [15:0] r15out;
-	 wire [15:0] RegSelect;
-	 
-	reg16 r0(CLK, enWrite[0], reset[0], data, r0out);
-	reg16 r1(CLK, enWrite[1], reset[1], data, r1out);
-	reg16 r2(CLK, enWrite[2], reset[2], data, r2out);
-	reg16 r3(CLK, enWrite[3], reset[3], data, r3out);
-	reg16 r4(CLK, enWrite[4], reset[4], data, r4out);
-	reg16 r5(CLK, enWrite[5], reset[5], data, r5out);
-	reg16 r6(CLK, enWrite[6], reset[6], data, r6out);
-	reg16 r7(CLK, enWrite[7], reset[7], data, r7out);
-	reg16 r8(CLK, enWrite[8], reset[8], data, r8out);
-	reg16 r9(CLK, enWrite[9], reset[9], data, r9out);
-	reg16 r10(CLK, enWrite[10], reset[10], data, r10out);
-	reg16 r11(CLK, enWrite[11], reset[11], data, r11out);
-	reg16 r12(CLK, enWrite[12], reset[12], data, r12out);
-	reg16 r13(CLK, enWrite[13], reset[13], data, r13out);
-	reg16 r14(CLK, enWrite[14], reset[14], data, r14out);
-	reg16 r15(CLK, enWrite[15], reset[15], data, r15out);
-	
-	mux16_to_1_16bit ALUBusA(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out, selectA, A);
-	mux16_to_1_16bit ALUBusB(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out, selectB, RegSelect);
-	
-	mux2_to_1_16bit ImmMux(RegSelect, {Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm}, selectImm, B);
-	
-	always @ (posedge CLK) begin
-		if (CLR == 1'b1) begin reset <= 16'b1111111111111111; enWrite <= 16'b0; end
-		else begin
-			reset <= 16'b0;
-			case(selectWrite)
-				0: enWrite <=  16'b0000000000000001;
-				1: enWrite <=  16'b0000000000000010;
-				2: enWrite <=  16'b0000000000000100;
-				3: enWrite <=  16'b0000000000001000;
-				4: enWrite <=  16'b0000000000010000;
-				5: enWrite <=  16'b0000000000100000;
-				6: enWrite <=  16'b0000000001000000;
-				7: enWrite <=  16'b0000000010000000;
-				8: enWrite <=  16'b0000000100000000;
-				9: enWrite <=  16'b0000001000000000;
-				10: enWrite <= 16'b0000010000000000;
-				11: enWrite <= 16'b0000100000000000;
-				12: enWrite <= 16'b0001000000000000;
-				13: enWrite <= 16'b0010000000000000;
-				14: enWrite <= 16'b0100000000000000;
-				15: enWrite <= 16'b1000000000000000;
-				default: enWrite <= 16'b0;
-			endcase
-		end
-	end
+	reg16 r0(CLK, enWrite[0], reset[0], r0in, r0out);
+	reg16 r1(CLK, enWrite[1], reset[1], r1in, r1out);
+	reg16 r2(CLK, enWrite[2], reset[2], r2in, r2out);
+	reg16 r3(CLK, enWrite[3], reset[3], r3in, r3out);
+	reg16 r4(CLK, enWrite[4], reset[4], r4in, r4out);
+	reg16 r5(CLK, enWrite[5], reset[5], r5in, r5out);
+	reg16 r6(CLK, enWrite[6], reset[6], r6in, r6out);
+	reg16 r7(CLK, enWrite[7], reset[7], r7in, r7out);
+	reg16 r8(CLK, enWrite[8], reset[8], r8in, r8out);
+	reg16 r9(CLK, enWrite[9], reset[9], r9in, r9out);
+	reg16 r10(CLK, enWrite[10], reset[10], r10in, r10out);
+	reg16 r11(CLK, enWrite[11], reset[11], r11in, r11out);
+	reg16 r12(CLK, enWrite[12], reset[12], r12in, r12out);
+	reg16 r13(CLK, enWrite[13], reset[13], r13in, r13out);
+	reg16 r14(CLK, enWrite[14], reset[14], r14in, r14out);
+	reg16 r15(CLK, enWrite[15], reset[15], r15in, r15out);
 endmodule
 
 module reg16(
