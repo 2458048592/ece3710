@@ -77,6 +77,13 @@ sub usage {
       getPut, will pull or push .v files (verilog module) from or to the 
       current or specified directory, respectively. 
 
+      The files must already exist in the xilinx projects, so new files will
+      need to be created before getPut will replace the source in the xilinx project
+      directory
+
+      Caution: There is no prompt message to confirm replacing a file, be careful that -g
+               and -p are used in the correct order.
+
   Usage: getPut [-ghp] <directory>
 
 

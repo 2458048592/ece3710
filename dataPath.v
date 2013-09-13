@@ -26,25 +26,47 @@ module dataPath(
 	output [4:0] flags
     );
 	 
-	wire [15:0] r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in, r11in, r12in, r13in, r14in, r15in, r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out, RegSelect;
-	reg [15:0] enWrite, reset;
+	wire [15:0] r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in,
+              r11in, r12in, r13in, r14in, r15in, r0out, r1out, r2out, r3out, r4out,
+              r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out,
+              r14out, r15out, RegSelect; // RegSelect is fed into a 2to1 mux to choose
+                                         // between an immediate or B
+
+	reg [15:0] enWrite, reset; // Each bit in enWrite and reset corresponds to
+                             // a register E.g. r0 = enWrite[0], reset [0]  
 	
 	ALU _alu(flags[4], A, B, op, Z, flags[4], flags[3], flags[2], flags[1], flags[0]);
 	
-	decoder_4_to_16_16bit loadBus(Z, loadReg, r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in, r11in, r12in, r13in, r14in, r15in);
+  // Write to read file
+	decoder_4_to_16_16bit loadBus(Z, loadReg, r0in, r1in, r2in, r3in, r4in, r5in, r6in,
+                                            r7in, r8in, r9in, r10in, r11in, r12in, 
+                                            r13in, r14in, r15in);
 	
-	RegFile _regfile(CLK, r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in, r11in, r12in, r13in, r14in, r15in, enWrite, reset, r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out);
+	RegFile _regfile(CLK, r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in,
+                        r10in, r11in, r12in, r13in, r14in, r15in,
+                        enWrite, reset,
+                        r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out,
+                        r9out, r10out, r11out, r12out, r13out, r14out, r15out);
 	
-	mux16_to_1_16bit ALUBusA(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegA, A);
-	mux16_to_1_16bit ALUBusB(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegB, RegSelect);
+  // Read port A
+	mux16_to_1_16bit ALUBusA(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out,
+                           r8out, r9out, r10out, r11out, r12out, r13out, r14out,
+                           r15out, readRegA, A);
+
+  // Read port B
+	mux16_to_1_16bit ALUBusB(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out,
+                           r8out, r9out, r10out, r11out, r12out, r13out, r14out,
+                           r15out, readRegB, RegSelect);
 	
-	mux2_to_1_16bit ImmMux(RegSelect, {Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm}, selectImm, B);
+  // determines whether a imm or B is loaded 
+	mux2_to_1_16bit ImmMux(RegSelect, {Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],
+                                     Imm[7],Imm}, selectImm, B);
 	
 	always @ (posedge CLK) begin
 		if (CLR == 1'b1) begin reset <= 16'b1111111111111111; enWrite <= 16'b0; end
 		else begin
 			reset <= 16'b0;
-			case(loadReg)
+			case(loadReg) // decodes which register to enable
 				0: enWrite <=  16'b0000000000000001;
 				1: enWrite <=  16'b0000000000000010;
 				2: enWrite <=  16'b0000000000000100;
