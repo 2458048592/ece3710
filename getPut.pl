@@ -41,8 +41,9 @@ die "No .v files were found in the current directory. \nAre you sure you are in 
 
 print "Located files: ", join(", ", @gitFiles), "\n\n";
 
-my %labFiles = ();
-find(sub {$labFiles{$_} = $File::Find::name if m/^[^\s]*.v$/}, $filepath);
+my %labFiles = (); # key is the name of the file, value is the path and name of the file
+                   # e.g. key = ALU.v; value = /path/to/file/ALU.v
+find(sub {$labFiles{$_} = $File::Find::name if m/^[^\s]*.v$/}, $filepath); # finds the files and puts into hash
 
 if ($put) {
   foreach my $file (@gitFiles) {
