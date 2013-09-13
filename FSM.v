@@ -21,12 +21,12 @@
 module FSM(
 	 input clk,
 	 input clr,
-    output reg[1:0] ALU_cont,
-    output reg[2:0] en_reg,
-    output reg[4:0] en_buffer,
-	 output tri [3:0] data_out
+   output selectImm,
+   output reg[3:0] loadReg, readRegA, readRegB
+   output reg[7:0] Imm, op
     );
 	 
+
 	 // Give names to states
 	 parameter State0 = 0; parameter State1 = 1;
 	 parameter State2 = 2; parameter State3 = 3; 
@@ -40,84 +40,47 @@ module FSM(
 
 	 // Declare states
 	 reg [3:0] PS, NS;
-	// Output
-	assign data_out = (PS == State2) ? 3 : 4'bz;
+
+	// Output 
 	always@(*) begin
 		case(PS)
 			State0 : begin
-				// resets all registers
-				en_reg <= 3'b000;
-				en_buffer <= 5'b00000;
-				ALU_cont <= 2'b00;
 			end
 			State1 : begin
-				// loads external data in R1
-				en_reg <= 3'b100; // enable reg 1
-				en_buffer <= 5'b11000; // enable buffer 1 and 2
-				ALU_cont <= 2'b00;
-
 			end
 			State2 : begin
-				// load 3 in R2
-				en_reg <= 3'b010; // enable R2
-				en_buffer <= 5'b00100; // enable buffer 3
-				ALU_cont <= 2'b00;
-
 			end
 			State3 : begin
-				// Rout <= R1 + R2
-				en_reg <= 3'b001; //enable Rout
-				ALU_cont <= 2'b11; //select add
-				en_buffer <= 5'b00000;
 			end
 			State4 : begin
-				// R2 <- Rout
-				en_buffer <= 5'b00110; // enable buffer 4 and 3
-				en_reg <= 3'b010; // enable R2
-				ALU_cont <= 2'b00;
-
 			end
 			State5 : begin
-				// Rout <- R1 | R2
-				en_reg <= 3'b001; //enable Rout
-				ALU_cont <= 2'b01; //select or
-				en_buffer <= 5'b00000;
-				
 			end
 			State6 : begin
-				// R1 <- Rout
-				en_buffer <= 5'b01010; // enable buffer 4 and 2
-				en_reg <= 3'b100; // enable R1
-				ALU_cont <= 2'b00;
-
 			end
 			State7 : begin
-				// Rout <- ~R1
-				en_reg <= 3'b001; //enable Rout
-				ALU_cont <= 2'b00; //select not
-				en_buffer <= 5'b00000;
 			end
 			State8 : begin
-				// R1 <- Rout
-				en_buffer <= 5'b01010; // enable buffer 4 and 2
-				en_reg <= 3'b100; // enable R1
-				ALU_cont <= 2'b00;
-
-				
 			end
 			State9 : begin
-				// Rout <- R1 ^ R2
-				en_reg <= 3'b001; //enable Rout
-				ALU_cont <= 2'b10; //select xor
-				en_buffer <= 5'b00001; // enable buffer 5
+			end
+			State10 : begin
+			end
+			State11 : begin
+			end
+			State12 : begin
+			end
+			State13 : begin
+			end
+			State14 : begin
+			end
+			State15 : begin
 			end
 			default: begin 
-				en_reg <= 3'b000;
-				en_buffer <= 5'b00000;
-				ALU_cont <= 2'b00;
 			end
 		endcase
 	end
+
 	// Present state
 	always@(posedge clk) begin
 			if (clr)
@@ -138,7 +101,13 @@ module FSM(
 			State6 : NS <= State7;
 			State7 : NS <= State8;
 			State8 : NS <= State9;
-			State9 : NS <= State9;// display
+			State9 : NS <= State10;
+			State10 : NS <= State11;
+			State11 : NS <= State12;
+			State12 : NS <= State13;
+			State13 : NS <= State14;
+			State14 : NS <= State15;
+			State15 : NS <= State15;
 			default : NS <= State0;
 		endcase
 				

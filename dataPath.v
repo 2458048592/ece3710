@@ -58,7 +58,7 @@ module dataPath(
                            r8out, r9out, r10out, r11out, r12out, r13out, r14out,
                            r15out, readRegB, RegSelect);
 	
-  // determines whether a imm or B is loaded 
+  // determines whether an imm or B is loaded (0 selects B, 1 selects Imm)
 	mux2_to_1_16bit ImmMux(RegSelect, {Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],
                                      Imm[7],Imm}, selectImm, B);
 	
