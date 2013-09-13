@@ -82,7 +82,7 @@ module mux16_to_1_16bit(
 	);
 	
 	always @ (*) begin
-		case(select)
+			case(select)
 			0: out = a0;
 			1: out = a1;
 			2: out = a2;
