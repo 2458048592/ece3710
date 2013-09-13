@@ -6,8 +6,8 @@
 // Create Date:    15:55:46 08/29/2013 
 // Design Name: 
 // Module Name:    ALU 
-// Project Name: 
-// Target Devices: 
+// Project Name: Lab 1
+// Target Devices: Nexys 3
 // Tool versions: 
 // Description: 
 //
