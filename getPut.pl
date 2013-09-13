@@ -57,7 +57,7 @@ if ($put) {
   }
 }
 elsif ($get) {
-  foreach my $file (@gitFiles) {
+  foreach my $file (keys %labFiles) {
     if (exists $labFiles{$file}) {
       print "Replacing <cwd>/$file with $labFiles{$file}.\n";
       copy("$labFiles{$file}","$cwd/$file") or die "Copy failed: $!";
