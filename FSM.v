@@ -22,7 +22,7 @@ module FSM(
 	 input clk,
 	 input clr,
    output selectImm,
-   output reg[3:0] loadReg, readRegA, readRegB
+   output reg[3:0] loadReg, readRegA, readRegB,
    output reg[7:0] Imm, op
     );
 	 
@@ -34,9 +34,8 @@ module FSM(
 	 parameter State6 = 6; parameter State7 = 7;
 	 parameter State8 = 8; parameter State9 = 9;
 	 parameter State10 = 10; parameter State11 = 11;
-	 parameter State12 = 12; parameter State12 = 12;
-	 parameter State13 = 13; parameter State13 = 13;
-	 parameter State13 = 14; parameter State13 = 15;
+	 parameter State12 = 12; parameter State13 = 13;
+	 parameter State14 = 14; parameter State15 = 15;
 
 	 // Declare states
 	 reg [3:0] PS, NS;
