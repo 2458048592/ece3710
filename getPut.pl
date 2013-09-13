@@ -28,7 +28,7 @@ die "Cannot use options g and p at the same time.\n" if $get and $put;
 
 print usage() and exit(0) if $opts{'h'};
 
-print usage() and exit unless defined $ARGV[0];
+die "A directory must be specified. Run \'-h\' for help.\n" and exit unless defined $ARGV[0];
 
 my $filepath = $ARGV[0];
 
