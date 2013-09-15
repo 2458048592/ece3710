@@ -33,13 +33,13 @@ die "A directory must be specified. Run \'-h\' for help.\n" and exit unless defi
 my $filepath = $ARGV[0];
 
 opendir my $dir, $cwd or die "Cannot open directory: $!";
-# read the .v files from the git repository
+# read the .v files from the current working directory
 my @gitFiles = grep { /^[^\s]*.v$/i } readdir $dir; 
 closedir $dir;
 
-die "No .v files were found in the current directory. \nAre you sure you are in the git repository containing .v files?" unless $#gitFiles > 0;
+die "No .v files were found in the current directory. \nAre you sure you are in the right place?" unless $#gitFiles > 0;
 
-print "Located files: ", join(", ", @gitFiles), "\n\n";
+print "Located files in current directory: ", join(", ", @gitFiles), "\n\n";
 
 my %labFiles = (); # key is the name of the file, value is the path and name of the file
                    # e.g. key = ALU.v; value = /path/to/file/ALU.v
@@ -79,7 +79,7 @@ sub usage {
 
       The files must already exist in the xilinx projects, so new files will
       need to be created before getPut will replace the source in the xilinx project
-      directory
+      directory. getPut will pull new .v files created in a Xilinx project.
 
       Caution: There is no prompt message to confirm replacing a file, be careful that -g
                and -p are used in the correct order.
@@ -96,13 +96,13 @@ sub usage {
 
   Options: 
           
-            -g  Retrives (gets) the files in the current directory (.git repository), from the
-                xilinx projects.
+            -g  Replaces (gets) the files in the current directory (.git repository), with the
+                xilinx projects files with the same name.
 
             -h  Displays this help message
 
-            -p  Replaces (puts) the files from the current directory (git repository) with the 
-                files in the xilinx projects.
+            -p  Replaces (puts) the files in the xilinx projects with the current directory
+                (git repository) files with the same name.
 
 '
 }
