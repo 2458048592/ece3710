@@ -43,7 +43,7 @@ print "Located files in current directory: ", join(", ", @gitFiles), "\n\n";
 
 my %labFiles = (); # key is the name of the file, value is the path and name of the file
                    # e.g. key = ALU.v; value = /path/to/file/ALU.v
-find(sub {$labFiles{$_} = $File::Find::name if m/^[^\s]*.v$/}, $filepath); # finds the files and puts into hash
+find(sub {$labFiles{$_} = $File::Find::name if m/^[^\s]*\.v$/}, $filepath); # finds the files and puts into hash
 
 if ($put) {
   foreach my $file (@gitFiles) {
