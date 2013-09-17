@@ -58,6 +58,7 @@ module FSM(
 			end
 			State1 : begin
 			  // r1 = r0 + r0
+			  // 2  = 1  + 1
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b0001; 
 			  readRegA <= 4'b0000;
@@ -67,6 +68,7 @@ module FSM(
 			end
 			State2 : begin
 			  // r2 = r1 + r0
+			  // 3  = 2  + 1
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b0010; 
 			  readRegA <= 4'b0001;
@@ -76,6 +78,7 @@ module FSM(
 			end
 			State3 : begin
 			  // r3 = r2 + r1
+			  // 5  = 3  + 2
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b0011; 
 			  readRegA <= 4'b0010;
@@ -85,6 +88,7 @@ module FSM(
 			end
 			State4 : begin
 			  // r4 = r3 + r2
+			  // 8  = 5  + 3
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b0100; 
 			  readRegA <= 4'b0011;
@@ -94,6 +98,7 @@ module FSM(
 			end
 			State5 : begin
 			  // r5 = r4 + r3
+			  // 13 = 8  + 5
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b0101; 
 			  readRegA <= 4'b0100;
@@ -103,6 +108,7 @@ module FSM(
 			end
 			State6 : begin
 			  // r6 = r5 + r4
+			  // 21 = 13 + 8
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b0110; 
 			  readRegA <= 4'b0101;
@@ -112,6 +118,7 @@ module FSM(
 			end
 			State7 : begin
 			  // r7 = r6 + r5
+			  // 34 = 21 + 13
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b0111; 
 			  readRegA <= 4'b0110;
@@ -121,6 +128,7 @@ module FSM(
 			end
 			State8 : begin
 			  // r8 = r7 + r6
+			  // 55 = 34 + 21
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1000; 
 			  readRegA <= 4'b0111;
@@ -130,6 +138,7 @@ module FSM(
 			end
 			State9 : begin
 			  // r9 = r8 + r7
+			  // 89 = 55 + 34
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1001; 
 			  readRegA <= 4'b1000;
@@ -139,6 +148,7 @@ module FSM(
 			end
 			State10 : begin
 			  // r10 = r9 + r8
+			  // 144 = 89 + 55
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1010; 
 			  readRegA <= 4'b1001;
@@ -148,6 +158,7 @@ module FSM(
 			end
 			State11 : begin
 			  // r11 = r10 + r9
+			  // 233 = 144 + 89
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1011; 
 			  readRegA <= 4'b1010;
@@ -157,6 +168,7 @@ module FSM(
 			end
 			State12 : begin
 			  // r12 = r11 + r10
+			  // 377 = 233 + 144
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1100; 
 			  readRegA <= 4'b1011;
@@ -166,6 +178,7 @@ module FSM(
 			end
 			State13 : begin
 			  // r13 = r12 + r11
+			  // 610 = 377 + 233
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1101; 
 			  readRegA <= 4'b1100;
@@ -175,6 +188,7 @@ module FSM(
 			end
 			State14 : begin
 			  // r14 = r13 + r12
+			  // 987 = 610 + 377
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1110; 
 			  readRegA <= 4'b1101;
@@ -184,6 +198,7 @@ module FSM(
 			end
 			State15 : begin
 			  // r15 = r14 + r13
+			  // 1597= 987 + 610
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1111; 
 			  readRegA <= 4'b1110;
@@ -193,6 +208,7 @@ module FSM(
 			end
 			State16 : begin
 			  // r15 = r15 | r15
+			  // 1597= 1597| 1597
 			  selectImm <= 1'b0;
 			  loadReg <= 4'b1111; 
 			  readRegA <= 4'b1111;

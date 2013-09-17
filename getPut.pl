@@ -34,7 +34,7 @@ my $filepath = $ARGV[0];
 
 opendir my $dir, $cwd or die "Cannot open directory: $!";
 # read the .v files from the current working directory
-my @gitFiles = grep { /^[^\s]*.v$/i } readdir $dir; 
+my @gitFiles = grep { /^[^\s]*\.v$/i } readdir $dir; 
 closedir $dir;
 
 die "No .v files were found in the current directory. \nAre you sure you are in the right place?" unless $#gitFiles > 0;
