@@ -21,6 +21,7 @@
 module FSM_with_dataPath(
     input clk,
     input reset,
+	 input [3:0] ext_input,
     output [6:0] seg7,
     output [3:0] select
     );
@@ -31,7 +32,7 @@ module FSM_with_dataPath(
 	wire [4:0] flags;
 	
  
-	FSM fsm(clk, reset, selectImm, loadReg, readRegA, readRegB, Imm, op);
+	FSM fsm(clk, reset,ext_input, selectImm, loadReg, readRegA, readRegB, Imm, op);
 	dataPath data(clk, reset, selectImm, loadReg, readRegA, readRegB, Imm, op, A, B, Z, flags);
 	SSD_decoder decoder(clk, reset, Z, seg7, select);
 
