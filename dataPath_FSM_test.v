@@ -124,51 +124,96 @@ module dataPath_FSM_test;
 		// Wait 100 ns for global reset to finish
 		#100;
 		
-		
+		//****TESTS ADDI FOREVER AND WRITES IT TO REG0 EVERYTIME****
 		// Load value 1 into reg0
 		CLR = 0; // CLR = 1 clears all reg values;
 		selectImm = 1;
-		Imm = 1;
-		op = ADDI;
-		// Don't care about readRegA or readRegB in this case
-		readRegA = 5;
+		Imm = 0;
+		// B output should be 1
 		readRegB = 0;
-		loadReg = 1; // this selects the register
+		readRegA = 0;
+		op = ADDI;
+		loadReg = 0; // this selects the register to write output Z into 
 		
-		#10
-		loadReg = 0;
-		readRegA = 1;
-		if(A != 1)
+		#1
+		if(Z != 1)
 		begin
 			$display("ERROR");
 		end
+
 		
 		
+		// forloop to check each cases
+		for (i = 0; i < 23; i = i + 1) 
+		begin
 		
+			case(i)
+			0: begin // Inputs to dataPath, wait, check if working
+					
+					selectImm = 1;
+					
+					// Loop to write result to all registers
+					for (j = 0; j < 16; j = j + 1) 
+					begin
+						Imm = $random % (2 ** 8); // 8 bit number
+						readRegA = j;
+						readRegB = j;
+						op = ADDI;
+						loadReg = (j + 1) % 16;
+						#2; 
+						readRegA = (j + 1) % 16;
+						readRegB = (j + 1) % 16;
+						if (A != Imm)
+							$display("Error with reg %d", j);
+							
+						
+						op = SUBI;
+						loadReg = j;
+						#2;
+						Imm = 0;
+						op = ADDI;
+						readRegA = j;
+						#2;
+						if (A != 0)
+							$display("Error with reg %d", j);
+						// Set reg 1 to 0
+						op = ADDI;
+						loadReg = (j + 1) % 16;
+						readRegA = j;
+						#2;
+						
+					end
+				end
+			
+//			1: 
+//			2:
+//			3:
+//			4:
+//			5:
+//			6:
+//			7:
+//			8:
+//			9:
+//			10:
+//			11:
+//			12:
+//			13:
+//			14:
+//			15:
+//			16:
+//			17:
+//			18:
+//			19:
+//			20:
+//			21:
+//			22:
+//			default:
+			endcase
+		end
+
 		
-		
-		
-		
-//		// Check each op_code on datapath to make sure it is working
-//		for (j = 0; j < 23; j = j + 1)
-//		begin
-//		
-//			for (i = 0; i < 16; i = i + 1)
-//			begin
-//				case(i)
-//					0: begin // Inputs to dataPath, wait, check if working
-//							op = codes[j];
-//						end
-//						
-//					1:
-//					2:
-//					3:
-//					4:
-//					default:
-//			end
-//		end
         
-		// Add stimulus here
+		
 
 	end
 	
@@ -179,4 +224,6 @@ module dataPath_FSM_test;
 		end
       
 endmodule
+
+
 
