@@ -20,8 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 module dataPath(
 	input CLK, CLR, selectImm,
-	input [3:0] readRegA, readRegB,
 	input [4:0] loadReg,
+	input [3:0] readRegA, readRegB,
 	input [7:0] Imm, op,
 	output [15:0] A, B, Z,
 	output [4:0] flags

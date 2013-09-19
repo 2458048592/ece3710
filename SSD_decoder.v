@@ -25,12 +25,11 @@ module SSD_decoder(
     output reg [6:0] ssOut,
     output reg [3:0] select
     );
-  reg  [2:0] divclk;
+  reg  [1:0] divclk;
   reg  [3:0] display; // used for each display
   
   integer count = 0; 
-	 
-  assign sev_seg_clk  = divclk[1:0];  	
+	  	
 
 	// clk divider
   always@(posedge clk, posedge clr) begin
@@ -42,7 +41,7 @@ module SSD_decoder(
 				if (divclk >= 3)
 					divclk <= 0;
 				else 
-					divclk <= divclk + 1;
+					divclk <= divclk + 1'b1;
 			end
 			else begin
 				count <= count + 1;
@@ -51,7 +50,7 @@ module SSD_decoder(
   end
   
 	// selects each seven segment display and assigns a number					 				 
-	always @ (divclk)
+	always @ (*)
 	begin
 		case (divclk) 
 				2'b00: begin
@@ -69,6 +68,10 @@ module SSD_decoder(
 				2'b11: begin
 					select = 4'b0111;
 					display = number[15:12];
+				end
+				default: begin
+					select = 4'b1110;
+					display = number[3:0];
 				end
 		endcase 
 	end

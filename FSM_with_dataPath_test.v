@@ -27,16 +27,22 @@ module FSM_with_dataPath_test;
 	// Inputs
 	reg clk;
 	reg reset;
+	reg [3:0] ext_input;
 
 	// Outputs
 	wire [6:0] seg7;
 	wire [3:0] select;
+	 wire [15:0] A, B, Z;
 
 	// Instantiate the Unit Under Test (UUT)
 	FSM_with_dataPath uut (
 		.clk(clk), 
 		.reset(reset), 
-		.seg7(seg7), 
+		.ext_input(ext_input),
+		.seg7(seg7),
+		.A(A),
+		.B(B),
+		.Z(Z),
 		.select(select)
 	);
 	integer i;
