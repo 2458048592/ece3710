@@ -39,7 +39,7 @@ module dataPath(
 	ALU _alu(flags[4], A, B, op, Z, flags[4], flags[3], flags[2], flags[1], flags[0]);
 	
   // Write to read file
-	decoder_4_to_16_16bit loadBus(Z, loadReg, r0in, r1in, r2in, r3in, r4in, r5in, r6in,
+	decoder_4_to_16_16bit loadBus(Z, loadReg[3:0], r0in, r1in, r2in, r3in, r4in, r5in, r6in,
                                             r7in, r8in, r9in, r10in, r11in, r12in, 
                                             r13in, r14in, r15in);
 	
