@@ -210,7 +210,7 @@ module FSM(
 			  // r15 = r15 | r15
 			  // 1597= 1597| 1597
 			  selectImm <= 1'b0;
-			  loadReg <= 4'b1111; 
+			  loadReg <= 4'b0000; 
 			  readRegA <= 4'b1111;
 			  readRegB <= 4'b1111;
 			  Imm <= 8'b00000000;

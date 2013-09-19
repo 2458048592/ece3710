@@ -25,24 +25,35 @@ module SSD_decoder(
     output reg [6:0] ssOut,
     output reg [3:0] select
     );
-  reg  [27:0]  divclk;
+  reg  [2:0] divclk;
   reg  [3:0] display; // used for each display
   
-  always @(posedge clk, posedge clr) 	
-    begin							
-        if (clr)
+  integer count = 0; 
+	 
+  assign sev_seg_clk  = divclk[1:0];  	
+
+	// clk divider
+  always@(posedge clk, posedge clr) begin
+		if (clr) 
 			divclk <= 0;
-        else
-			divclk <= divclk + 1'b1;
+		else begin
+			if (count == 100000) begin // set to 100000 for every 1 ms
+				count <= 0;
+				if (divclk >= 3)
+					divclk <= 0;
+				else 
+					divclk <= divclk + 1;
+			end
+			else begin
+				count <= count + 1;
+			end
+		end
   end
   
-  assign sev_seg_clk  = divclk[16:15];  // every divclk[17] (~381Hz) = (100MHz / 2 **18)
-													 // http://www-classes.usc.edu/engr/ee-s/201/Spring2012/ISE/test_nexys3_verilog/test_nexys3_verilog.v
-						 
-						 
-	always @ (sev_seg_clk)
+	// selects each seven segment display and assigns a number					 				 
+	always @ (divclk)
 	begin
-		case (sev_seg_clk) 
+		case (divclk) 
 				2'b00: begin
 					select = 4'b1110;
 					display = number[3:0];
@@ -86,7 +97,7 @@ module SSD_decoder(
     endcase
 	 
 	 
-	  ssOut = ~ssOut;
+	  ssOut = ~ssOut; 
 	 end
 
 endmodule
