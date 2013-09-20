@@ -33,6 +33,7 @@ module FSM_with_dataPath_test;
 	wire [6:0] seg7;
 	wire [3:0] select;
 	 wire [15:0] A, B, Z;
+	 wire [4:0] flags;
 
 	// Instantiate the Unit Under Test (UUT)
 	FSM_with_dataPath uut (
@@ -43,6 +44,7 @@ module FSM_with_dataPath_test;
 		.A(A),
 		.B(B),
 		.Z(Z),
+		.flags(flags),
 		.select(select)
 	);
 	integer i;

@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module dataPath(
 	input CLK, CLR, selectImm,
-	input [4:0] loadReg,
+	input [4:0] loadReg, // When the MSB is 1, loading is disabled, when 0 loading is enabled.
 	input [3:0] readRegA, readRegB,
 	input [7:0] Imm, op,
 	output [15:0] A, B, Z,
@@ -62,29 +62,31 @@ module dataPath(
   // determines whether an imm or B is loaded (0 selects B, 1 selects Imm)
 	mux2_to_1_16bit ImmMux(RegSelect, {Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],
                                      Imm[7],Imm}, selectImm, B);
-	
-	always @ (posedge CLK) begin
-		if (CLR == 1'b1) begin reset <= 16'b1111111111111111; enWrite <= 16'b0; end
+												 
+	//  If the decoder doesn't have blocking statements, zero is always displayed
+   // 	on the FPGA and simulation.
+	always @ (*) begin
+		if (CLR == 1'b1) begin reset = 16'b1111111111111111; enWrite = 16'b0; end
 		else begin
-			reset <= 16'b0;
+			reset = 16'b0;
 			case(loadReg) // decodes which register to enable
-				0: enWrite <=  16'b0000000000000001;
-				1: enWrite <=  16'b0000000000000010;
-				2: enWrite <=  16'b0000000000000100;
-				3: enWrite <=  16'b0000000000001000;
-				4: enWrite <=  16'b0000000000010000;
-				5: enWrite <=  16'b0000000000100000;
-				6: enWrite <=  16'b0000000001000000;
-				7: enWrite <=  16'b0000000010000000;
-				8: enWrite <=  16'b0000000100000000;
-				9: enWrite <=  16'b0000001000000000;
-				10: enWrite <= 16'b0000010000000000;
-				11: enWrite <= 16'b0000100000000000;
-				12: enWrite <= 16'b0001000000000000;
-				13: enWrite <= 16'b0010000000000000;
-				14: enWrite <= 16'b0100000000000000;
-				15: enWrite <= 16'b1000000000000000;
-				default: enWrite <= 16'b0;
+				0: enWrite =  16'b0000000000000001;
+				1: enWrite =  16'b0000000000000010;
+				2: enWrite =  16'b0000000000000100;
+				3: enWrite =  16'b0000000000001000;
+				4: enWrite =  16'b0000000000010000;
+				5: enWrite =  16'b0000000000100000;
+				6: enWrite =  16'b0000000001000000;
+				7: enWrite =  16'b0000000010000000;
+				8: enWrite =  16'b0000000100000000;
+				9: enWrite =  16'b0000001000000000;
+				10: enWrite = 16'b0000010000000000;
+				11: enWrite = 16'b0000100000000000;
+				12: enWrite = 16'b0001000000000000;
+				13: enWrite = 16'b0010000000000000;
+				14: enWrite = 16'b0100000000000000;
+				15: enWrite = 16'b1000000000000000;
+				default: enWrite = 16'b0;
 			endcase
 		end
 	end

@@ -28,7 +28,7 @@ module SSD_decoder(
   reg  [1:0] divclk;
   reg  [3:0] display; // used for each display
   
-  integer count = 0; 
+  reg [16: 0] count = 0; 
 	  	
 
 	// clk divider

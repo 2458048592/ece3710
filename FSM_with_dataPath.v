@@ -23,14 +23,14 @@ module FSM_with_dataPath(
     input reset,
 	 input [3:0] ext_input,
     output [6:0] seg7,
-	 output [15:0] A, B, Z,
+	 output tri [15:0] A, B, Z,
 	 output [4:0] flags,
     output [3:0] select
     );
-	wire selectImm;
-	wire [3:0] readRegA, readRegB;
-	wire [4:0] loadReg;
-	wire [7:0] Imm, op;
+	tri selectImm;
+	tri [3:0] readRegA, readRegB;
+	tri [4:0] loadReg;
+	tri [7:0] Imm, op;
 	
 	// FSM
 	// input clk,
