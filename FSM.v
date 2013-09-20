@@ -54,14 +54,14 @@ module FSM(
 			  // load 1 into r0 
 			  selectImm = 1'b1;
 			  loadReg = 5'b00000; 
-			  readRegA = 4'b0001;
-			  readRegB = 4'b0001;
+			  readRegA = 4'b0010;
+			  readRegB = 4'b0010;
 			  Imm = 8'b00000001;
 			  op = ADDI;
 			end
 			State1 : begin
 			  // Load 1 into r1
-			  selectImm = 1'b0;
+			  selectImm = 1'b1;
 			  loadReg = 5'b00001; 
 			  readRegA = 4'b0010;
 			  readRegB = 4'b0010;
