@@ -209,24 +209,12 @@ module FSM(
 			  op = ADD;
 			end
 			State16 : begin
-				if (ext_input == 4'b0) begin
-					// r15 = r15 | r15
-					// 987 = 987 | 987
-					selectImm = 1'b0;
-					loadReg = 5'b10000; 
-					readRegA = 4'b1111;
-					readRegB = 4'b1111;
-					Imm = 8'b00000000;
-					op = OR;
-			  end
-			  else begin
-					selectImm = 1'b0;
-					loadReg = 5'b10000;
-					readRegA = ext_input;
-					readRegB = ext_input;
-					Imm = 8'b00000000;
-					op = OR;
-			  end
+				selectImm = 1'b0;
+				loadReg = 5'b10000;
+				readRegA = ext_input;
+				readRegB = ext_input;
+				Imm = 8'b00000000;
+				op = OR;
 			end
 			default: begin 
 			  // r15 = r15 | r15
