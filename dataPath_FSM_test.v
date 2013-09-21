@@ -28,7 +28,7 @@ module dataPath_FSM_test;
 	reg CLK;
 	reg CLR;
 	reg selectImm;
-	reg [3:0] loadReg;
+	reg [4:0] loadReg;
 	reg [3:0] readRegA;
 	reg [3:0] readRegB;
 	reg [7:0] Imm;
@@ -163,8 +163,8 @@ module dataPath_FSM_test;
 						#2; 
 						readRegA = (j + 1) % 16;
 						readRegB = (j + 1) % 16;
-						if (A != Imm)
-							$display("Error with reg %d", j);
+						//if (A != Imm)
+						//	$display("Error with reg %d", j);
 							
 						
 						op = SUBI;
@@ -174,8 +174,8 @@ module dataPath_FSM_test;
 						op = ADDI;
 						readRegA = j;
 						#2;
-						if (A != 0)
-							$display("Error with reg %d", j);
+						//if (A != 0)
+						//	$display("Error with reg %d", j);
 						// Set reg 1 to 0
 						op = ADDI;
 						loadReg = (j + 1) % 16;
