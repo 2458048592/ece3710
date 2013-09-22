@@ -127,6 +127,8 @@ module dataPath_test2;
 				selectImm = 1;
 				Imm = j + 1;
 				#2;
+				if (A != (j+1)*i)
+					$display("There was a problem writing to register %d", j);
 			end
 			
 		op = 16'b0;
