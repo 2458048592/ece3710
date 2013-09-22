@@ -48,7 +48,7 @@ module FSM(
 	 reg [5:0] PS, NS;
 
 	// Output 
-	always@(PS) begin
+	always@(PS, ext_input) begin
 		case(PS)
 			State0 : begin
 			  // load 1 into r0 
@@ -209,6 +209,9 @@ module FSM(
 			  op = ADD;
 			end
 			State16 : begin
+				// State16 is the final state in the Controller.
+				// ext_input determines which register value to display on the 7 segment displays.
+				// values of 0-15 on ext_input selects r0-r15
 				selectImm = 1'b0;
 				loadReg = 5'b10000;
 				readRegA = ext_input;
