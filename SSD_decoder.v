@@ -44,22 +44,27 @@ module SSD_decoder(
 	begin
 		case (divclk) 
 				2'b00: begin
+					// Lowest 4-bits
 					select = 4'b1110;
 					display = number[3:0];
 				end
 				2'b01: begin 
+					// 2nd lowest 4-bits
 					select = 4'b1101;
 					display = number[7:4];				
 				end
 				2'b10: begin 
+					// 2nd highest 4-bits
 					select = 4'b1011;
 					display = number[11:8];
 				end
 				2'b11: begin
+					// Highest 4-bits
 					select = 4'b0111;
 					display = number[15:12];
 				end
 				default: begin
+					// Default to lowest.  This will never happen.
 					select = 4'b1110;
 					display = number[3:0];
 				end
