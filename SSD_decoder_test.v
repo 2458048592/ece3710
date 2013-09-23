@@ -2,23 +2,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer:
-//
-// Create Date:   07:46:22 09/19/2013
-// Design Name:   SSD_decoder
-// Module Name:   U:/My Documents/ece3710_projects/lab2/SSD_decoder_test.v
-// Project Name:  lab2
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: SSD_decoder
-//
-// Dependencies:
+// Engineer: Plan B
 // 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+// Module: SSD_decoder_test
+// Description: This is a test for all 4 7-segment displays
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -51,6 +38,7 @@ module SSD_decoder_test;
 		#5 clr = 1;
 		#1 clr = 0;
 		
+		// number is automatically parsed into 4-bit chunks by the decoder
 		for(i =0; i < 2**16; i = i+1) begin
 			number = i;
 			#1000000;
