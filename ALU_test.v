@@ -2,23 +2,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer:
+// Engineer: Plan B
 //
-// Create Date:   16:37:01 09/03/2013
-// Design Name:   ALU
-// Module Name:   C:/Users/Zach/Documents/Xilinx/ALU/ALU_test.v
-// Project Name:  ALU
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: ALU
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+// Module: ALU_test
+// Description: ALU_test performs targeted testing on the ALU for specific edge cases
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -111,7 +98,7 @@ module ALU_test;
 		
 		
 		#50
-		// Test min int + 1
+		// Test max int + 1
 		// Check for the overflow flag
 		a = 16'b0111111111111111; // max int 
 		b = 1; 
@@ -137,12 +124,11 @@ module ALU_test;
 			$display("A: %0d, B: %0d, OPCODE: %0d, C: %0d, L: %0d, F: %0d, Z: %0d, N: %0d, time:%0d", a, b, op, C, L, F, Z, N, $time );
 			end
 		
-		// @TODO Not sure about the I functions
 		// Immediate always in B
 		#50
 		op = ADDI;
 		#10
-		// Max int + 1 immediate
+		// 0 + max immediate value
 		a = 0; 
 		b = 16'b0000000001111111; // max immediate value
 		#10
@@ -154,10 +140,9 @@ module ALU_test;
 			$display("A: %0d, B: %0d, OPCODE: %0d, C: %0d, L: %0d, F: %0d, Z: %0d, N: %0d, time:%0d", a, b, op, C, L, F, Z, N, $time );
 			end
 		#50;
-		// Test  0 + most negative number
+		// Test  0 + min immediate value
 
 		// This should generate a Carry bit... Adding a 16-bit negative number with 16'b0 will generate a 17-bit signed representation
-
 		// of the number--hence the Carry bit.
 		a = 16'b0; 
 		b = 16'b1111111110000000;
@@ -207,14 +192,8 @@ module ALU_test;
 			$display("A: %0d, B: %0d, OPCODE: %0d, C: %0d, L: %0d, F: %0d, Z: %0d, N: %0d, time:%0d", a, b, op, C, L, F, Z, N, $time );
 			end
 		
-		
-		
-		
-		
-		// @TODO Not sure about the I functions
-		// @TODO Check implementation
 		op = ADDUI;
-		// Max int + 0 immediate
+		// 0 + max immediate
 		a = 0; 
 		b = 16'b0000000001111111; // max immediate value
 		#10
@@ -233,6 +212,7 @@ module ALU_test;
 			
 		// Check for flags overflow
 		#50
+		// Does not generate a carry or an overflow
 		a = 1;  
 		b = 16'b0111111111111111; // max positive number
 		#10
@@ -245,7 +225,6 @@ module ALU_test;
 			end
 		
 		#50
-		// Check the carry flag
 		// Max int + 1
 		op = ADDC;
 		a = 16'b0111111111111111; // max int 
@@ -254,7 +233,7 @@ module ALU_test;
 		c = 1'b0;
 		#20;
 		flagTests[4] = Z;flagTests[3] = C;flagTests[2] = F;flagTests[1] = L;flagTests[0] = N;
-
+		// Should set the Overflow flag, but not carry
       if (flagTests != 5'b00100) // Z C F L N
 			begin
 			$display("ERROR ON ADDC Test 1");
@@ -268,6 +247,7 @@ module ALU_test;
 		#20;
 		flagTests[4] = Z;flagTests[3] = C;flagTests[2] = F;flagTests[1] = L;flagTests[0] = N;
 
+		// Should generate Overflow and Carry
       if (flagTests != 5'b01100) // Z C F L N
 			begin
 			$display("ERROR ON ADDC Test 2");
@@ -278,7 +258,6 @@ module ALU_test;
 
 		#50
 		// max int  + 1 
-
 		// Should generate a Zero and a Carry bit
 		op = ADDCU;
 		a = 16'b1111111111111111; 
@@ -300,6 +279,7 @@ module ALU_test;
 		#10
 		flagTests[4] = Z;flagTests[3] = C;flagTests[2] = F;flagTests[1] = L;flagTests[0] = N;
 
+		// Should not set any flags
       if (flagTests != 5'b00000) // Z C F L N
 			begin
 			$display("ERROR ON ADDCUI Test 1 flagsTest");
@@ -318,6 +298,7 @@ module ALU_test;
 		#10
 		flagTests[4] = Z;flagTests[3] = C;flagTests[2] = F;flagTests[1] = L;flagTests[0] = N;
 
+		// Should not set any flags
       if (flagTests != 5'b00000) // Z C F L N
 			begin
 			$display("ERROR ON ADDCUI Test 2");
@@ -340,8 +321,7 @@ module ALU_test;
 			end
 		
 		//Max negative - 1
-
-		// Should generate a borrow bit (Carry), not overflow, since 
+		// Should generate a Carry and Overflow
 		#50
 		a = 16'b1000000000000000;
 		b = 1;
@@ -357,6 +337,7 @@ module ALU_test;
 			end
 			
 		//Max positive - (-1)
+		// Should generate Overflow, not carry
 		#50
 		a = 16'b0111111111111111;
 		b = -1;
@@ -383,7 +364,7 @@ module ALU_test;
 		//$display($signed(b));
 		#10
 		flagTests[4] = Z;flagTests[3] = C;flagTests[2] = F;flagTests[1] = L;flagTests[0] = N;
-
+		// No flags should be generated
       if (flagTests != 5'b00000) // Z C F L N
 			begin
 			$display("ERROR ON SUBI Test 1 FLAGS");
@@ -401,6 +382,7 @@ module ALU_test;
 		#10
 		flagTests[4] = Z;flagTests[3] = C;flagTests[2] = F;flagTests[1] = L;flagTests[0] = N;
 
+		// No flags should be generated
       if (flagTests != 5'b00000) // Z C F L N
 			begin
 			$display("ERROR ON SUBI Test 2 FLAGS");
@@ -412,7 +394,7 @@ module ALU_test;
 			$display("A: %0d, B: %0d, OPCODE: %0d, C: %0d, L: %0d, F: %0d, Z: %0d, N: %0d, time:%0d", $signed(a), $signed(b), op, C, L, F, Z, N, $time );
 			end
 		
-		// Check for flags overflow, max negative - 1
+		// Check for flags overflow, 1 - max negative
 		#50
 		a = 1;  
 		b = 16'b1000000000000000; // max neg number
@@ -424,10 +406,7 @@ module ALU_test;
 			$display("ERROR ON SUBI Test 3");
 			$display("A: %0d, B: %0d, OPCODE: %0d, C: %0d, L: %0d, F: %0d, Z: %0d, N: %0d, time:%0d", $signed(a), $signed(b), op, C, L, F, Z, N, $time );
 			end
-
-		
-		
-		
+			
 		#50
 		op = CMP; 
 		// set zero flag is result is zero (I.E. equal comparison)
