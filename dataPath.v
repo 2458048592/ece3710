@@ -1,33 +1,31 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
-// 
-// Create Date:    15:31:13 09/12/2013 
-// Design Name: 
-// Module Name:    dataPath 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
+// Engineer: Plan B
 //
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
+// Module: 	dataPath
+// Description: dataPath module instantiates the ALU and Regfile as well as the necessary muxes.
+//      The outputs include everything that other modules may want to see.  This module also
+//      has an enhancement on the RegFile which allows a controller to not load the ALU result into
+//      a register.  This is done with the active-Low high-bit of the loadReg input.  The lower 4 bits 
+//      indicate the register to be written, but if the high bit is set to 1, the write-enable signal
+//      for that register will not turn on.  This means that we can store register values without
+//      constantly performing intensive operations on the ALU.
 //
 //////////////////////////////////////////////////////////////////////////////////
 module dataPath(
 	input CLK, CLR, selectImm,
-	input [3:0] loadReg, readRegA, readRegB,
+	input [4:0] loadReg, // When the MSB is 1, loading is disabled, when 0 loading is enabled.
+	input [3:0] readRegA, readRegB,
 	input [7:0] Imm, op,
 	output [15:0] A, B, Z,
 	output [4:0] flags
     );
 	 
-	wire [15:0] r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in,
-              r11in, r12in, r13in, r14in, r15in, r0out, r1out, r2out, r3out, r4out,
+	// This is not necessary, since each register is Write-Enabled with enWrite.  Commented out
+	//wire [15:0] r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in,
+   	//           r11in, r12in, r13in, r14in, r15in,
+	wire [15:0] r0out, r1out, r2out, r3out, r4out,
               r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out,
               r14out, r15out, RegSelect; // RegSelect is fed into a 2to1 mux to choose
                                          // between an immediate or B
@@ -37,58 +35,71 @@ module dataPath(
 	
 	ALU _alu(flags[4], A, B, op, Z, flags[4], flags[3], flags[2], flags[1], flags[0]);
 	
-  // Write to read file
-	decoder_4_to_16_16bit loadBus(Z, loadReg, r0in, r1in, r2in, r3in, r4in, r5in, r6in,
-                                            r7in, r8in, r9in, r10in, r11in, r12in, 
-                                            r13in, r14in, r15in);
+	// This is not necessary, since each register is Write-Enabled with enWrite.  Commented out
+  	// Write to read file
+	//decoder_4_to_16_16bit loadBus(Z, loadReg[3:0], r0in, r1in, r2in, r3in, r4in, r5in, r6in,
+   	//                                         r7in, r8in, r9in, r10in, r11in, r12in, 
+   	//                                         r13in, r14in, r15in);
 	
-	RegFile _regfile(CLK, r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in,
-                        r10in, r11in, r12in, r13in, r14in, r15in,
+	// Set the input for each register to be the output from the ALU
+	RegFile _regfile(CLK, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z,
+                        Z, Z, Z, Z, Z, Z,
                         enWrite, reset,
                         r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out,
                         r9out, r10out, r11out, r12out, r13out, r14out, r15out);
 	
-  // Read port A
+  	// Read port A
 	mux16_to_1_16bit ALUBusA(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out,
                            r8out, r9out, r10out, r11out, r12out, r13out, r14out,
                            r15out, readRegA, A);
 
-  // Read port B
+  	// Read port B
 	mux16_to_1_16bit ALUBusB(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out,
                            r8out, r9out, r10out, r11out, r12out, r13out, r14out,
                            r15out, readRegB, RegSelect);
 	
-  // determines whether an imm or B is loaded (0 selects B, 1 selects Imm)
+  	// determines whether an imm or B is loaded (0 selects B, 1 selects Imm)
+  	// TODO: Once the primary controller is completed, we need to replace the concatenation of the Sign-extended
+  	//    Immediate with a full 16-bit value Immediate so that the Controller performs the sign-extension
 	mux2_to_1_16bit ImmMux(RegSelect, {Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],Imm[7],
                                      Imm[7],Imm}, selectImm, B);
-	
-	always @ (posedge CLK) begin
-		if (CLR == 1'b1) begin reset <= 16'b1111111111111111; enWrite <= 16'b0; end
+												 
+	//  If the decoder doesn't have blocking statements, zero is always displayed
+   	// 	on the FPGA and simulation.
+	always @ (*) begin
+		if (CLR == 1'b1) begin reset = 16'b1111111111111111; enWrite = 16'b0; end
 		else begin
-			reset <= 16'b0;
+			reset = 16'b0;
+			// loadReg is a 5-bit address/enable vector.  The lower four
+			// bits indicate the address of the register to be enabled, but the
+			// MSB indicates whether writing is enabled.  This MSB is active-Low,
+			// meaning that when it is low, writing is enabled for the register
+			// addressed by the lower 4 bits.  When it is high, writing is disabled.
+			// This decision was for ease of reading and implementation.
 			case(loadReg) // decodes which register to enable
-				0: enWrite <=  16'b0000000000000001;
-				1: enWrite <=  16'b0000000000000010;
-				2: enWrite <=  16'b0000000000000100;
-				3: enWrite <=  16'b0000000000001000;
-				4: enWrite <=  16'b0000000000010000;
-				5: enWrite <=  16'b0000000000100000;
-				6: enWrite <=  16'b0000000001000000;
-				7: enWrite <=  16'b0000000010000000;
-				8: enWrite <=  16'b0000000100000000;
-				9: enWrite <=  16'b0000001000000000;
-				10: enWrite <= 16'b0000010000000000;
-				11: enWrite <= 16'b0000100000000000;
-				12: enWrite <= 16'b0001000000000000;
-				13: enWrite <= 16'b0010000000000000;
-				14: enWrite <= 16'b0100000000000000;
-				15: enWrite <= 16'b1000000000000000;
-				default: enWrite <= 16'b0;
+				0: enWrite =  16'b0000000000000001;
+				1: enWrite =  16'b0000000000000010;
+				2: enWrite =  16'b0000000000000100;
+				3: enWrite =  16'b0000000000001000;
+				4: enWrite =  16'b0000000000010000;
+				5: enWrite =  16'b0000000000100000;
+				6: enWrite =  16'b0000000001000000;
+				7: enWrite =  16'b0000000010000000;
+				8: enWrite =  16'b0000000100000000;
+				9: enWrite =  16'b0000001000000000;
+				10: enWrite = 16'b0000010000000000;
+				11: enWrite = 16'b0000100000000000;
+				12: enWrite = 16'b0001000000000000;
+				13: enWrite = 16'b0010000000000000;
+				14: enWrite = 16'b0100000000000000;
+				15: enWrite = 16'b1000000000000000;
+				default: enWrite = 16'b0;
 			endcase
 		end
 	end
 endmodule
 
+// This module is not necessary for correct operation, but was designed for a just in case.  It isn't needed.
 module decoder_4_to_16_16bit(
 	input [15:0] in,
 	input [3:0] select,
@@ -117,19 +128,3 @@ module decoder_4_to_16_16bit(
 	end
 	
 endmodule
-
-	//module ALU(
-	//input c,
-   //input signed [15:0] a, b,
-	//input [7:0] op,
-   //output reg [15:0] y,
-   //output reg C, L, F, Z, N
-   //);
-	 
-	//module RegFile(
-	//input CLK, CLR, selectImm,
-	//input [15:0] data,
-	//input [7:0] Imm,
-	//input [3:0] selectA, selectB, selectWrite,
-	//output reg [15:0] A, B
-   //);

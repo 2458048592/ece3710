@@ -1,21 +1,23 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Plan B
 // 
-// Create Date:    15:47:54 09/10/2013 
-// Design Name: 
 // Module Name:    RegFile 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
+// Description: RegFile instantiates 16 16-bit registers.
 //
-// Dependencies: 
+// Module Name:	   reg16
+// Description: reg16 is a 16-bit register
 //
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
+// Module Name:    mux16_to_1_16bit
+// Description: mux16_to_1_16bit is a 16-bit wide 16 to 1 selector mux for reading from the RegFile
+//
+// Module Name:    mux2_to_1_16bit
+// Description: mux2_to_1_16bit is a 16-bit wide 2 to 1 selector mux for selecting either the value
+//      from the RegFile or an Immediate.
+//
+// Module Name:    block_Mem
+// Description: block_Mem is an incomplete memory module.  Currently unused.
 //
 //////////////////////////////////////////////////////////////////////////////////
 module RegFile(
@@ -23,7 +25,7 @@ module RegFile(
 	 input [15:0] r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in, r11in, r12in, r13in, r14in, r15in, enWrite, reset,
 	 output [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out
     );
-	 
+	// Instantiate all 16-bit registers with the correct write-enable and reset inputs
 	reg16 r0(CLK, enWrite[0], reset[0], r0in, r0out);
 	reg16 r1(CLK, enWrite[1], reset[1], r1in, r1out);
 	reg16 r2(CLK, enWrite[2], reset[2], r2in, r2out);
@@ -121,7 +123,7 @@ module mux2_to_1_16bit(
 	end
 endmodule
 
-// this is a block memory
+// this is an incomplete block memory to be completed later
 module block_Mem(
 	input CLK, CLR, w,
 	input [3:0] addr,

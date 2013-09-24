@@ -3,19 +3,11 @@
 // Company: 
 // Engineers: Plan B
 // 
-// Create Date:    15:55:46 08/29/2013 
-// Design Name: 
-// Module Name:    ALU 
-// Project Name: Lab 1
-// Target Devices: Nexys 3
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
+// Module: ALU
+// Description: This module is purely combinational and generates a 16-bit result y, and
+//     operational result indicator 1-bit flags C, L, F, Z, N based on an 8-bit operation code op
+//     two 16-bit input values a, b and a possible third 1-bit value c (which is interpreted as a 17-bit
+//     value with 16 0s appended)
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ALU(
@@ -26,7 +18,10 @@ module ALU(
     output reg [15:0] y,
     output reg C, L, F, Z, N
     );
-	 
+	 // currently implemented operations.  NOP/WAIT hasn't been explicitly
+	 // implemented, but can be essentially any operation so long as the
+	 // result is not written back to the registers.  It will be explicitly
+	 // written as part of the controller.
 	 // ADD, ADDI, ADDU, ADDUI, ADDC, ADDCU, ADDCUI, ADDCI
 	 // SUB, SUBI, CMP, CMPI, CMPU/I, AND, OR, XOR, NOT
 	 // LSH, LSHI, RSH, RSHI, ALSH, ARSH, NOP/WAIT
@@ -55,6 +50,7 @@ module ALU(
 	 parameter ALSH = 8'b10000101; // Interprets RSrc as Unsigned
 	 parameter ARSH = 8'b10001101; // Interprets RSrc as Unsigned
 	
+	// generate y result and flags for each operation type
 	always @ (*) begin
 		C = 0; L = 0; F = 0; Z = 0; N = 0; y = 0;
 		casex(op)
@@ -62,18 +58,23 @@ module ALU(
 				begin
 					// Signed
 					{C, y} = a + b;
+					// signed addition can create overflow only
+					// if the signs of inputs a and b are the same,
+					// but the output y does not have the same sign
 					if (a[15] == b[15] && y[15] != b[15])
 						F = 1;
 				end
 			ADDI: 
 				begin
 					{C, y} = a + b; // a is Rdest, b contains imm
+					// signed addition can create overflow only
+					// if the signs of inputs a and b are the same,
+					// but the output y does not have the same sign
 					if (a[15] == b[15] && y[15] != b[15])
 						F = 1;
 				end
 			ADDU:
 				begin 
-					// Unsigned
 					y = $unsigned(a) + $unsigned(b);
 				end
 			ADDUI: 
@@ -82,6 +83,11 @@ module ALU(
 				end
 			ADDC: 
 				begin
+					// The difference between ADD and ADDC is that
+					// ADDC includes the c input
+					// signed addition can create overflow only
+					// if the signs of inputs a and b are the same,
+					// but the output y does not have the same sign
 					{C, y} = b + a + {c, 16'b0};
 					if (a[15] == b[15] && y[15] != b[15])
 						F = 1;
@@ -96,43 +102,59 @@ module ALU(
 				end
 			ADDCI: 
 				begin
+					// The difference between ADDI and ADDCI is that
+					// ADDC includes the c input
 					{C, y} = b + {c, a};
 					if (a[15] == b[15] && y[15] != b[15])
 						F = 1;
 				end
 			SUB: 
 				begin
+					// Overflow for a subtraction operation can occur in 3 ways:
+					// If the inputs have the same sign, but the output does not and the result is non-zero
+					// If a is positive, b is negative and y is also negative
+					// If a is negative, b is positive and y is also positive
 					{C, y}  = a - b;
 					if (((a[15] == b[15]) && (y[15] != b[15]) && y!= 0) || (~(a[15]) && b[15] && y[15]) || (a[15] && ~(b[15]) && ~(y[15])))
 						F = 1;
 				end
 			SUBI: 
 				begin
+					// Overflow for a subtraction operation can occur in 3 ways:
+					// If the inputs have the same sign, but the output does not and the result is non-zero
+					// If a is positive, b is negative and y is also negative
+					// If a is negative, b is positive and y is also positive
 					{C, y} = a - b;
 					if (((a[15] == b[15]) && (y[15] != b[15]) && y!= 0) || (~(a[15]) && b[15] && y[15]) || (a[15] && ~(b[15]) && ~(y[15])))
 						F = 1;
 				end
 			CMP: 
 				begin
+					// signed
 					y = a - b;
 					if (y == 0)
 						Z = 1;
+					// if a is less than b, then set the N flag
 					if (a < b)
 						N = 1; 					
 				end
 			CMPI: 
 				begin
+					// signed
 					y = a - b;
 					if (y == 0)
 						Z = 1;
+					// if a is less than b, then set the N flag
 					if (a < b)
 						N = 1;	
 				end
 			CMPUI: 
 				begin
+					// unsigned
 					y = $unsigned(a) - $unsigned(b);
 					if (y == 0)
 						Z = 1;
+					// if a is less than b, then set the L flag
 					if ($unsigned(a) < $unsigned(b))
 						L = 1;
 				end
@@ -170,6 +192,7 @@ module ALU(
 				end
 			ALSH:
 				begin
+					// arithmetic left shifts retain the sign bit
 					y = {a[15], a[14:0] <<< $unsigned(b)};		
 				end
 			ARSH: 
@@ -181,6 +204,7 @@ module ALU(
 					y = 0;
 				end
 		endcase
+		// ensure that if the result is ever 0 to set the Z flag
 		if (y == 0)
 			Z = 1;
 		

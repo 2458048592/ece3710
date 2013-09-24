@@ -1,0 +1,40 @@
+
+# PlanAhead Generated IO constraints 
+
+NET "seg7[6]" IOSTANDARD = LVCMOS33;
+NET "seg7[5]" IOSTANDARD = LVCMOS33;
+NET "seg7[4]" IOSTANDARD = LVCMOS33;
+NET "seg7[3]" IOSTANDARD = LVCMOS33;
+NET "seg7[2]" IOSTANDARD = LVCMOS33;
+NET "seg7[1]" IOSTANDARD = LVCMOS33;
+NET "seg7[0]" IOSTANDARD = LVCMOS33;
+NET "select[3]" IOSTANDARD = LVCMOS33;
+NET "select[2]" IOSTANDARD = LVCMOS33;
+NET "select[1]" IOSTANDARD = LVCMOS33;
+NET "select[0]" IOSTANDARD = LVCMOS33;
+NET "clk" IOSTANDARD = LVCMOS33;
+NET "reset" IOSTANDARD = LVCMOS33;
+NET "ext_input[3]" IOSTANDARD = LVCMOS33;
+NET "ext_input[2]" IOSTANDARD = LVCMOS33;
+NET "ext_input[1]" IOSTANDARD = LVCMOS33;
+NET "ext_input[0]" IOSTANDARD = LVCMOS33;
+
+# PlanAhead Generated physical constraints 
+
+NET "seg7[0]" LOC = T17;
+NET "seg7[1]" LOC = T18;
+NET "seg7[2]" LOC = U17;
+NET "seg7[3]" LOC = U18;
+NET "seg7[4]" LOC = M14;
+NET "seg7[5]" LOC = N14;
+NET "seg7[6]" LOC = L14;
+NET "select[3]" LOC = P17;
+NET "select[2]" LOC = P18;
+NET "select[1]" LOC = N15;
+NET "select[0]" LOC = N16;
+NET "clk" LOC = V10;
+NET "reset" LOC = C9;
+NET "ext_input[3]" LOC = M8;
+NET "ext_input[2]" LOC = V9;
+NET "ext_input[1]" LOC = T9;
+NET "ext_input[0]" LOC = T10;
