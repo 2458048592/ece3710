@@ -124,51 +124,103 @@ module dataPath_FSM_test;
 		// Wait 100 ns for global reset to finish
 		#100;
 		
-		
+		//****TESTS ADDI FOREVER AND WRITES IT TO REG0 EVERYTIME****
 		// Load value 1 into reg0
 		CLR = 0; // CLR = 1 clears all reg values;
 		selectImm = 1;
-		Imm = 1;
-		op = ADDI;
-		// Don't care about readRegA or readRegB in this case
-		readRegA = 5;
+		Imm = 0;
+		// B output should be 1
 		readRegB = 0;
-		loadReg = 1; // this selects the register
+		readRegA = 0;
+		op = ADDI;
+		loadReg = 0; // this selects the register to write output Z into 
 		
-		#10
-		loadReg = 0;
-		readRegA = 1;
-		if(A != 1)
+		#1
+		if(Z != 1)
 		begin
 			$display("ERROR");
 		end
+
 		
 		
 		
+		for (i = 0; i < 23; i = i + 1) 
+		begin
+			
+			case(i)
+			0: begin // Inputs to dataPath, wait, check if working
+					
+					selectImm = 1;
+					
+					// Loop to write result to all registers
+					for (j = 0; j < 16; j = j + 1) 
+					begin
+						// Select a random number for Imm value.
+						Imm = $random % (2 ** 8); // 8 bit number
+						// EXAMPLE: Read from reg 0, then add the immediate with reg 0 and then write result in reg1
+						readRegA = j;
+						readRegB = j;
+						op = ADDI;
+						// loadReg must be different than the readReg
+						loadReg = (j + 1) % 16;
+						
+						//wait one clock cycle
+						#2;
+						// read the reg that was just written in.
+						readRegA = (j + 1) % 16;
+						readRegB = (j + 1) % 16;
+						
+						// Now subtract the same value from the register it was written to.
+						op = SUBI;
+						loadReg = j;
+						// wait one clock cycle
+						#2;
+						
+						Imm = 0;
+						op = ADDI;
+						readRegA = j;
+						// wait one clock cycle
+						#2;
+						
+						// Set reg j to 0
+						op = ADDI;
+						loadReg = (j + 1) % 16;
+						readRegA = j;
+						// wait a clock cycle for everything to finish.
+						#2;
+						
+					end
+				end
+			
+//			1: 
+//			2:
+//			3:
+//			4:
+//			5:
+//			6:
+//			7:
+//			8:
+//			9:
+//			10:
+//			11:
+//			12:
+//			13:
+//			14:
+//			15:
+//			16:
+//			17:
+//			18:
+//			19:
+//			20:
+//			21:
+//			22:
+//			default:
+			endcase
+		end
+
 		
-		
-		
-		
-//		// Check each op_code on datapath to make sure it is working
-//		for (j = 0; j < 23; j = j + 1)
-//		begin
-//		
-//			for (i = 0; i < 16; i = i + 1)
-//			begin
-//				case(i)
-//					0: begin // Inputs to dataPath, wait, check if working
-//							op = codes[j];
-//						end
-//						
-//					1:
-//					2:
-//					3:
-//					4:
-//					default:
-//			end
-//		end
         
-		// Add stimulus here
+		
 
 	end
 	
