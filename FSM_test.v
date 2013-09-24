@@ -2,23 +2,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer:
-//
-// Create Date:   15:52:48 09/17/2013
-// Design Name:   FSM
-// Module Name:   U:/My Documents/ece3710_projects/lab2/FSM_test.v
-// Project Name:  lab2
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: FSM
-//
-// Dependencies:
+// Engineer: Plan B
 // 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+// Design Name:   FSM_test
+// Description: FSM_test verifies the correct outputs of the FSM for any inputs
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -27,10 +14,11 @@ module FSM_test;
 	// Inputs
 	reg clk;
 	reg clr;
+	reg [3:0] ext_input;
 
 	// Outputs
 	wire selectImm;
-	wire [3:0] loadReg;
+	wire [4:0] loadReg;
 	wire [3:0] readRegA;
 	wire [3:0] readRegB;
 	wire [7:0] Imm;
@@ -40,6 +28,7 @@ module FSM_test;
 	FSM uut (
 		.clk(clk), 
 		.clr(clr), 
+		.ext_input(ext_input),
 		.selectImm(selectImm), 
 		.loadReg(loadReg), 
 		.readRegA(readRegA), 
@@ -47,7 +36,7 @@ module FSM_test;
 		.Imm(Imm), 
 		.op(op)
 	);
-	integer i;
+	integer i, j;
 	initial begin
 		// Initialize Inputs
 		clr = 0;
@@ -55,16 +44,18 @@ module FSM_test;
 		#5 clr = 1;
 		#1 clr = 0;
 		
+		// Outer Loop starts the timer
 		for(i =0; i < 2**5; i = i+1) begin
 			#50;
+			// inner loop verifies the output once the FSM is in State16
+			for (j=0; j < 16; j = j + 1) begin
+				ext_input = j;
+				#2;
+			end
 			#1 clr = 1;
 			#2 clr = 0;
 		end
 		
-
-        
-		
-
 	end
 	
 	always

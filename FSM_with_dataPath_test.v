@@ -2,23 +2,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer:
+// Engineer: Plan B
 //
-// Create Date:   09:18:38 09/19/2013
-// Design Name:   FSM_with_dataPath
-// Module Name:   U:/My Documents/ece3710_projects/lab2/FSM_with_dataPath_test.v
-// Project Name:  lab2
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: FSM_with_dataPath
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+// Design Name:   FSM_with_dataPath_test
+// Description: FSM_with_dataPath_test verifies the outputs for the FSM and values from the ALU
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +20,7 @@ module FSM_with_dataPath_test;
 	wire [6:0] seg7;
 	wire [3:0] select;
 	 wire [15:0] A, B, Z;
+	 wire [4:0] flags;
 
 	// Instantiate the Unit Under Test (UUT)
 	FSM_with_dataPath uut (
@@ -43,9 +31,10 @@ module FSM_with_dataPath_test;
 		.A(A),
 		.B(B),
 		.Z(Z),
+		.flags(flags),
 		.select(select)
 	);
-	integer i;
+	integer i, j;
 	initial begin
 		// Initialize Inputs
 		reset = 0;
@@ -53,8 +42,14 @@ module FSM_with_dataPath_test;
 		#5 reset = 1;
 		#1 reset = 0;
 		
+		// Outer loop runs through all FSM states
 		for(i =0; i < 2**5; i = i+1) begin
 			#50;
+			// Inner loop runs through all ext_input possibilities
+			for (j=0; j < 16; j = j + 1) begin
+				ext_input = j;
+				#2;
+			end
 			#1 reset = 1;
 			#2 reset = 0;
 		end

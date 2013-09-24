@@ -14,6 +14,10 @@ NET "select[1]" IOSTANDARD = LVCMOS33;
 NET "select[0]" IOSTANDARD = LVCMOS33;
 NET "clk" IOSTANDARD = LVCMOS33;
 NET "reset" IOSTANDARD = LVCMOS33;
+NET "ext_input[3]" IOSTANDARD = LVCMOS33;
+NET "ext_input[2]" IOSTANDARD = LVCMOS33;
+NET "ext_input[1]" IOSTANDARD = LVCMOS33;
+NET "ext_input[0]" IOSTANDARD = LVCMOS33;
 
 # PlanAhead Generated physical constraints 
 
@@ -30,3 +34,7 @@ NET "select[1]" LOC = N15;
 NET "select[0]" LOC = N16;
 NET "clk" LOC = V10;
 NET "reset" LOC = C9;
+NET "ext_input[3]" LOC = M8;
+NET "ext_input[2]" LOC = V9;
+NET "ext_input[1]" LOC = T9;
+NET "ext_input[0]" LOC = T10;
