@@ -5,7 +5,6 @@ file = ARGV.shift
 raise "Pass file name as first argument" unless file
 
 instr_types = {
-  #begin mine
   :ADD =>   :r_type,
   :ADDI =>  :i_type, 
   :ADDU =>  :r_type,           
@@ -69,12 +68,6 @@ def get_reg( reg, pos )
   num << ( pos * 8 ) 
 end
 
-def get_reg_old( reg, pos )
-  raise "This doesn't look like a register: #{reg}" unless reg =~ /^\$(\d+)$/ 
-  num = $1.to_i # num is register number
-  num << ( 31 - 5 * ( pos + 1 ) ) 
-end
-
 parsed = []
 labels = {}
 
@@ -113,32 +106,6 @@ parsed.each do |data|
     result += get_reg( args[0], 0) # append Rsrc
     result += get_reg( args[1], 1) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
-  when :immed
-    result += get_reg_old( args[0], 2 )
-    result += get_reg_old( args[1], 1 )
-    result += args[2].to_i & 0xffff
-  when :branch
-    result += get_reg_old( args[0], 1 )
-    result += get_reg_old( args[1], 2 )
-    addr = labels[args[2]]
-    raise "No such label: #{args[2].inspect}" unless addr
-    result += (addr - my_addr - 1) & 0xffff
-  when :reg
-    result += get_reg_old( args[0], 3 )
-    result += get_reg_old( args[1], 1 )
-    result += get_reg_old( args[2], 2 )
-    alu = alu_instr[ inst ]
-    raise "No alu instr for #{inst}" unless alu
-    result += alu
-  when :jump
-    addr = labels[args[0]]
-    raise "No such label: #{args[0].inspect}" unless addr
-    result += addr
-  when :memory
-    result += get_reg_old( args[0], 2 )
-    raise "Invalid memory address #{args[1]}" unless args[1] =~ /^(\d+)\((.*?)\)$/
-    result += get_reg_old( $2, 1 )
-    result += $1.to_i & 0xffff
   else
     raise "Unsupported instruction #{inst}"
   end
