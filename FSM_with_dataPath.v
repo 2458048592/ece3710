@@ -1,21 +1,10 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
-// 
-// Create Date:    09:29:49 09/17/2013 
-// Design Name: 
+// Engineer: Plan B
+//
 // Module Name:    FSM_with_dataPath 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
+// Description: FSM_with_dataPath instantiates all modules for Lab 2.
 //
 //////////////////////////////////////////////////////////////////////////////////
 module FSM_with_dataPath(
@@ -33,18 +22,17 @@ module FSM_with_dataPath(
 	wire [4:0] loadReg;
 	wire [7:0] Imm, op;
 	
-	// FSM
+	// Correct input/output ordering for FSM module
 	// input clk,
 	// input clr,
 	// input [3:0] ext_input,
-   // output reg selectImm,
+   	// output reg selectImm,
 	// output reg[4:0] loadReg,
-   // output reg[3:0] readRegA, readRegB,
-   // output reg[7:0] Imm, op
- 
+   	// output reg[3:0] readRegA, readRegB,
+   	// output reg[7:0] Imm, op
 	FSM fsm(clk, reset,ext_input, selectImm, loadReg, readRegA, readRegB, Imm, op);
 	
-	// dataPath
+	// Correct input/output ordering for datapath module
 	//input CLK, CLR, selectImm,
 	//input [4:0] loadReg,
 	//input [3:0] readRegA, readRegB,
@@ -53,11 +41,12 @@ module FSM_with_dataPath(
 	//output [4:0] flags
 	dataPath data(clk, reset, selectImm, loadReg, readRegA, readRegB, Imm, op, A, B, Z, flags);
 	
+	// Correct input/output ordering for SSD_decoder module
 	//input clk,
 	// input clr,
-   // input [15:0] number,
-   // output reg [6:0] ssOut,
-   // output reg [3:0] select
+   	// input [15:0] number,
+   	// output reg [6:0] ssOut,
+   	// output reg [3:0] select
 	SSD_decoder decoder(clk, reset, Z, seg7, select);
 
 endmodule
