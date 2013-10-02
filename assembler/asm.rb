@@ -32,7 +32,7 @@ instr_types = {
 
 instr_bits = {
   :ADD => 0b00000101,
-  :ADDI => 0b0101000,
+  :ADDI => 0b01010000,
   :ADDU => 0b00000110,
   :ADDUI => 0b0110000,
   :ADDC => 0b00000111,
@@ -100,12 +100,16 @@ parsed.each do |data|
   type = instr_types[ inst ]
   instr_bit = instr_bits[ inst ]
   raise "No bits for #{inst}" unless instr_bit
-  result = (instr_bit & 0xf0) << ( 4 ) # append the top 4 bits of the op-code to bit 15-12
   case type
   when :r_type
+		result = (instr_bit & 0xf0) << ( 4 ) # append the top 4 bits of the op-code to bit 15-12
     result += get_reg( args[0], 0) # append Rsrc
     result += get_reg( args[1], 1) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
+	when :i_type
+		result = (instr_bit & 0xf0) << ( 8 ) 
+	  result += (args[0].to_i & 0xff) # append 8 bit immediate value 
+    result += get_reg( args[1], 1) # append Rdest	
   else
     raise "Unsupported instruction #{inst}"
   end
