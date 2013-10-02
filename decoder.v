@@ -22,27 +22,20 @@ module decoder(
 	 output reg [3:0] loadReg
     );
 
-	
+	// R-Type instructions
 	parameter RTYPE = 4'b0000;
 	//parameter ADD_0 = 4'b0000; 
 	parameter ADD_1 = 4'b0101;
-	parameter ADDI = 4'b0101;
 	//parameter ADDU_0 = 4'b0000;
 	parameter ADDU_1 = 4'b0110;
-	parameter ADDUI = 8'b0110;
 	//parameter ADDC_0 = 4'b0000;
 	parameter ADDC_1 = 4'b0111;
 	//parameter ADDCU_0 = 4'b0000;
 	parameter ADDCU_1 = 4'b0100;
-	parameter ADDCUI = 4'b1010; // Replaces SUBCI
-	parameter ADDCI = 4'b0111;
 	//parameter SUB_0 = 4'b0000;
 	parameter SUB_1 = 4'b1001;
-	parameter SUBI = 4'b1001;
 	//parameter CMP_0 = 4'b0000;
 	parameter CMP_1 = 4'b1011;
-	parameter CMPI = 4'b1011;
-	parameter CMPUI = 4'b1110; // Replaces MULI
 	//parameter AND_0 = 4'b0000;
 	parameter AND_1 = 4'b0001;
 	//parameter OR_0 = 4'b0000;
@@ -51,6 +44,17 @@ module decoder(
 	parameter XOR_1 = 4'b0011;
 	//parameter NOT_0 = 4'b0000;
 	parameter NOT_1 = 4'b1111;
+	
+	// I-Type instructions
+	parameter ADDI = 4'b0101;
+	parameter ADDUI = 8'b0110;
+	parameter ADDCUI = 4'b1010; // Replaces SUBCI
+	parameter ADDCI = 4'b0111;
+	parameter SUBI = 4'b1001;
+	parameter CMPI = 4'b1011;
+	parameter CMPUI = 4'b1110; // Replaces MULI
+	
+	// Shift instructions
 	parameter SHIFT = 4'b1000;
 	//parameter LSH_0 = 4'b1000;
 	parameter LSH_1 = 4'b0100; 
