@@ -6,9 +6,6 @@ include Rubygame
 
 resolution = [640, 480]
 
-
-
-
 @screen = Screen.open resolution, 0, [HWSURFACE, DOUBLEBUF]
 @screen.title = "Duck Hunt"
 
@@ -28,14 +25,14 @@ class Duck
     @image = Surface.new [60,60]
     @rect = @image.make_rect
     @image.fill @color  
-    @velocity = [0, 0] #gravity
+    @velocity = [1, 1] #gravity
     @position = [320,240]
     @rect.move! @position[0], @position[1]
   end
 
-  def vel_add vel
-    @velocity[0] += vel[0]
-    @velocity[1] += vel[1]
+  def vel vel
+    @velocity[0] = vel[0]
+    @velocity[1] = vel[1]
   end
 
   def color_original
@@ -48,11 +45,14 @@ class Duck
 
   def update seconds_passed, walls
     old_velocity = @velocity
+    
     x, y = @velocity
-    factor = 500 * seconds_passed
+    factor = 250 * seconds_passed
     x *= factor
     y *= factor
     @rect.move! x,y
+    @pos = [x ,y]
+    puts "pos: #{@rect.x}, #{@rect.y}" 
 
     # undo x and y separately so you can move without jumping
     @rect.move! 0, -1.0 * y if collides? walls # undo gravity
@@ -65,7 +65,7 @@ class Duck
   end
 
   def draw on_surface
-    @rect.clamp! on_surface.make_rect
+    @rect.clamp! Rect.new(-60,-60, 760,600)#on_surface.make_rect
     @image.blit on_surface, @rect
   end
 
@@ -76,11 +76,11 @@ end
 
 class Wall
   include Sprites::Sprite
-  def initialize pos
+  def initialize pos, color
     super()
 
     @image = Surface.new [80,10]
-    @image.draw_box_s [0,0], [80,10], color
+    @image.fill color
     @rect = @image.make_rect
     @rect.topleft = pos
   end
@@ -107,56 +107,59 @@ Sprites::UpdateGroup.extend_object @walls
 @duck1 = Duck.new [ 0xc0, 0xc0, 0xa0]
 @duck2 = Duck.new [ 0xc0, 0x80, 0x40]
 @ducks << @duck1
-@ducks << @duck2
+#@ducks << @duck2
 
-#@walls << Wall.new([400,400])
-#@walls << Wall.new([300,300])
-#@walls << Wall.new([200,200])
-#@walls << Wall.new([100,100])
-@walls.draw @screen
+@walls << Wall.new([400,400],[ 0xc0, 0xc0, 0xa0])
+@walls << Wall.new([300,300],[ 0xc0, 0xc0, 0xa0])
+@walls << Wall.new([200,200],[ 0xc0, 0xc0, 0xa0])
+@walls << Wall.new([100,100],[ 0xc0, 0xc0, 0xa0])
+#@walls.draw @screen
 
 @event_queue = EventQueue.new
 @event_queue.enable_new_style_events #enables rubygame 3.0
 
 should_run = true
 @colliding = false
+@count = 0
+@sec = 1
 
 while should_run
   seconds_passed = @clock.tick().seconds
-  first = rand(640)
-  second = rand(480)
-
+  first = rand(2) - rand(2) 
+  second = rand(2) - rand(2)
+  third = rand(2) - rand(2) 
+  fourth = rand(2) - rand(2)
   @event_queue.each do |event|
     case event
       when Events::QuitRequested
         should_run = false
       when Events::KeyPressed 
         case event.key
-          when :left
-            @duck1.vel_add [1,0]
-            @duck2.vel_add [0,1]
-          when :right
-            @duck1.vel_add [-1,0]
-            @duck2.vel_add [0,-1]
           when :d
             @duck1.color_original
             @duck2.color_original
-            @ducks.undraw @screen, @background
-            @ducks.update seconds_passed, @walls
-            @ducks.draw @screen
           when :c
             @ducks.undraw @screen, @background
           when :w
             @duck1.color_white
             @duck2.color_white
-            @ducks.undraw @screen, @background
-            @ducks.update seconds_passed, @walls
-            @ducks.draw @screen
         end
      end
   end
-
-
+  @count += seconds_passed
+  if @count > @sec 
+    @duck2.vel [second, first] 
+    @duck1.vel [third, fourth] 
+  end
+  if @count > @sec
+    @count = 0 
+    num = rand(2) + 0.5
+    num = 1 if num == 2.5
+    @sec = num
+  end
+  @ducks.undraw @screen, @background
+  @ducks.update seconds_passed, @walls
+  @ducks.draw @screen
   @screen.flip
 end
 
