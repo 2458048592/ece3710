@@ -5,6 +5,14 @@
 // Module Name:    controller 
 //
 //////////////////////////////////////////////////////////////////////////////////
+
+/* ** TODO **
+	This actually needs to be fixed for a 5-bit loadReg.  I forgot to use our optimization
+	that allows us to not write to the Regfile for Nop Instructions.  In addition, we need
+	a strategy for dealing with LW (load word) and SW (store word) instructions, and likely
+	will want LI (load immediate) and SI (store immediate) instructions.  Once I figure these
+	out, I will email everyone.
+*/
 module decoder(
     input [15:0] inst,
     output reg [7:0] op, Imm,
