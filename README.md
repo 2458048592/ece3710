@@ -19,3 +19,6 @@ Zapp Guns:
      * yellow ground
      * brown trigger
      * blue photo
+
+Memory
+*Copy load and store will be the same instruction twice
