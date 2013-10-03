@@ -36,24 +36,28 @@ class Duck
   end
 
   def switch 
-    x = [1, 1]
-    case rand(7)
+    i = [1, 1]
+    case rand(9)
     when 0
-      x = [-1,-1]
+      i = [-1,-1]
     when 1
-      x = [-1, 0]
+      i = [-1, 0]
     when 2
-      x = [0, -1]
+      i = [-1, 1]
     when 3
-      x = [1, 1]
+      i = [0, -1]
     when 4
-      x = [1, 0]
+      i = [1, 1]
     when 5
-      x = [0, 1]
+      i = [1, 0]
+    when 6
+      i = [1, -1]
+    when 7
+      i = [0, 1]
     else
-      x = [1, 1]
+      i = [1, 1]
     end
-    @velocity = x
+    @velocity = i
   end
 
   def color_original
@@ -65,19 +69,18 @@ class Duck
   end
 
   def update seconds_passed, walls
-    old_velocity = @velocity
-    
-    x, y = @velocity
-    factor = 250 * seconds_passed
-    x *= factor
-    y *= factor
-    @rect.move! x,y
-    puts "vel: #{x}, #{y}" 
+    @x, @y = @velocity
+    @factor = 250 * seconds_passed
+    @x *= @factor
+    @y *= @factor
+    #puts "#{@x}, #{@y}" if @x == 0 or @y == 0
+    @rect.move! @x,@y
+    #puts "vel: #{x}, #{y}" 
     #puts "pos: #{@rect.x}, #{@rect.y}" 
 
     # undo x and y separately so you can move without jumping
-    @rect.move! 0, -1.0 * y if collides? walls # undo gravity
-    @rect.move! -1.0 * x, 0 if collides? walls # undo sideways movement
+    #@rect.move! 0, -1.0 * @y if collides? walls # undo gravity
+    #@rect.move! -1.0 * @x, 0 if collides? walls # undo sideways movement
   end
 
   def draw on_surface
@@ -134,10 +137,14 @@ end
 Sprites::UpdateGroup.extend_object @ducks
 Sprites::UpdateGroup.extend_object @walls
 
-@duck1 = Duck.new [ 0xc0, 0xc0, 0xa0]
-@duck2 = Duck.new [ 0xc0, 0x80, 0x40]
-@duck3 = Duck.new [ 0xc0, 0x80, 0x40]
-@ducks << @duck1
+for i in 0..10
+  duck1 = Duck.new [ 0xc0, i* 200, 0xa0]
+  @ducks << duck1
+end
+#@duck1 = Duck.new [ 0xc0, 0xc0, 0xa0]
+#@duck2 = Duck.new [ 0xc0, 0x80, 0x40]
+#@duck3 = Duck.new [ 0xc0, 0x80, 0x40]
+#@ducks << @duck1
 #@ducks << @duck2
 #@ducks << @duck3
 
@@ -151,10 +158,8 @@ Sprites::UpdateGroup.extend_object @walls
 @event_queue.enable_new_style_events #enables rubygame 3.0
 
 should_run = true
-@colliding = false
 @count = 0
 @sec = 1
-
 while should_run
   seconds_passed = @clock.tick().seconds
   @event_queue.each do |event|
@@ -164,29 +169,17 @@ while should_run
       when Events::KeyPressed 
         case event.key
           when :d
-            @duck1.color_original
-            @duck2.color_original
-            @duck3.color_original
+            @ducks.map &:original_color
           when :c
             @ducks.undraw @screen, @background
           when :w
-            @duck1.color_white
-            @duck2.color_white
-            @duck3.color_white
+            @ducks.map &:color_white
         end
      end
   end
   @count += seconds_passed
   if @count > @sec 
-    #first = randLevelTwo
-    #second = randLevelTwo
-    #third = randLevelTwo
-    #fourth = randLevelTwo
-    #puts "fourth: #{fourth}"
-    #@duck2.vel [second, first] 
-    #@duck1.vel [third, fourth] 
-    @duck2.switch 
-    @duck1.switch 
+    @ducks.map &:switch
   end
   if @count > @sec
     @count = 0 
