@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 
 // this is an 18-kbit block ram instance
+// dual-port, synchronous read/write
 module memory(
 	input CLK, CLR, w0, w1,
 	input [9:0] addr0, addr1,
@@ -9,23 +10,24 @@ module memory(
 	);
 	
 	reg [17:0] RAM [1023:0];
-	
+		
 	always @ (posedge CLK) begin
-		out0 <= RAM[addr0];
-		out1 <= RAM[addr1];
+		if (w0) begin RAM[addr0] <= data0; out0 <= data0; end
+		else out0 <= RAM[addr0];
 	end
 	
 	always @ (posedge CLK) begin
-		if (w0) RAM[addr0] <= data0;
-		else RAM[addr0] <= RAM[addr0];
-	end
-	
-	always @ (posedge CLK) begin
-		if (w1) RAM[addr1] <= data1;
-		else RAM[addr1] <= RAM[addr1];
+		if (w1) begin RAM[addr1] <= data1; out1 <= data1; end
+		else out1 <= RAM[addr1];
 	end
 endmodule
 
+// If there are 32 blocks of memory, then this will instantiate 30 of them for the Instruction
+// and the Data Memory blocks.  Since this instantiates 30 blocks, it requires a decoder on the
+// write signal input and a mux on the data coming out of each memory block instance.  The
+// convention for the use of this memory will be: instruction memory will be accessed using
+// w0, addr0, and data0 held in blocks 0 through 27 (00000 and 11011), while data memory will
+// be accessed using w1, addr1, and data1 held in blocks 28 and 29 (11100 and 11101)
 module memory2(
 	input CLK, CLR, w0, w1,
 	input [14:0] addr0, addr1,
