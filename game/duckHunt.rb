@@ -5,7 +5,7 @@ require 'rubygame'
 include Rubygame
 
 @background_image = "index.jpeg"
-@duck_count = 5
+@duck_count = 50
 resolution = [640, 480]
 #resolution = Screen.get_resolution
 
@@ -219,7 +219,7 @@ while should_run
   end
   if @count > @sec
     @count = 0 
-    num = rand(5) + 0.5
+    num = rand(3) + 0.5
     num = 1 if num == 2.5
     @sec = num
   end
