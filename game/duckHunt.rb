@@ -26,13 +26,34 @@ class Duck
     @rect = @image.make_rect
     @image.fill @color  
     @velocity = [1, 1] #gravity
-    @position = [320,240]
+    @position = [0,0]
     @rect.move! @position[0], @position[1]
   end
 
   def vel vel
     @velocity[0] = vel[0]
     @velocity[1] = vel[1]
+  end
+
+  def switch 
+    x = [1, 1]
+    case rand(7)
+    when 0
+      x = [-1,-1]
+    when 1
+      x = [-1, 0]
+    when 2
+      x = [0, -1]
+    when 3
+      x = [1, 1]
+    when 4
+      x = [1, 0]
+    when 5
+      x = [0, 1]
+    else
+      x = [1, 1]
+    end
+    @velocity = x
   end
 
   def color_original
@@ -51,17 +72,12 @@ class Duck
     x *= factor
     y *= factor
     @rect.move! x,y
-    @pos = [x ,y]
-    puts "pos: #{@rect.x}, #{@rect.y}" 
+    puts "vel: #{x}, #{y}" 
+    #puts "pos: #{@rect.x}, #{@rect.y}" 
 
     # undo x and y separately so you can move without jumping
     @rect.move! 0, -1.0 * y if collides? walls # undo gravity
     @rect.move! -1.0 * x, 0 if collides? walls # undo sideways movement
-  end
-
-  def move pos
-    @position = pos
-    @rect.move! pos[0], pos[1]
   end
 
   def draw on_surface
@@ -90,6 +106,20 @@ class Wall
   end
 end
 
+# returns -1, 0 ,1
+def randLevelOne
+  a = rand(3)
+  a = -1 if a == 2
+  return a
+end
+
+# returns -1, 1
+def randLevelTwo
+  a = rand(2)
+  a = -1 if a == 0
+  return a
+end
+
 @black = Surface.new resolution
 @black.blit @screen,[0,0]
 @background = Surface.new resolution
@@ -106,8 +136,10 @@ Sprites::UpdateGroup.extend_object @walls
 
 @duck1 = Duck.new [ 0xc0, 0xc0, 0xa0]
 @duck2 = Duck.new [ 0xc0, 0x80, 0x40]
+@duck3 = Duck.new [ 0xc0, 0x80, 0x40]
 @ducks << @duck1
 #@ducks << @duck2
+#@ducks << @duck3
 
 @walls << Wall.new([400,400],[ 0xc0, 0xc0, 0xa0])
 @walls << Wall.new([300,300],[ 0xc0, 0xc0, 0xa0])
@@ -125,10 +157,6 @@ should_run = true
 
 while should_run
   seconds_passed = @clock.tick().seconds
-  first = rand(2) - rand(2) 
-  second = rand(2) - rand(2)
-  third = rand(2) - rand(2) 
-  fourth = rand(2) - rand(2)
   @event_queue.each do |event|
     case event
       when Events::QuitRequested
@@ -138,18 +166,27 @@ while should_run
           when :d
             @duck1.color_original
             @duck2.color_original
+            @duck3.color_original
           when :c
             @ducks.undraw @screen, @background
           when :w
             @duck1.color_white
             @duck2.color_white
+            @duck3.color_white
         end
      end
   end
   @count += seconds_passed
   if @count > @sec 
-    @duck2.vel [second, first] 
-    @duck1.vel [third, fourth] 
+    #first = randLevelTwo
+    #second = randLevelTwo
+    #third = randLevelTwo
+    #fourth = randLevelTwo
+    #puts "fourth: #{fourth}"
+    #@duck2.vel [second, first] 
+    #@duck1.vel [third, fourth] 
+    @duck2.switch 
+    @duck1.switch 
   end
   if @count > @sec
     @count = 0 
