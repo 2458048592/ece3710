@@ -4,9 +4,13 @@ require 'rubygame'
 
 include Rubygame
 
+@background_image = "index.jpeg"
+@duck_count = 5
 resolution = [640, 480]
+#resolution = Screen.get_resolution
 
 @screen = Screen.open resolution, 0, [HWSURFACE, DOUBLEBUF]
+#@screen = Screen.open resolution, 0, [HWSURFACE, DOUBLEBUF, FULLSCREEN]
 @screen.title = "Duck Hunt"
 
 unless @screen.respond_to? :draw_box
@@ -22,9 +26,10 @@ class Duck
     super()
 
     @color = color
-    @image = Surface.new [60,60]
+    #@image = Surface.new [60,60]
+    @image = Surface.load "picDuck.png"
     @rect = @image.make_rect
-    @image.fill @color  
+    #@image.fill @color  
     @velocity = [1, 1] #gravity
     @position = [0,0]
     @rect.move! @position[0], @position[1]
@@ -63,9 +68,17 @@ class Duck
   def color_original
     @image.fill @color
   end
+  
+  def duck
+    @image = Surface.load "picDuck.png"
+  end
 
   def color_white
     @image.fill [ 0xff, 0xff, 0xff]
+  end
+
+  def color_black
+    @image.fill [ 0, 0, 0]
   end
 
   def update seconds_passed, walls
@@ -84,7 +97,9 @@ class Duck
   end
 
   def draw on_surface
-    @rect.clamp! Rect.new(-60,-60, 760,600)#on_surface.make_rect
+    bordRect = on_surface.make_rect
+    @border = Rect.new(-@rect.w,-@rect.h, bordRect.w + @rect.w * 2, bordRect.h + @rect.h * 2)
+    @rect.clamp! @border
     @image.blit on_surface, @rect
   end
 
@@ -109,6 +124,22 @@ class Wall
   end
 end
 
+def hit hits
+  frames = 30
+  if hits >= 1 and hits < frames
+    @black.blit @screen,[0,0]
+    hits += 1
+  elsif hits >= frames and hits < frames * 2
+    @ducks.map &:color_white
+    hits += 1
+  elsif hits >= frames * 2
+    @ducks.map &:duck
+    @background.blit @screen,[0,0]
+    hits = 0
+  end
+  return hits
+end
+
 # returns -1, 0 ,1
 def randLevelOne
   a = rand(3)
@@ -125,7 +156,8 @@ end
 
 @black = Surface.new resolution
 @black.blit @screen,[0,0]
-@background = Surface.new resolution
+#@background = Surface.new resolution
+@background = Surface.load @background_image
 @background.blit @screen,[0,0]
 
 @clock = Clock.new
@@ -137,16 +169,10 @@ end
 Sprites::UpdateGroup.extend_object @ducks
 Sprites::UpdateGroup.extend_object @walls
 
-for i in 0..10
-  duck1 = Duck.new [ 0xc0, i* 200, 0xa0]
+for i in 1..@duck_count
+  duck1 = Duck.new [ i*200,100000 - i*100 , i*110]
   @ducks << duck1
 end
-#@duck1 = Duck.new [ 0xc0, 0xc0, 0xa0]
-#@duck2 = Duck.new [ 0xc0, 0x80, 0x40]
-#@duck3 = Duck.new [ 0xc0, 0x80, 0x40]
-#@ducks << @duck1
-#@ducks << @duck2
-#@ducks << @duck3
 
 @walls << Wall.new([400,400],[ 0xc0, 0xc0, 0xa0])
 @walls << Wall.new([300,300],[ 0xc0, 0xc0, 0xa0])
@@ -160,36 +186,54 @@ end
 should_run = true
 @count = 0
 @sec = 1
+@hit_count = 0
 while should_run
   seconds_passed = @clock.tick().seconds
   @event_queue.each do |event|
     case event
       when Events::QuitRequested
         should_run = false
+      when Events::MousePressed
+        puts "Pressed #{event.button} at #{event.pos}"
       when Events::KeyPressed 
         case event.key
           when :d
-            @ducks.map &:original_color
+            @ducks.map &:duck
+          when :b
+            @ducks.map &:color_black
+          when :o
+            @ducks.map &:color_original
           when :c
             @ducks.undraw @screen, @background
           when :w
             @ducks.map &:color_white
+          when :h
+            @hit_count = 1
         end
      end
   end
+
   @count += seconds_passed
   if @count > @sec 
     @ducks.map &:switch
   end
   if @count > @sec
     @count = 0 
-    num = rand(2) + 0.5
+    num = rand(5) + 0.5
     num = 1 if num == 2.5
     @sec = num
   end
-  @ducks.undraw @screen, @background
-  @ducks.update seconds_passed, @walls
+
+
+  if @hit_count == 0
+    @ducks.undraw @screen, @background
+    @ducks.update seconds_passed, @walls
+  elsif
+    @ducks.undraw @screen, @black # display the ducks as white on black
+  end
   @ducks.draw @screen
+  @hit_count = hit @hit_count
+
   @screen.flip
 end
 
