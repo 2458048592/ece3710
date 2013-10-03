@@ -22,3 +22,4 @@ Zapp Guns:
 
 Memory:
   * Copy load and store will be the same instruction twice
+  * Load duplicate, store is a no-op
