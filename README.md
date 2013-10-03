@@ -20,5 +20,5 @@ Zapp Guns:
      * brown trigger
      * blue photo
 
-Memory
+Memory:
   *Copy load and store will be the same instruction twice
