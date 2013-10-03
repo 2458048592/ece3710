@@ -21,4 +21,4 @@ Zapp Guns:
      * blue photo
 
 Memory
-*Copy load and store will be the same instruction twice
+  *Copy load and store will be the same instruction twice
