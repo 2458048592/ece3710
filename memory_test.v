@@ -66,10 +66,12 @@ module memory_test;
 		// Wait 100 ns for global reset to finish
 		#100;
 		
+		// Write the data to the address
 		w0 = 1;
 		data0 = 42;
 		addr0 = 1;
 		#2;
+		// Read the data from the address
 		w0 = 0;
 		data0 = 0;
 		addr0 = 1;
