@@ -5,7 +5,7 @@ require 'rubygame'
 include Rubygame
 
 @background_image = "index.jpeg"
-@duck_count = 50
+@duck_count = 5
 resolution = [640, 480]
 #resolution = Screen.get_resolution
 
