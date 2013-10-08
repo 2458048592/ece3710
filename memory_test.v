@@ -78,6 +78,15 @@ module memory_test;
 		#2;
         
 		// Add stimulus here
+		
+		/* TODO
+		when enable is zero, is the output still what was written
+		
+		2 writes
+		
+		constantly read and write to same addresss
+		
+		*/
 
 	end
       
