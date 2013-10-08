@@ -52,12 +52,12 @@ module memory2_test;
 		.out1(out1)
 	);
 
-	integer i; // for the forloop calculating FIBONACCI
+	integer i, j; // for the forloop calculating FIBONACCI
 	integer fib1;
 	integer fib2;
 	integer temp_fib;
-	
-	
+
+
 	initial begin
 		// Initialize Inputs
 		CLK = 0;
@@ -70,51 +70,65 @@ module memory2_test;
 		data1 = 0;
 
 		// Wait 100 ns for global reset to finish
-		#100;
+		#10;
         
 		// Add stimulus here
-		
-		fib1 = 0;
-		fib2 = 1;
+
 		// *** WRITE THE DATA TO THE ADDRESSES ***
+		w0 = 1;
 		w1 = 1; // enable data write
+		for(j=0; j<=29; j=j+1) begin
+			for (i=0; i<=1023; i=i+1) begin
+				addr1 = {j[4:0], i[9:0]};
+				addr0 = {j[4:0], i[9:0]};
+				data1 = {j[4:0], i[9:0]};
+				data0 = {j[4:0], i[9:0]};
+				#2;
+			end
+		end
+		w0 = 0;
+		
 		// max number to go up to is a 16-bit fibonacci
 		// max normal number is 32767, maxfib number is 28657 (23 fibonacci sequences)
-		for(i = 0; i<23; i=i+1)
-		begin
-			temp_fib = fib1 + fib2;
-			addr1 = temp_fib; // fibonnaci sequence;
-			data1 = addr1; // write the fib number to the same address in memory
-			// Update the fib sequence
-			fib1 = fib2;
-			fib2 = temp_fib;
-			#2;
-		end
-		
-		// *** CHECK THAT THE DATA WRITTEN IS CORRENT ***
-		w1 = 0;
-		fib1 = 0;
-		fib2 = 0;
-		data1 = 0;
-		for(i=0; i<23; i=i+1)
-		begin
-			temp_fib = fib1 + fib2;
-			addr1 = temp_fib;
-			if(addr1 != out1)
+		for(j = 0; j <= 29; j=j+1) begin
+			
+			fib1 = 0;
+			fib2 = 1;
+			for(i = 0; i<23; i=i+1)
 			begin
-				$display("Error with writing memory");
-				$display("ADDR1: %0d, OUT1: %0d", addr1, out1);
+				temp_fib = fib1 + fib2;
+				addr1 = {j,temp_fib[9:0]}; // fibonnaci sequence;
+				data1 = temp_fib; // write the fib number to the same address in memory
+				// Update the fib sequence
+				fib1 = fib2;
+				fib2 = temp_fib;
 				#2;
 			end
 		end
 
+		// *** CHECK THAT THE DATA WRITTEN IS CORRENT ***
+		w1 = 0;
+		data1 = 0;
+		for(j=0; j<=29; j=j+1) begin
+			fib1 = 0;
+			fib2 = 1;
+			for(i=0; i<23; i=i+1)
+			begin
+				temp_fib = fib1 + fib2;
+				addr1 = {j,temp_fib[9:0]};
+				#2;
+				if(temp_fib != out1)
+				begin
+					$display("Error with writing memory");
+					$display("ADDR1: %0d, OUT1: %0d", addr1, out1);
+				end
+				fib1 = fib2;
+				fib2 = temp_fib;
+			end
+		end
 	end
-	
+
 	always
 		#1 CLK = ~CLK;
       
 endmodule
-
-
-
-
