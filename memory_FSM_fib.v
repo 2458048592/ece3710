@@ -352,7 +352,7 @@ module memory_FSM_fib(
 
 	// Present state
 	always@(posedge clk) begin
-			if (clr) begin
+			if (clr)
 				PS <= State0;
 			else
 				PS <= NS;
