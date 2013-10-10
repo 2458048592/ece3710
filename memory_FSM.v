@@ -45,14 +45,15 @@ module memory_FSM(
 //	input [14:0] addr0, addr1,
 //	input [17:0] data0, data1,
 //	output reg [17:0] out0, out1
-	memory2 mem_block(clk,clr,addr0,addr1,data0,data1,out0,out1);
+	memory2 mem_block(clk,clr,w0,w1,addr0,addr1,data0,data1,out0,out1);
 	
 //	input [15:0] a0,
 //	input [15:0] a1,
 //	input sel,
 //	output reg [15:0] b
-	mux2_to_1_16bit(out0,out1,button,display);
-	SSD_decoder decoder(clk, reset, display, seg7, select);
+	mux2_to_1_16bit muxX(out0,out1,button,display);
+	
+	SSD_decoder decoder(clk, clr, display, seg7, select);
 	
 
 
