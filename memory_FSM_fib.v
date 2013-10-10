@@ -21,7 +21,10 @@
 module memory_FSM_fib(
 	input clk,
 	input clr,
-	output reg[14:0] address
+	input [5:0] ext_input,
+	output reg[14:0] addr0, addr1,
+	output reg w0, w1,
+	output reg[15:0] data0, data1
     );
 // Give names to states
 	 parameter State0 = 0; parameter State1 = 1;
@@ -30,51 +33,85 @@ module memory_FSM_fib(
 
 	 // Declare states
 	 reg [1:0] PS, NS;
-
+	 reg [14:0] count;
+	 reg [4:0] block_count;
+	 initial begin
+		count = 0;
+	end
 	// Output 
-	always@(PS) begin
-		case(PS)
+	always@(*) begin
+		case(PS) 
 			State0 : begin
 			  // load 1 into r0 
-			  
+			  w0 = 0;
+			  w1 = 0;
+			  addr0 = 0;
+			  addr1 = 1023;
+			  data0 = 0;
+			  data1 = 0;
 			end
 			State1 : begin
-			  // Load 1 into r1
-			 
+			  w0 = 1;
+			  w1 = 1;
+			  addr0 = addr0 + 1024;
+				addr1 = addr0 + 1023;
+			  data0 = {block_count,5'b1010};
+			  data1 = {block_count,5'b1110};	
 			end
 			State2 : begin
-			  // r2 = r1 + r0
-			  // 2  = 1  + 1
-			  
+				w0 = 1;
+				w1 = 1;
+				addr0 = addr0 + 1024;
+				addr1 = addr0 + 1023;
+				data0 = {block_count,5'b1010};
+				data1 = {block_count,5'b1110};
+				
 			end
 			State3 : begin
-			  // r3 = r2 + r1
-			  // 3  = 2  + 1
-			  
+				w0 = 0;
+				w1 = 0;
+				addr0 = 1024 * ext_input[5:0];
+				addr1 = 1024 * ext_input[5:0] + 1023;
+				data0 = {block_count,5'b1010};
+				data1 = {block_count,5'b1110};
 			end
 			default: begin 
-			  // r15 = r15 | r15
-			  // 1597= 1597| 1597
-			 
+			  w0 = 0;
+			  w1 = 0;
+			  addr0 = 0;
+			  addr1 = 0;
+			  data0 = 0;
+			  data1 = 0;
 			end
 		endcase
 	end
 
 	// Present state
 	always@(posedge clk) begin
-			if (clr)
+			if (clr) begin
 				PS <= State0;
-			else 
+				count <= 0;
+				block_count <= 0;
+			end
+			else if (count >= 30720) begin
+				PS <= State3;
+				count <= 30720;
+				block_count <= 30;
+			end
+			else begin
+				block_count <= block_count + 1;
+				count <= count + 1024; 
 				PS <= NS;
+			end
 	end
 		
 		// Next state
 	always@(PS)
 		case(PS)
 			State0 : NS = State1;
-			State1 : NS = State0;
-			State2 : NS = State3;
-			State3 : NS = State4;
+			State1 : NS = State2;
+			State2 : NS = State1;
+			State3 : NS = State3;
 			default : NS = State0;
 		endcase
 

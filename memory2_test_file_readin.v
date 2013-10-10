@@ -69,25 +69,30 @@ module memory2_test_file_readin;
         
 		// Add stimulus here
 		//Write the number for the address into the address
-		w1=1;
-		for(i=0; i<2**15; i=i+1)
+		w0=1;
+		for(i=0; i<30720; i=i+1)
 		begin
-			addr1 = i;
-			data1 = i;
+			addr0 = i;
+			data0 = i;
 			#2;
 		end
 		
 		//Check that the reading was correct
-		w1 = 0;
-		for(i=0; i<2**15; i=i+1)
+		w0 = 0;
+		for(i=0; i<30720; i=i+1)
 		begin
 			#2;
-			addr1 = i;
-			data1 = i;
+			addr0 = i;
 			#2;
+			if(i != out0)
+				begin
+					$display("ERROR--ADDR0: %0d, OUT0: %0d", addr0, out0);
+				end
 		end
-
+	$display("done");
 	end
-      
+	
+   always
+		#1 CLK = ~CLK;
 endmodule
 
