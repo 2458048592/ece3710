@@ -21,7 +21,7 @@
 module memory_FSM(
     input clk,
     input clr,
-    input [5:0] ext_input,
+    input [4:0] ext_input,
 	 input button,
     output [6:0] seg7,
     output [3:0] select

@@ -21,7 +21,7 @@
 module memory_FSM_fib(
 	input clk,
 	input clr,
-	input [5:0] ext_input,
+	input [4:0] ext_input,
 	output reg[14:0] addr0, addr1,
 	output reg w0, w1,
 	output reg[15:0] data0, data1
@@ -47,9 +47,22 @@ module memory_FSM_fib(
 
 	 // Declare states
 	reg [4:0] PS, NS;
-//	reg[14:0] addr0, addr1;
+	reg[14:0] addr0_count = 0;
+	reg[14:0] addr1_count = 0; 
 //	reg w0, w1;
 //	reg[15:0] data0, data1;
+
+	// Counter 
+	always@(posedge clk) begin 
+		if (clr) begin
+			addr0_count <= 0;
+			addr1_count <= 11'b01111111111;
+		end
+		else begin
+			addr0_count <= addr0_count + 11'b10000000000;	
+			addr1_count <= addr1_count + 11'b10000000000;	
+		end
+	end
 	// Output 
 	always@(*) begin
 		case(PS) 
@@ -57,24 +70,24 @@ module memory_FSM_fib(
 			  // load 1 into r0 
 			  w0 = 0;
 			  w1 = 0;
-			  addr0 = 0;
-			  addr1 = 11'b01111111111;
+			  addr0 = addr0_count;
+			  addr1 = addr1_count;
 			  data0 = 0;
 			  data1 = 0;
 			end
 			State1 : begin
 			  w0 = 1;
 			  w1 = 1;
-			  addr0 = addr0;
-			  addr1 = addr1 + 11'b01111111111;
+			  addr0 = addr0_count;
+			  addr1 = addr1_count;
 			  data0 = {5'b00000,5'b1010};
 			  data1 = {5'b00000,5'b1110};	
 			end
 			State2 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b00001,5'b1010};
 				data1 = {5'b00001,5'b1110};
 				
@@ -82,8 +95,8 @@ module memory_FSM_fib(
 			State3 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b00010,5'b1010};
 				data1 = {5'b00010,5'b1110};
 				
@@ -91,8 +104,8 @@ module memory_FSM_fib(
 			State4 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b00011,5'b1010};
 				data1 = {5'b00011,5'b1110};
 				
@@ -100,8 +113,8 @@ module memory_FSM_fib(
 			State5 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b00100,5'b1010};
 				data1 = {5'b00100,5'b1110};
 				
@@ -109,8 +122,8 @@ module memory_FSM_fib(
 			State6 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b00101,5'b1010};
 				data1 = {5'b00101,5'b1110};
 				
@@ -118,8 +131,8 @@ module memory_FSM_fib(
 			State7 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b00110,5'b1010};
 				data1 = {5'b00110,5'b1110};
 				
@@ -127,8 +140,8 @@ module memory_FSM_fib(
 			State8 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b00111,5'b1010};
 				data1 = {5'b00111,5'b1110};
 				
@@ -136,8 +149,8 @@ module memory_FSM_fib(
 			State9 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b01000,5'b1010};
 				data1 = {5'b01000,5'b1110};
 				
@@ -145,8 +158,8 @@ module memory_FSM_fib(
 			State10 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b01001,5'b1010};
 				data1 = {5'b01001,5'b1110};
 				
@@ -154,8 +167,8 @@ module memory_FSM_fib(
 			State11 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b01010,5'b1010};
 				data1 = {5'b01010,5'b1110};
 				
@@ -163,8 +176,8 @@ module memory_FSM_fib(
 			State12 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b01011,5'b1010};
 				data1 = {5'b01011,5'b1110};
 				
@@ -172,8 +185,8 @@ module memory_FSM_fib(
 			State13 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b01100,5'b1010};
 				data1 = {5'b01100,5'b1110};
 				
@@ -181,8 +194,8 @@ module memory_FSM_fib(
 			State14 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b01101,5'b1010};
 				data1 = {5'b01101,5'b1110};
 				
@@ -190,8 +203,8 @@ module memory_FSM_fib(
 			State15 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b01110,5'b1010};
 				data1 = {5'b01110,5'b1110};
 				
@@ -199,8 +212,8 @@ module memory_FSM_fib(
 			State16 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b01111,5'b1010};
 				data1 = {5'b01111,5'b1110};
 				
@@ -208,8 +221,8 @@ module memory_FSM_fib(
 			State17 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b10000,5'b1010};
 				data1 = {5'b10000,5'b1110};
 				
@@ -217,8 +230,8 @@ module memory_FSM_fib(
 			State18 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b10001,5'b1010};
 				data1 = {5'b10001,5'b1110};
 				
@@ -226,8 +239,8 @@ module memory_FSM_fib(
 			State19 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b10010,5'b1010};
 				data1 = {5'b10010,5'b1110};
 				
@@ -235,8 +248,8 @@ module memory_FSM_fib(
 			State20 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b10011,5'b1010};
 				data1 = {5'b10011,5'b1110};
 				
@@ -244,8 +257,8 @@ module memory_FSM_fib(
 			State21 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b10100,5'b1010};
 				data1 = {5'b10100,5'b1110};
 				
@@ -253,8 +266,8 @@ module memory_FSM_fib(
 			State22 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b10101,5'b1010};
 				data1 = {5'b10101,5'b1110};
 				
@@ -262,8 +275,8 @@ module memory_FSM_fib(
 			State23 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b10110,5'b1010};
 				data1 = {5'b10110,5'b1110};
 				
@@ -271,8 +284,8 @@ module memory_FSM_fib(
 			State24 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b10111,5'b1010};
 				data1 = {5'b10111,5'b1110};
 				
@@ -280,8 +293,8 @@ module memory_FSM_fib(
 			State25 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b11000,5'b1010};
 				data1 = {5'b11000,5'b1110};
 				
@@ -289,8 +302,8 @@ module memory_FSM_fib(
 			State26 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b11001,5'b1010};
 				data1 = {5'b11001,5'b1110};
 				
@@ -298,8 +311,8 @@ module memory_FSM_fib(
 			State27 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b11010,5'b1010};
 				data1 = {5'b11010,5'b1110};
 				
@@ -307,8 +320,8 @@ module memory_FSM_fib(
 			State28 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b11011,5'b1010};
 				data1 = {5'b11011,5'b1110};
 				
@@ -316,8 +329,8 @@ module memory_FSM_fib(
 			State29 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b11100,5'b1010};
 				data1 = {5'b11100,5'b1110};
 				
@@ -325,8 +338,8 @@ module memory_FSM_fib(
 			State30 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 11'b10000000000;
-				addr1 = addr1 + 11'b10000000000;
+				addr0 = addr0_count;
+				addr1 = addr1_count;
 				data0 = {5'b11101,5'b1010};
 				data1 = {5'b11101,5'b1110};
 				
@@ -334,8 +347,8 @@ module memory_FSM_fib(
 			State31 : begin
 				w0 = 0;
 				w1 = 0;
-				addr0 = ext_input[5:0] * 11'b10000000000;
-				addr1 = ext_input[5:0] * 11'b10000000000 + 11'b01111111111;
+				addr0 = ext_input[4:0] * 11'b10000000000;
+				addr1 = ext_input[4:0] * 11'b10000000000 + 11'b01111111111;
 				data0 = {5'b11111,5'b1010};
 				data1 = {5'b11111,5'b1110};
 				

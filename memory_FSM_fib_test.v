@@ -60,6 +60,7 @@ module memory_FSM_fib_test;
 		#100;
 		#5 clr = 1;
 		#1 clr = 0;
+		#200;
 		for (i =0; i < 2**5; i = i + 1) begin
 			ext_input = i;
 			#2;
