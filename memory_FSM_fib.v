@@ -47,329 +47,36 @@ module memory_FSM_fib(
 
 	 // Declare states
 	reg [4:0] PS, NS;
-	reg[14:0] addr0_count = 0;
-	reg[14:0] addr1_count = 0; 
-//	reg w0, w1;
-//	reg[15:0] data0, data1;
-
-	// Counter 
-	always@(posedge clk) begin 
-		if (clr) begin
-			addr0_count <= 0;
-			addr1_count <= 11'b01111111111;
-		end
-		else begin
-			addr0_count <= addr0_count + 11'b10000000000;	
-			addr1_count <= addr1_count + 11'b10000000000;	
-		end
-	end
+	reg [1:0] count;
+	
 	// Output 
 	always@(*) begin
 		case(PS) 
-			State0 : begin
-			  // load 1 into r0 
-			  w0 = 0;
-			  w1 = 0;
-			  addr0 = addr0_count;
-			  addr1 = addr1_count;
-			  data0 = 0;
-			  data1 = 0;
-			end
-			State1 : begin
-			  w0 = 1;
-			  w1 = 1;
-			  addr0 = addr0_count;
-			  addr1 = addr1_count;
-			  data0 = {5'b00000,5'b1010};
-			  data1 = {5'b00000,5'b1110};	
-			end
-			State2 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b00001,5'b1010};
-				data1 = {5'b00001,5'b1110};
-				
-			end
-			State3 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b00010,5'b1010};
-				data1 = {5'b00010,5'b1110};
-				
-			end
-			State4 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b00011,5'b1010};
-				data1 = {5'b00011,5'b1110};
-				
-			end
-			State5 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b00100,5'b1010};
-				data1 = {5'b00100,5'b1110};
-				
-			end
-			State6 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b00101,5'b1010};
-				data1 = {5'b00101,5'b1110};
-				
-			end
-			State7 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b00110,5'b1010};
-				data1 = {5'b00110,5'b1110};
-				
-			end
-			State8 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b00111,5'b1010};
-				data1 = {5'b00111,5'b1110};
-				
-			end
-			State9 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b01000,5'b1010};
-				data1 = {5'b01000,5'b1110};
-				
-			end
-			State10 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b01001,5'b1010};
-				data1 = {5'b01001,5'b1110};
-				
-			end
-			State11 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b01010,5'b1010};
-				data1 = {5'b01010,5'b1110};
-				
-			end
-			State12 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b01011,5'b1010};
-				data1 = {5'b01011,5'b1110};
-				
-			end
-			State13 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b01100,5'b1010};
-				data1 = {5'b01100,5'b1110};
-				
-			end
-			State14 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b01101,5'b1010};
-				data1 = {5'b01101,5'b1110};
-				
-			end
-			State15 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b01110,5'b1010};
-				data1 = {5'b01110,5'b1110};
-				
-			end
-			State16 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b01111,5'b1010};
-				data1 = {5'b01111,5'b1110};
-				
-			end
-			State17 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b10000,5'b1010};
-				data1 = {5'b10000,5'b1110};
-				
-			end
-			State18 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b10001,5'b1010};
-				data1 = {5'b10001,5'b1110};
-				
-			end
-			State19 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b10010,5'b1010};
-				data1 = {5'b10010,5'b1110};
-				
-			end
-			State20 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b10011,5'b1010};
-				data1 = {5'b10011,5'b1110};
-				
-			end
-			State21 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b10100,5'b1010};
-				data1 = {5'b10100,5'b1110};
-				
-			end
-			State22 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b10101,5'b1010};
-				data1 = {5'b10101,5'b1110};
-				
-			end
-			State23 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b10110,5'b1010};
-				data1 = {5'b10110,5'b1110};
-				
-			end
-			State24 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b10111,5'b1010};
-				data1 = {5'b10111,5'b1110};
-				
-			end
-			State25 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b11000,5'b1010};
-				data1 = {5'b11000,5'b1110};
-				
-			end
-			State26 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b11001,5'b1010};
-				data1 = {5'b11001,5'b1110};
-				
-			end
-			State27 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b11010,5'b1010};
-				data1 = {5'b11010,5'b1110};
-				
-			end
-			State28 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b11011,5'b1010};
-				data1 = {5'b11011,5'b1110};
-				
-			end
-			State29 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b11100,5'b1010};
-				data1 = {5'b11100,5'b1110};
-				
-			end
-			State30 : begin
-				w0 = 1;
-				w1 = 1;
-				addr0 = addr0_count;
-				addr1 = addr1_count;
-				data0 = {5'b11101,5'b1010};
-				data1 = {5'b11101,5'b1110};
-				
-			end
 			State31 : begin
 				w0 = 0;
 				w1 = 0;
-				addr0 = ext_input[4:0] * 11'b10000000000;
-				addr1 = ext_input[4:0] * 11'b10000000000 + 11'b01111111111;
-				data0 = {5'b11111,5'b1010};
-				data1 = {5'b11111,5'b1110};
-				
+				addr0 = {ext_input[4:0], 10'b0000000000};
+				addr1 = {ext_input[4:0], 10'b1111111111};
+				data0 = {5'b11111,4'b1010};
+				data1 = {5'b11111,4'b1110};	
 			end
 			default: begin 
-			  w0 = 0;
-			  w1 = 0;
-			  addr0 = 0;
-			  addr1 = 0;
-			  data0 = 0;
-			  data1 = 0;
+			 	w0 = 1;
+				w1 = 1;
+				addr0 = {PS[4:0],10'b0000000000};
+				addr1 = {PS[4:0],10'b1111111111};
+				data0 = {PS[4:0],4'b1010};
+				data1 = {PS[4:0],4'b1110};
 			end
 		endcase
 	end
 
 	// Present state
-	always@(posedge clk) begin
-			if (clr)
-				PS <= State0;
-			else
-				PS <= NS;
+	always@(negedge clk) begin
+		if (clr)
+			PS <= State0;
+		else 
+			PS <= NS;
 	end
 		
 		// Next state
