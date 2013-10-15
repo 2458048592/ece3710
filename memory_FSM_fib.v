@@ -46,9 +46,10 @@ module memory_FSM_fib(
 	 
 
 	 // Declare states
-	 reg [4:0] PS, NS;
-	 reg [14:0] count;
-	 reg [4:0] block_count;
+	reg [4:0] PS, NS;
+//	reg[14:0] addr0, addr1;
+//	reg w0, w1;
+//	reg[15:0] data0, data1;
 	// Output 
 	always@(*) begin
 		case(PS) 
@@ -57,7 +58,7 @@ module memory_FSM_fib(
 			  w0 = 0;
 			  w1 = 0;
 			  addr0 = 0;
-			  addr1 = 1023;
+			  addr1 = 11'b01111111111;
 			  data0 = 0;
 			  data1 = 0;
 			end
@@ -65,278 +66,278 @@ module memory_FSM_fib(
 			  w0 = 1;
 			  w1 = 1;
 			  addr0 = addr0;
-			  addr1 = addr0 + 1023;
-			  data0 = {0,5'b1010};
-			  data1 = {0,5'b1110};	
+			  addr1 = addr1 + 11'b01111111111;
+			  data0 = {5'b00000,5'b1010};
+			  data1 = {5'b00000,5'b1110};	
 			end
 			State2 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {1,5'b1010};
-				data1 = {1,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b00001,5'b1010};
+				data1 = {5'b00001,5'b1110};
 				
 			end
 			State3 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {2,5'b1010};
-				data1 = {2,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b00010,5'b1010};
+				data1 = {5'b00010,5'b1110};
 				
 			end
 			State4 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {3,5'b1010};
-				data1 = {3,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b00011,5'b1010};
+				data1 = {5'b00011,5'b1110};
 				
 			end
 			State5 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {4,5'b1010};
-				data1 = {4,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b00100,5'b1010};
+				data1 = {5'b00100,5'b1110};
 				
 			end
 			State6 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {5,5'b1010};
-				data1 = {5,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b00101,5'b1010};
+				data1 = {5'b00101,5'b1110};
 				
 			end
 			State7 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {6,5'b1010};
-				data1 = {6,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b00110,5'b1010};
+				data1 = {5'b00110,5'b1110};
 				
 			end
 			State8 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {7,5'b1010};
-				data1 = {7,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b00111,5'b1010};
+				data1 = {5'b00111,5'b1110};
 				
 			end
 			State9 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {8,5'b1010};
-				data1 = {8,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b01000,5'b1010};
+				data1 = {5'b01000,5'b1110};
 				
 			end
 			State10 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {9,5'b1010};
-				data1 = {9,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b01001,5'b1010};
+				data1 = {5'b01001,5'b1110};
 				
 			end
 			State11 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {10,5'b1010};
-				data1 = {10,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b01010,5'b1010};
+				data1 = {5'b01010,5'b1110};
 				
 			end
 			State12 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {11,5'b1010};
-				data1 = {11,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b01011,5'b1010};
+				data1 = {5'b01011,5'b1110};
 				
 			end
 			State13 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {12,5'b1010};
-				data1 = {12,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b01100,5'b1010};
+				data1 = {5'b01100,5'b1110};
 				
 			end
 			State14 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {13,5'b1010};
-				data1 = {13,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b01101,5'b1010};
+				data1 = {5'b01101,5'b1110};
 				
 			end
 			State15 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {14,5'b1010};
-				data1 = {14,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b01110,5'b1010};
+				data1 = {5'b01110,5'b1110};
 				
 			end
 			State16 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {15,5'b1010};
-				data1 = {15,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b01111,5'b1010};
+				data1 = {5'b01111,5'b1110};
 				
 			end
 			State17 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {16,5'b1010};
-				data1 = {16,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b10000,5'b1010};
+				data1 = {5'b10000,5'b1110};
 				
 			end
 			State18 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {17,5'b1010};
-				data1 = {17,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b10001,5'b1010};
+				data1 = {5'b10001,5'b1110};
 				
 			end
 			State19 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {18,5'b1010};
-				data1 = {18,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b10010,5'b1010};
+				data1 = {5'b10010,5'b1110};
 				
 			end
 			State20 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {19,5'b1010};
-				data1 = {19,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b10011,5'b1010};
+				data1 = {5'b10011,5'b1110};
 				
 			end
 			State21 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {20,5'b1010};
-				data1 = {20,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b10100,5'b1010};
+				data1 = {5'b10100,5'b1110};
 				
 			end
 			State22 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {21,5'b1010};
-				data1 = {21,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b10101,5'b1010};
+				data1 = {5'b10101,5'b1110};
 				
 			end
 			State23 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {22,5'b1010};
-				data1 = {22,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b10110,5'b1010};
+				data1 = {5'b10110,5'b1110};
 				
 			end
 			State24 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {23,5'b1010};
-				data1 = {23,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b10111,5'b1010};
+				data1 = {5'b10111,5'b1110};
 				
 			end
 			State25 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {24,5'b1010};
-				data1 = {24,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b11000,5'b1010};
+				data1 = {5'b11000,5'b1110};
 				
 			end
 			State26 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {25,5'b1010};
-				data1 = {25,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b11001,5'b1010};
+				data1 = {5'b11001,5'b1110};
 				
 			end
 			State27 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {26,5'b1010};
-				data1 = {26,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b11010,5'b1010};
+				data1 = {5'b11010,5'b1110};
 				
 			end
 			State28 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {27,5'b1010};
-				data1 = {27,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b11011,5'b1010};
+				data1 = {5'b11011,5'b1110};
 				
 			end
 			State29 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {28,5'b1010};
-				data1 = {28,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b11100,5'b1010};
+				data1 = {5'b11100,5'b1110};
 				
 			end
 			State30 : begin
 				w0 = 1;
 				w1 = 1;
-				addr0 = addr0 + 1024;
-				addr1 = addr0 + 1023;
-				data0 = {29,5'b1010};
-				data1 = {29,5'b1110};
+				addr0 = addr0 + 11'b10000000000;
+				addr1 = addr1 + 11'b10000000000;
+				data0 = {5'b11101,5'b1010};
+				data1 = {5'b11101,5'b1110};
 				
 			end
 			State31 : begin
 				w0 = 0;
 				w1 = 0;
-				addr0 = ext_input[5:0] * 1024;
-				addr1 = ext_input[5:0] * 1024 + 1023;
-				data0 = {29,5'b1010};
-				data1 = {29,5'b1110};
+				addr0 = ext_input[5:0] * 11'b10000000000;
+				addr1 = ext_input[5:0] * 11'b10000000000 + 11'b01111111111;
+				data0 = {5'b11111,5'b1010};
+				data1 = {5'b11111,5'b1110};
 				
 			end
 			default: begin 
