@@ -67,10 +67,12 @@ module dataPath_FSM_test;
 		// Wait 100 ns for global reset to finish
 		#100;
 		
-		//****TESTS ADDI/SUBI ****
+		//****TESTS ADDI FOREVER AND WRITES IT TO REG0 EVERYTIME****
+		// Load value 1 into reg0
 		CLR = 0; // CLR = 1 clears all reg values;
 		selectImm = 1;
 		Imm = 0;
+		// B output should be 1
 		readRegB = 0;
 		readRegA = 0;
 		op = ADDI;
