@@ -5,8 +5,8 @@ require 'rubygame'
 include Rubygame
 
 @background_image = "index.jpeg"
-@duck_count = 7
-@frame_delay = 30
+@duck_count = 5
+@frame_delay = 2
 
 resolution = [640, 480]
 #resolution = Screen.get_resolution
@@ -81,6 +81,10 @@ class Duck
     @image.fill [ 0, 0, 0]
   end
 
+  def color_trans
+    @image.fill [ 0, 0, 0, 0]
+  end
+
   def update seconds_passed, walls
     @x, @y = @velocity
     @factor = 250 * seconds_passed
@@ -124,28 +128,29 @@ class Wall
   end
 end
 
-@count = 0
-@duck_array = []
+@offset = 0
 def hit hits
-  if hits >= 1 and hits < @frame_delay
+  if hits >= 1 and hits <= @frame_delay 
     @black.blit @screen,[0,0]
     hits += 1
-  # need to display each duck for the alloted frame_delay
-  elsif hits >= @frame_delay and hits < @frame_delay*@ducks.count * 2
-    @count = @count + 1 if hits % @frame_delay == 0
+    @ducks.map &:color_trans
+  elsif hits > @frame_delay and hits < @frame_delay*(@ducks.count) + @frame_delay
+    @offset = @offset + 1 if hits % @frame_delay == 0
 
-    @duck_array.each do |duck| 
-      if (@duck_array.index(duck) == @count) 
+    # displays each duck for the alloted frame_delay
+    @ducks.each_with_index do |duck, index| 
+      if (index == @offset) 
         duck.color_white()
+        duck.draw @screen
       else
         duck.color_black()
       end
     end
 
-    #@ducks.map &:color_white
-    puts "hi" 
     hits += 1
-  elsif hits >= @frame_delay*@ducks.count * 2
+    puts @offset
+  elsif hits >= @frame_delay*(@ducks.count) + @frame_delay
+    @offset = 0
     @ducks.map &:duck
     @background.blit @screen,[0,0]
     hits = 0
@@ -185,9 +190,6 @@ Sprites::UpdateGroup.extend_object @walls
 for i in 1..@duck_count
   duck1 = Duck.new [ i*200,100000 - i*100 , i*110]
   @ducks << duck1
-end
-@ducks.each do |duck|
-  @duck_array << duck
 end
 
 @walls << Wall.new([400,400],[ 0xc0, 0xc0, 0xa0])
@@ -244,8 +246,6 @@ while should_run
   if @hit_count == 0
     @ducks.undraw @screen, @background
     @ducks.update seconds_passed, @walls
-  elsif
-    @ducks.undraw @screen, @black # display the ducks as white on black
   end
   
   @ducks.draw @screen
