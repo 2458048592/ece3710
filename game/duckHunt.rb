@@ -5,7 +5,9 @@ require 'rubygame'
 include Rubygame
 
 @background_image = "index.jpeg"
-@duck_count = 5
+@duck_count = 7
+@frame_delay = 30
+
 resolution = [640, 480]
 #resolution = Screen.get_resolution
 
@@ -26,10 +28,8 @@ class Duck
     super()
 
     @color = color
-    #@image = Surface.new [60,60]
     @image = Surface.load "picDuck.png"
     @rect = @image.make_rect
-    #@image.fill @color  
     @velocity = [1, 1] #gravity
     @position = [0,0]
     @rect.move! @position[0], @position[1]
@@ -124,15 +124,28 @@ class Wall
   end
 end
 
+@count = 0
+@duck_array = []
 def hit hits
-  frames = 30
-  if hits >= 1 and hits < frames
+  if hits >= 1 and hits < @frame_delay
     @black.blit @screen,[0,0]
     hits += 1
-  elsif hits >= frames and hits < frames * 2
-    @ducks.map &:color_white
+  # need to display each duck for the alloted frame_delay
+  elsif hits >= @frame_delay and hits < @frame_delay*@ducks.count * 2
+    @count = @count + 1 if hits % @frame_delay == 0
+
+    @duck_array.each do |duck| 
+      if (@duck_array.index(duck) == @count) 
+        duck.color_white()
+      else
+        duck.color_black()
+      end
+    end
+
+    #@ducks.map &:color_white
+    puts "hi" 
     hits += 1
-  elsif hits >= frames * 2
+  elsif hits >= @frame_delay*@ducks.count * 2
     @ducks.map &:duck
     @background.blit @screen,[0,0]
     hits = 0
@@ -172,6 +185,9 @@ Sprites::UpdateGroup.extend_object @walls
 for i in 1..@duck_count
   duck1 = Duck.new [ i*200,100000 - i*100 , i*110]
   @ducks << duck1
+end
+@ducks.each do |duck|
+  @duck_array << duck
 end
 
 @walls << Wall.new([400,400],[ 0xc0, 0xc0, 0xa0])
@@ -231,7 +247,9 @@ while should_run
   elsif
     @ducks.undraw @screen, @black # display the ducks as white on black
   end
+  
   @ducks.draw @screen
+  # call the hit code
   @hit_count = hit @hit_count
 
   @screen.flip
