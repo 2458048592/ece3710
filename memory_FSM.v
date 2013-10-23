@@ -24,7 +24,11 @@ module memory_FSM(
     input [4:0] ext_input,
 	 input button,
     output [6:0] seg7,
-    output [3:0] select
+    output [3:0] select,
+	 output [14:0] addr0,
+ 	 output [14:0] addr1,
+	 output [15:0] data0,
+	 output [15:0] data1
     );
 	
 	wire [15:0]addr0,addr1;

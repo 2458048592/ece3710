@@ -26,29 +26,33 @@ module ALU(
 	 // SUB, SUBI, CMP, CMPI, CMPU/I, AND, OR, XOR, NOT
 	 // LSH, LSHI, RSH, RSHI, ALSH, ARSH, NOP/WAIT
 	 
-	 parameter ADD = 8'b00000101;
-	 parameter ADDI = 8'b0101xxxx;
-	 parameter ADDU = 8'b00000110;
-	 parameter ADDUI = 8'b0110xxxx;
-	 parameter ADDC = 8'b00000111;
-	 parameter ADDCU = 8'b00000100;
-	 parameter ADDCUI = 8'b1010xxxx; // Replaces SUBCI
-	 parameter ADDCI = 8'b0111xxxx;
-	 parameter SUB = 8'b00001001;
-	 parameter SUBI = 8'b1001xxxx;
-	 parameter CMP = 8'b00001011;
-	 parameter CMPI = 8'b1011xxxx;
-	 parameter CMPUI = 8'b1110xxxx; // Replaces MULI
-	 parameter AND = 8'b00000001;
-	 parameter OR = 8'b00000010;
-	 parameter XOR = 8'b00000011;
-	 parameter NOT = 8'b00001111;
-	 parameter LSH = 8'b10000100; 
-	 parameter LSHI = 8'b10000000; // Imm is unsigned
-	 parameter RSH = 8'b10001100;
-	 parameter RSHI = 8'b10000001; // Imm is unsigned
-	 parameter ALSH = 8'b10000101; // Interprets RSrc as Unsigned
-	 parameter ARSH = 8'b10001101; // Interprets RSrc as Unsigned
+	parameter ADD = 8'b00000101;
+	parameter ADDI = 8'b0101xxxx;
+	parameter ADDU = 8'b00000110;
+	parameter ADDUI = 8'b0110xxxx;
+	parameter ADDC = 8'b00000111;
+	parameter ADDCU = 8'b00000100;
+	parameter ADDCUI = 8'b1010xxxx; // Replaces SUBCI
+	parameter ADDCI = 8'b0111xxxx;
+	parameter SUB = 8'b00001001;
+	parameter SUBI = 8'b1001xxxx;
+	parameter CMP = 8'b00001011;
+	parameter CMPI = 8'b1011xxxx;
+	parameter CMPUI = 8'b1110xxxx; // Replaces MULI
+	parameter AND = 8'b00000001;
+	parameter OR = 8'b00000010;
+	parameter XOR = 8'b00000011;
+	parameter NOT = 8'b00001111;
+	parameter LSH = 8'b10000100; 
+	parameter LSHI = 8'b10000000; // Imm is unsigned
+	parameter RSH = 8'b10001100;
+	parameter RSHI = 8'b10000001; // Imm is unsigned
+	parameter ALSH = 8'b10000101; // Interprets RSrc as Unsigned
+	parameter ARSH = 8'b10001101; // Interprets RSrc as Unsigned
+	
+	parameter LUI = 8'b1111xxxx;
+	parameter MOV = 8'b00001101;
+	parameter MOVI = 8'b1101xxxx;
 	
 	// generate y result and flags for each operation type
 	always @ (*) begin
@@ -197,7 +201,19 @@ module ALU(
 				end
 			ARSH: 
 				begin
-					y = a >>> $unsigned(b);				
+					y = a >>> $unsigned(b);
+				end
+			MOV:
+				begin
+					y = b;
+				end
+			MOVI:
+				begin
+					y = b; // {a[15:8], b[7:0]};
+				end
+			LUI:
+				begin
+					y = b; // {b[15:8], a[7:0]};
 				end
 			default: 
 				begin 
