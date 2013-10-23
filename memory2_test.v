@@ -29,6 +29,8 @@ module memory2_test;
 	reg CLR;
 	reg w0;
 	reg w1;
+	reg e0;
+	reg e1;
 	reg [14:0] addr0;
 	reg [14:0] addr1;
 	reg [17:0] data0;
@@ -44,6 +46,8 @@ module memory2_test;
 		.CLR(CLR), 
 		.w0(w0), 
 		.w1(w1), 
+		.e0(e0), 
+		.e1(e1), 
 		.addr0(addr0), 
 		.addr1(addr1), 
 		.data0(data0), 
@@ -64,6 +68,8 @@ module memory2_test;
 		CLR = 0;
 		w0 = 0; // instruction write enable 
 		w1 = 0; // data write enable
+		e0 = 0; // Block RAM enable
+		e1 = 0; // Block RAM enable
 		addr0 = 0;
 		addr1 = 0; // data address
 		data0 = 0;
@@ -75,6 +81,8 @@ module memory2_test;
 		// Add stimulus here
 
 		// *** WRITE THE DATA TO THE ADDRESSES ***
+		e0 = 1;
+		e1 = 1;
 		w0 = 1;
 		w1 = 1; // enable data write
 		for(j=0; j<=29; j=j+1) begin

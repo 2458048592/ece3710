@@ -3,39 +3,42 @@
 // Company: 
 // Engineer: 
 // Module Name:    controller 
+// Description: controller turns the 8-bit Imm value into a 16-bit immediate value
+//      Signed instructions will have a sign-extended immediate value, Unsigned
+//      instructions will have eight 0's added to Imm[15:8].  LUI will shift the
+//		  8-bit Imm value up to Imm[15:8] and add eight 0's to fill Imm[7:0].
 //
 //////////////////////////////////////////////////////////////////////////////////
-
-/* ** TODO **
-	This actually needs to be fixed for a 5-bit loadReg.  I forgot to use our optimization
-	that allows us to not write to the Regfile for Nop Instructions.  In addition, we need
-	a strategy for dealing with LW (load word) and SW (store word) instructions, and likely
-	will want LI (load immediate) and SI (store immediate) instructions.  Once I figure these
-	out, I will email everyone.
-*/
 module decoder(
-    input [15:0] inst,
-    output reg [7:0] op, Imm,
-	 output reg selectImm,
+    input [17:0] inst,
+    output reg [7:0] op,
+	 output reg [15:0] Imm, // Imm needs to be sign-extended or 0-extended when applicable
+	 output reg selectImm, selectResult, w1, e1,
 	 output reg [3:0] readRegA,
 	 output reg [3:0] readRegB,
 	 output reg [3:0] loadReg
     );
-
-	// R-Type instructions
+	
 	parameter RTYPE = 4'b0000;
 	//parameter ADD_0 = 4'b0000; 
 	parameter ADD_1 = 4'b0101;
+	parameter ADDI = 4'b0101;
 	//parameter ADDU_0 = 4'b0000;
 	parameter ADDU_1 = 4'b0110;
+	parameter ADDUI = 8'b0110;
 	//parameter ADDC_0 = 4'b0000;
 	parameter ADDC_1 = 4'b0111;
 	//parameter ADDCU_0 = 4'b0000;
 	parameter ADDCU_1 = 4'b0100;
+	parameter ADDCUI = 4'b1010; // Replaces SUBCI
+	parameter ADDCI = 4'b0111;
 	//parameter SUB_0 = 4'b0000;
 	parameter SUB_1 = 4'b1001;
+	parameter SUBI = 4'b1001;
 	//parameter CMP_0 = 4'b0000;
 	parameter CMP_1 = 4'b1011;
+	parameter CMPI = 4'b1011;
+	parameter CMPUI = 4'b1110; // Replaces MULI
 	//parameter AND_0 = 4'b0000;
 	parameter AND_1 = 4'b0001;
 	//parameter OR_0 = 4'b0000;
@@ -44,17 +47,6 @@ module decoder(
 	parameter XOR_1 = 4'b0011;
 	//parameter NOT_0 = 4'b0000;
 	parameter NOT_1 = 4'b1111;
-	
-	// I-Type instructions
-	parameter ADDI = 4'b0101;
-	parameter ADDUI = 8'b0110;
-	parameter ADDCUI = 4'b1010; // Replaces SUBCI
-	parameter ADDCI = 4'b0111;
-	parameter SUBI = 4'b1001;
-	parameter CMPI = 4'b1011;
-	parameter CMPUI = 4'b1110; // Replaces MULI
-	
-	// Shift instructions
 	parameter SHIFT = 4'b1000;
 	//parameter LSH_0 = 4'b1000;
 	parameter LSH_1 = 4'b0100; 
@@ -68,226 +60,283 @@ module decoder(
 	parameter ALSH_1 = 4'b0101; // Interprets RSrc as Unsigned
 	//parameter ARSH_0 = 4'b1000;
 	parameter ARSH_1 = 4'b1101; // Interprets RSrc as Unsigned
-
-	always begin
-		case (inst[15:12])
-			RTYPE: begin
-				case (inst[7:4])
-					ADD_1: begin
-							op = {RTYPE, ADD_1};
-							readRegA = inst[11:8];
+	
+	parameter MEM = 4'b0100;
+	parameter LOAD_1 = 4'b0000;
+	parameter STOR_1 = 4'b0100;
+	parameter LUI = 4'b1111;
+	// MOV_0 = 4'b0000;
+	parameter MOV_1 = 4'b1101;
+	parameter MOVI = 4'b1101;
+	
+	//parameter LOAD = 2'b10; // This is a read instruction and reads the value in memory[RAddr] and stores in RDest
+	//parameter STOR = 2'b11; // This is a write instruction and writes the value in RDest to memory[RAddr]
+	
+	always @ (*) begin
+		w1 = 1'b0;
+		selectResult = 1'b0;
+		selectImm = 1'b0;
+		Imm = 16'b0000000000000000;
+		e1 = 1'b0;
+		if (inst[17:16] == 2'b00) begin
+			case (inst[15:12])
+				RTYPE: begin
+					case (inst[7:4])
+						ADD_1: begin
+								op = {RTYPE, ADD_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						ADDU_1: begin
+								op = {RTYPE, ADDU_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						ADDC_1: begin
+								op = {RTYPE, ADDC_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						ADDCU_1: begin
+								op = {RTYPE, ADDCU_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						SUB_1: begin
+								op = {RTYPE, SUB_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						CMP_1: begin
+								op = {RTYPE, CMP_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						AND_1: begin
+								op = {RTYPE, ADD_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						OR_1: begin
+								op = {RTYPE, OR_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						NOT_1: begin
+								op = {RTYPE, NOT_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						XOR_1: begin
+								op = {RTYPE, XOR_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						MOV_1: begin
+								op = {RTYPE, MOV_1};
+								readRegA = inst[3:0];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						default: begin
+								op = {RTYPE, OR_1};
+								readRegA = inst[11:8];
+								readRegB = inst[11:8];
+								loadReg = inst[11:8];
+							end
+					endcase
+				end
+				ADDI: begin
+						op = {ADDI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
+					end
+				ADDUI: begin
+						op = {ADDUI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {8'b00000000, inst[7:0]};
+					end
+				ADDCUI: begin
+						op = {ADDCUI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {8'b00000000, inst[7:0]};
+					end
+				ADDCI: begin
+						op = {ADDCI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
+					end
+				SUBI: begin
+						op = {SUBI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
+					end
+				CMPI: begin
+						op = {CMPI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
+					end
+				CMPUI: begin
+						op = {CMPUI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {8'b00000000, inst[7:0]};
+					end
+				MOVI: begin
+						op = {MOVI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {8'b00000000, inst[7:0]};
+					end
+				LUI: begin
+						op = {LUI, inst[7:4]};
+						readRegA = inst[11:8];
+						readRegB = inst[3:0];
+						loadReg = inst[11:8];
+						selectImm = 1'b1;
+						Imm = {inst[7:0], 8'b00000000};
+					end
+				SHIFT: begin
+					case (inst[7:4])
+						LSH_1: begin
+								op = {SHIFT, LSH_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						LSHI_1: begin
+								op = {SHIFT, LSHI_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+								selectImm = 1'b1;
+								Imm = {12'b000000000000, inst[3:0]};
+							end
+						RSH_1: begin
+								op = {SHIFT, RSH_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						RSHI_1: begin
+								op = {SHIFT, RSHI_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+								selectImm = 1'b1;
+								Imm = {12'b000000000000, inst[3:0]};
+							end
+						ALSH_1: begin
+								op = {SHIFT, ALSH_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						ARSH_1: begin
+								op = {SHIFT, ARSH_1};
+								readRegA = inst[11:8];
+								readRegB = inst[3:0];
+								loadReg = inst[11:8];
+							end
+						default: begin
+								op = {RTYPE, OR_1};
+								readRegA = inst[11:8];
+								readRegB = inst[11:8];
+								loadReg = inst[11:8];
+							end
+					endcase
+				end
+				MEM: begin
+					// LOAD and STOR take two cycles to complete, so duplicate the LOAD instruction, and use
+					// a NOP instruction on the STOR instruction
+					case (inst[7:4])
+						LOAD_1: begin
+							// LOAD takes the value stored in mem[RAddr] and loads it into RDest
+							// where RAddr = inst[3:0] and RDest = inst[11:8]
+							op = {RTYPE, OR_1};
+							readRegA = inst[3:0];
 							readRegB = inst[3:0];
 							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
+							// selectResult selects the value out of the memory
+							selectResult = 1'b1;
+							e1 = 1'b1;
 						end
-					ADDU_1: begin
-							op = {RTYPE, ADDU_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					ADDC_1: begin
-							op = {RTYPE, ADDC_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					ADDCU_1: begin
-							op = {RTYPE, ADDCU_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					SUB_1: begin
-							op = {RTYPE, SUB_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					CMP_1: begin
-							op = {RTYPE, CMP_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					AND_1: begin
-							op = {RTYPE, ADD_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					OR_1: begin
+						STOR_1: begin
+							// STOR takes the value stored in RDest and stores it in mem[RAddr]
+							// where RAddr = inst[11:8] and RDest = inst[3:0]
 							op = {RTYPE, OR_1};
 							readRegA = inst[11:8];
 							readRegB = inst[3:0];
 							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
+							w1 = 1'b1;
+							e1 = 1'b1;
 						end
-					NOT_1: begin
-							op = {RTYPE, NOT_1};
+						default: begin
+							op = {RTYPE, OR_1};
 							readRegA = inst[11:8];
-							readRegB = inst[3:0];
+							readRegB = inst[11:8];
 							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
 						end
-					XOR_1: begin
-							op = {RTYPE, XOR_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					default: begin
-							op = {ADDI, inst[7:4]};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b1;
-							Imm = 8'b00000000;
-						end
-				endcase
-			end
-			ADDI: begin
-					op = {ADDI, inst[7:4]};
+					endcase
+				end
+				default: begin
+					op = {RTYPE, OR_1};
 					readRegA = inst[11:8];
-					readRegB = inst[3:0];
+					readRegB = inst[11:8];
+					loadReg = inst[11:8];
+				end
+			endcase
+		end
+		else begin
+			case (inst[17:16])
+				2'b11: begin
+					op = {LUI, inst[7:4]};
+					readRegA = inst[11:8];
+					readRegB = inst[11:8];
 					loadReg = inst[11:8];
 					selectImm = 1'b1;
-					Imm = inst[7:0];
+					Imm = inst[15:0];
 				end
-			ADDUI: begin
-					op = {ADDUI, inst[7:4]};
+				default: begin
+					op = {RTYPE, OR_1};
 					readRegA = inst[11:8];
-					readRegB = inst[3:0];
+					readRegB = inst[11:8];
 					loadReg = inst[11:8];
-					selectImm = 1'b1;
-					Imm = inst[7:0];
 				end
-			ADDCUI: begin
-					op = {ADDCUI, inst[7:4]};
-					readRegA = inst[11:8];
-					readRegB = inst[3:0];
-					loadReg = inst[11:8];
-					selectImm = 1'b1;
-					Imm = inst[7:0];
-				end
-			ADDCI: begin
-					op = {ADDCI, inst[7:4]};
-					readRegA = inst[11:8];
-					readRegB = inst[3:0];
-					loadReg = inst[11:8];
-					selectImm = 1'b1;
-					Imm = inst[7:0];
-				end
-			SUBI: begin
-					op = {SUBI, inst[7:4]};
-					readRegA = inst[11:8];
-					readRegB = inst[3:0];
-					loadReg = inst[11:8];
-					selectImm = 1'b1;
-					Imm = inst[7:0];
-				end
-			CMPI: begin
-					op = {CMPI, inst[7:4]};
-					readRegA = inst[11:8];
-					readRegB = inst[3:0];
-					loadReg = inst[11:8];
-					selectImm = 1'b1;
-					Imm = inst[7:0];
-				end
-			CMPUI: begin
-					op = {CMPUI, inst[7:4]};
-					readRegA = inst[11:8];
-					readRegB = inst[3:0];
-					loadReg = inst[11:8];
-					selectImm = 1'b1;
-					Imm = inst[7:0];
-				end
-			SHIFT: begin
-				case (inst[7:4])
-					LSH_1: begin
-							op = {SHIFT, LSH_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					LSHI_1: begin
-							op = {SHIFT, LSHI_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b1;
-							Imm = {4'b0000, inst[3:0]};
-						end
-					RSH_1: begin
-							op = {SHIFT, RSH_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					RSHI_1: begin
-							op = {SHIFT, RSHI_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b1;
-							Imm = {4'b0000, inst[3:0]};
-						end
-					ALSH_1: begin
-							op = {SHIFT, ALSH_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					ARSH_1: begin
-							op = {SHIFT, ARSH_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b0;
-							Imm = 8'b00000000;
-						end
-					default: begin
-							op = {SHIFT, RSH_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							selectImm = 1'b1;
-							Imm = 8'b00000000;
-						end
-				endcase
-				end
-			default: begin 
-				op = {ADDI, inst[7:4]};
-				readRegA = inst[11:8];
-				readRegB = inst[3:0];
-				loadReg = inst[11:8];
-				selectImm = 1'b1;
-				Imm = 8'b00000000;
-			end
-		endcase
+			endcase
+		end
 	end
 
 endmodule
