@@ -15,9 +15,9 @@ class Game
   include Rubygame
 
   def initialize
-    @duckCount = 1
-    @frameDelay = 2 
-    @serialEnable = true
+    @duckCount = 5
+    @frameDelay = 30 
+    @serialEnable = false
 
     @player1Score = 0
     @player2Score = 0
@@ -32,12 +32,12 @@ class Game
     #@resolution = [800, 600]
     @screen = Screen.open @resolution, 0, [HWSURFACE, DOUBLEBUF]
     #@backgroundImage = "bg800x600.jpg"
-    #@backgroundImage = "bg1024x768.jpg"
+    @backgroundImage = "bg1024x768.jpg"
 
     @black = Surface.new @resolution
     @black.blit @screen,[0,0]
-    @background = Surface.new @resolution
-    #@background = Surface.load @backgroundImage
+    #@background = Surface.new @resolution
+    @background = Surface.load @backgroundImage
     @background.blit @screen,[0,0]
     @screen.title = "Duck Hunt"
 
@@ -164,8 +164,8 @@ class Game
   end
 
   def update_score
-    player1_score_text = $font.render_utf8 @player1Score.to_s, true, BLUE
-    player2_score_text = $font.render_utf8 @player2Score.to_s, true, BLUE
+    player1_score_text = $font.render_utf8 @player1Score.to_s, true, YELLOW
+    player2_score_text = $font.render_utf8 @player2Score.to_s, true, YELLOW
     player1_score_text.blit @screen, [0,0]
     player2_score_text.blit @screen, [320,0]
   end
@@ -206,7 +206,7 @@ class Game
             Screen.close
             @resolution = Screen.get_resolution
             @screen = Screen.open @resolution, 0, [HWSURFACE, DOUBLEBUF, FULLSCREEN]
-            #@background = Surface.load @backgroundImage
+            @background = Surface.load @backgroundImage
             @background.blit @screen,[0,0]
           when :d
             @ducks.map &:duck
