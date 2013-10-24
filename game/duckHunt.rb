@@ -15,13 +15,20 @@ class Game
   include Rubygame
 
   def initialize
-    @duckCount = 5
-    @frameDelay = 30 
-    @serialEnable = false
+    @demo = false
+
+    @serialEnable = true
 
     @player1Score = 0
     @player2Score = 0
 
+    if @demo  
+      @duckCount = 5
+      @frameDelay = 30 
+    else
+      @duckCount = 5
+      @frameDelay = 2 
+    end
 
     TTF.setup
     @point_size = 40
@@ -32,12 +39,15 @@ class Game
     #@resolution = [800, 600]
     @screen = Screen.open @resolution, 0, [HWSURFACE, DOUBLEBUF]
     #@backgroundImage = "bg800x600.jpg"
-    @backgroundImage = "bg1024x768.jpg"
+    if @demo
+      @backgroundImage = "bg1024x768.jpg"
+      @background = Surface.load @backgroundImage
+    else
+      @background = Surface.new @resolution
+    end
 
     @black = Surface.new @resolution
     @black.blit @screen,[0,0]
-    #@background = Surface.new @resolution
-    @background = Surface.load @backgroundImage
     @background.blit @screen,[0,0]
     @screen.title = "Duck Hunt"
 
@@ -89,7 +99,7 @@ class Game
   end
 
   def update(newData)
-    #puts "#{newData}"
+    puts "#{newData}"
 
     if newData =~ /^\bPlayer\b\s+\btrigger\b\s+(\d+)$/
       @hitCount = 1 
@@ -113,8 +123,9 @@ class Game
       @black.blit @screen,[0,0]
       hits += 1
       @ducks.map &:color_trans
+    end
     # Draw each duck as a white square
-    elsif hits >= @frameDelay and hits < @frameDelay*(@ducks.count) + @frameDelay
+    if hits >= @frameDelay and hits < @frameDelay*(@ducks.count) + @frameDelay * 2
       puts @drawOffset
       if hits % @frameDelay == 0
         @ducks.each_with_index do |duck, index| 
@@ -144,16 +155,16 @@ class Game
         @killDuck = true
       end
 
-      if @killDuck == true
-        @ducks.delete_at(@drawOffset) 
-        @killDuck = false
-      end
+      #if @killDuck == true
+        #@ducks.delete_at(@drawOffset) 
+        #@killDuck = false
+      #end
       @player1Hit = "0"
       @player2Hit = "0"
 
       hits += 1
     # Go back to normal
-    elsif hits >= @frameDelay*(@ducks.count) + @frameDelay
+    elsif hits >= @frameDelay*(@ducks.count) + @frameDelay * 2
       @drawOffset = 0
       @whoPulledTrigger = 0
       @ducks.map &:duck
@@ -206,7 +217,11 @@ class Game
             Screen.close
             @resolution = Screen.get_resolution
             @screen = Screen.open @resolution, 0, [HWSURFACE, DOUBLEBUF, FULLSCREEN]
-            @background = Surface.load @backgroundImage
+            if @demo
+              @background = Surface.load @backgroundImage
+            else
+              @background = Surface.new @resolution
+            end
             @background.blit @screen,[0,0]
           when :d
             @ducks.map &:duck
@@ -228,7 +243,6 @@ class Game
         end
       end
 
-      @watcher.observe if @serialEnable
 
       count += secondsPassed
       if count > sec 
@@ -251,6 +265,7 @@ class Game
       @ducks.draw @screen
       # call the hit code
       @hitCount = self.hit @hitCount
+      @watcher.observe if @serialEnable
 
       @screen.flip
     end
