@@ -27,7 +27,7 @@ class Game
       @frameDelay = 30 
     else
       @duckCount = 5
-      @frameDelay = 2 
+      @frameDelay = 5
     end
 
     TTF.setup
@@ -58,7 +58,7 @@ class Game
     end
 
 
-    @drawOffset = 0
+    @drawOffset = -1
     @killDuck = false
 
     if (@serialEnable)
@@ -79,21 +79,21 @@ class Game
     @walls=Sprites::Group.new
     Sprites::UpdateGroup.extend_object @ducks
 
-    #duck1 = Duck.new YELLOW
-    #@ducks << duck1
-    #duck2 = Duck.new RED
-    #@ducks << duck2
-    #duck3 = Duck.new GREEN
-    #@ducks << duck3
-    #duck4 = Duck.new BLUE
-    #@ducks << duck4
-    #duck5 = Duck.new PURPLE
-    #@ducks << duck5
-    for i in 1..@duckCount
-      duck1 = Duck.new [ 200,  i*100 , 110]
-      @ducks << duck1
+    duck1 = Duck.new YELLOW
+    @ducks << duck1
+    duck2 = Duck.new RED
+    @ducks << duck2
+    duck3 = Duck.new GREEN
+    @ducks << duck3
+    duck4 = Duck.new BLUE
+    @ducks << duck4
+    duck5 = Duck.new PURPLE
+    @ducks << duck5
+    #for i in 1..@duckCount
+      #duck1 = Duck.new [ 200,  i*100 , 110]
+      #@ducks << duck1
    
-    end
+    #end
 
 
   end
@@ -119,17 +119,23 @@ class Game
   # handles the drawing when the trigger is pulled
   def hit hits
     # blackout the screen
+    @watcher.observe_sensors if @serialEnable
     if hits >= 1 and hits < @frameDelay 
       @black.blit @screen,[0,0]
       hits += 1
       @ducks.map &:color_trans
     end
     # Draw each duck as a white square
-    if hits >= @frameDelay and hits < @frameDelay*(@ducks.count) + @frameDelay * 2
-      puts @drawOffset
+    if hits >= @frameDelay and hits < @frameDelay*(@ducks.count) + @frameDelay 
+      puts "******** drawOffset: #{@drawOffset} ****************"
+      
+      #@ducks.map &:color_black
+      #@ducks.draw @screen
       if hits % @frameDelay == 0
+        @drawOffset += 1 
         @ducks.each_with_index do |duck, index| 
-          if (index == @drawOffset) 
+          if (index == @drawOffset and duck.alive?) 
+            puts "drawOffset: #{@drawOffset}, index that is white: #{index}"
             duck.color_white()
           else
             duck.color_black()
@@ -137,7 +143,6 @@ class Game
             duck.color_trans()
           end
         end
-        @drawOffset += 1
       end
 
       # displays each duck for the alloted frameDelay
@@ -154,18 +159,18 @@ class Game
         @whoPulledTrigger == "0"
         @killDuck = true
       end
+      @player1Hit = "3" 
+      @player2Hit = "3"
 
-      #if @killDuck == true
-        #@ducks.delete_at(@drawOffset) 
-        #@killDuck = false
-      #end
-      @player1Hit = "0"
-      @player2Hit = "0"
+      if @killDuck == true
+        @ducks[@drawOffset].alive = false
+        @killDuck = false
+      end
 
       hits += 1
     # Go back to normal
-    elsif hits >= @frameDelay*(@ducks.count) + @frameDelay * 2
-      @drawOffset = 0
+    elsif hits >= @frameDelay*(@ducks.count) + @frameDelay 
+      @drawOffset = -1
       @whoPulledTrigger = 0
       @ducks.map &:duck
       @background.blit @screen,[0,0]
@@ -259,13 +264,13 @@ class Game
       if @hitCount == 0
         @ducks.undraw @screen, @background
         @ducks.update secondsPassed, @walls
+        @watcher.observe_trigger if @serialEnable
         update_score
       end
 
       @ducks.draw @screen
       # call the hit code
       @hitCount = self.hit @hitCount
-      @watcher.observe if @serialEnable
 
       @screen.flip
     end

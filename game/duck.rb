@@ -5,11 +5,13 @@ include Rubygame
 
 class Duck
   include Sprites::Sprite
+  attr_accessor :alive
 
   def initialize color
     super()
 
     @color = color
+    @alive = true
     @image = Surface.load "picDuck.png"
     @rect = @image.make_rect
     @velocity = [1, 1] #gravity

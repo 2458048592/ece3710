@@ -22,7 +22,7 @@ class SerialObservable
     #puts i.class #String
   end
   
-  def observe
+  def observe_trigger
     while (i = @sp.gets)
       if (i =~ /^(\d+)/)
         changed
@@ -32,6 +32,14 @@ class SerialObservable
         if $1.include? "2"
           notify_observers("Player trigger 2")
         end
+      end
+    end
+  end
+
+  def observe_sensors
+    while (i = @sp.gets)
+      if (i =~ /^(\d+)/)
+        changed
         if $1.include? "3"
           notify_observers("Player1 sens 1")
         end
@@ -45,7 +53,6 @@ class SerialObservable
           notify_observers("Player2 sens 0")
         end
       end
-      return
     end
   end
 

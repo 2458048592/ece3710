@@ -55,11 +55,14 @@ int prevbuttonStatePlayer2;
 
 /////////////////// Variables for sensor interupt   ///////////
 const int senseDelay = 20;
+const int sensorSerialDisplayTime = 1000;
 volatile long p1SenseTime = 0;
 volatile long p2SenseTime = 0;
 
 volatile int p1State = LOW;
 volatile int p2State = LOW;
+
+volatile long triggerSenseTime = 0;
 
 
 
@@ -68,7 +71,7 @@ long previousMillis = 0;        // will store last time LED was updated
 
 // the follow variables is a long because the time, measured in miliseconds,
 // will quickly become a bigger number than can be stored in an int.
-long interval = 50;           // interval at which to blink (milliseconds)
+long interval = 100;           // interval at which to display serial sensor outpu
 
 void setup() {
   Serial.begin(9600);
@@ -99,26 +102,38 @@ void loop() {
   
   if (prevbuttonStatePlayer1 == 0 && buttonStatePlayer1 == 1) {
     Serial.println("1");
+    triggerSenseTime = millis();
+    triggerSenseTime = millis() + sensorSerialDisplayTime;
+
   }
   if (prevbuttonStatePlayer2 == 0 && buttonStatePlayer2 == 1) {
     Serial.println("2");
+    triggerSenseTime = millis() + sensorSerialDisplayTime;
+
   }
   
-  unsigned long currentMillis = millis();
-
-  if(currentMillis - previousMillis > interval) {
-    if (p1State) 
-      Serial.println("3");
-    else 
-      Serial.println("4");
-      
-    if (p2State) 
-      Serial.println("5");
-    else 
-      Serial.println("6");
-    // save the last time you blinked the LED
-    previousMillis = currentMillis;  
+  if (millis() < triggerSenseTime) {
+ 
+    unsigned long currentMillis = millis();
+  
+    if(currentMillis - previousMillis > interval) {
+      if (p1State) 
+        Serial.println("3");
+      else 
+        Serial.println("4");
+        
+      if (p2State) 
+        Serial.println("5");
+      else 
+        Serial.println("6");
+      // save the last time you blinked the LED
+      previousMillis = currentMillis;  
+    }
   }
+  else {
+      triggerSenseTime = millis();
+  }
+
 }
 
 void debounce() {
@@ -126,6 +141,7 @@ void debounce() {
   // read the state of the switch into a local variable:
   int readingPlayer1 = digitalRead(player1);  
   int readingPlayer2 = digitalRead(player2);
+
 
   // If the switch changed, due to noise or pressing:
   if (readingPlayer1 != lastbuttonStatePlayer1) {
@@ -157,7 +173,7 @@ void interupt() {
   digitalWrite(ledPin2, p2State);
 
   
-  if (millis() > p1SenseTime){
+  if (millis() > p1SenseTime) {
     p1State = LOW;
     p1SenseTime = 0;
   }
