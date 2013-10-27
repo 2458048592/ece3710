@@ -54,8 +54,8 @@ int prevbuttonStatePlayer1;
 int prevbuttonStatePlayer2;
 
 /////////////////// Variables for sensor interupt   ///////////
-const int senseDelay = 20;
-const int sensorSerialDisplayTime = 1000;
+const int senseDelay = 10; // how long to wait before turning off player states for sensor
+const int sensorSerialDisplayTime = 200;
 volatile long p1SenseTime = 0;
 volatile long p2SenseTime = 0;
 
@@ -71,7 +71,7 @@ long previousMillis = 0;        // will store last time LED was updated
 
 // the follow variables is a long because the time, measured in miliseconds,
 // will quickly become a bigger number than can be stored in an int.
-long interval = 100;           // interval at which to display serial sensor outpu
+long interval = 10;           // interval at which to display serial sensor outpu
 
 void setup() {
   Serial.begin(9600);

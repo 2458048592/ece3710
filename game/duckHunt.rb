@@ -27,7 +27,7 @@ class Game
       @frameDelay = 30 
     else
       @duckCount = 5
-      @frameDelay = 5
+      @frameDelay = 2
     end
 
     TTF.setup
@@ -79,18 +79,18 @@ class Game
     @walls=Sprites::Group.new
     Sprites::UpdateGroup.extend_object @ducks
 
-    duck1 = Duck.new YELLOW
+    duck1 = Duck.new @screen, YELLOW
     @ducks << duck1
-    duck2 = Duck.new RED
+    duck2 = Duck.new @screen, RED
     @ducks << duck2
-    duck3 = Duck.new GREEN
+    duck3 = Duck.new @screen, GREEN
     @ducks << duck3
-    duck4 = Duck.new BLUE
+    duck4 = Duck.new @screen, BLUE
     @ducks << duck4
-    duck5 = Duck.new PURPLE
+    duck5 = Duck.new @screen, PURPLE
     @ducks << duck5
     #for i in 1..@duckCount
-      #duck1 = Duck.new [ 200,  i*100 , 110]
+      #duck1 = Duck.new @screen [ 200,  i*100 , 110]
       #@ducks << duck1
    
     #end
@@ -134,7 +134,7 @@ class Game
       if hits % @frameDelay == 0
         @drawOffset += 1 
         @ducks.each_with_index do |duck, index| 
-          if (index == @drawOffset and duck.alive?) 
+          if (index == @drawOffset ) 
             puts "drawOffset: #{@drawOffset}, index that is white: #{index}"
             duck.color_white()
           else
@@ -151,19 +151,20 @@ class Game
       puts "P2 #{@whoPulledTrigger}, #{@player2Hit}"
       if @whoPulledTrigger == "1" and @player1Hit == "1"
         @player1Score += 1 
-        @whoPulledTrigger == "0"
+        @whoPulledTrigger = "0"
         @killDuck = true
       end
       if @whoPulledTrigger == "2" and @player2Hit == "1"
         @player2Score += 1 
-        @whoPulledTrigger == "0"
+        @whoPulledTrigger = "0"
         @killDuck = true
       end
       @player1Hit = "3" 
       @player2Hit = "3"
 
       if @killDuck == true
-        @ducks[@drawOffset].alive = false
+        #@ducks[@drawOffset].alive = false
+        @ducks.delete_at @drawOffset
         @killDuck = false
       end
 
@@ -230,6 +231,8 @@ class Game
             @background.blit @screen,[0,0]
           when :d
             @ducks.map &:duck
+            duck1 = Duck.new @screen, [ 200,  100 , 110]
+            @ducks << duck1
           when :b
             @ducks.map &:color_black
           when :o
@@ -271,6 +274,14 @@ class Game
       @ducks.draw @screen
       # call the hit code
       @hitCount = self.hit @hitCount
+
+      if @ducks.size == 0
+        5.times do
+          duck1 = Duck.new @screen, [ 200,  100 , 110]
+          @ducks << duck1
+
+        end
+      end
 
       @screen.flip
     end

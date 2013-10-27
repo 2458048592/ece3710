@@ -7,23 +7,50 @@ class Duck
   include Sprites::Sprite
   attr_accessor :alive
 
-  def initialize color
+  def initialize on_surface, color
     super()
 
     @color = color
     @alive = true
     @image = Surface.load "picDuck.png"
     @rect = @image.make_rect
-    @velocity = [1, 1] #gravity
-    @position = [0,0]
+    @velocity = [0,0 ] #gravity
+    @screen = on_surface
+    @position = random_start_pos()
     @speed = 150
-    @rect.move! @position[0], @position[1]
+    @rect.move! @position[0], @position[0]
   end
 
   def vel vel
     @velocity[0] = vel[0]
     @velocity[1] = vel[1]
   end
+
+  def random_start_pos
+    duckSizeX = @image.w 
+    duckSizeY = @image.h 
+    pos = 0
+    case rand(4)
+    when 0
+      pos = [-1*duckSizeX, -1 *duckSizeY] # top left
+      puts "0"
+    when 1
+      pos = [@screen.w, -duckSizeY] # top right
+      puts "1"
+    when 2
+      pos = [-duckSizeX, @screen.h] # bottom left
+      puts "2"
+    when 3
+      pos = [@screen.w, @screen.h] # bottom right
+      puts "3"
+    else 
+      pos = [-1*duckSizeX, -1 *duckSizeY] # top left
+      puts "else"
+    end
+    return pos
+  end
+
+
 
   def switch 
     i = [1, 1]
