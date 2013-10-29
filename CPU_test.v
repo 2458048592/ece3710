@@ -53,7 +53,7 @@ module CPU_test;
 		.pc_addr(pc_addr),
 		.FLAGS(FLAGS)
 	);
-	reg [17:0] mem [4:0];
+	reg [17:0] mem [7:0];
 	 
 	integer i;
 	initial begin
@@ -67,7 +67,7 @@ module CPU_test;
 		#100;
 		#1 load_program = 1;
 		#3;
-		for(i=0;i<5;i=i+1)
+		for(i=0;i<8;i=i+1)
 			begin
 				addr0_ext = i[14:0];
 				write_data0 = mem[i];
