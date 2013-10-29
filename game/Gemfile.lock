@@ -1,9 +1,16 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    colored (1.2)
     ffi (1.9.0)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.7.0)
     nice-ffi (0.4)
       ffi (>= 0.5.0)
+    observer (0.0.3)
+      colored (>= 1.2)
+      net-sftp (>= 2.1.1)
     rake (10.1.0)
     ruby-sdl-ffi (0.4)
       nice-ffi (>= 0.2)
@@ -16,5 +23,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  observer
   rubygame
   serialport

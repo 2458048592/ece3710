@@ -57,7 +57,6 @@ class Game
       exit 1
     end
 
-
     @drawOffset = -1
     @killDuck = false
 
@@ -66,7 +65,6 @@ class Game
       @watcher.start_observing
       @watcher.add_observer(self)
     end
-
 
     @clock = Clock.new
     @clock.target_framerate = 60
@@ -79,6 +77,7 @@ class Game
     @walls=Sprites::Group.new
     Sprites::UpdateGroup.extend_object @ducks
 
+    # different color to help debug
     duck1 = Duck.new @screen, YELLOW
     @ducks << duck1
     duck2 = Duck.new @screen, RED
@@ -92,10 +91,7 @@ class Game
     #for i in 1..@duckCount
       #duck1 = Duck.new @screen [ 200,  i*100 , 110]
       #@ducks << duck1
-   
     #end
-
-
   end
 
   def update(newData)
@@ -112,9 +108,7 @@ class Game
     if newData =~ /^\bPlayer2\b\s+\bsens\b\s+(\d+)$/
       @player2Hit = $1 
     end
-
   end
-
 
   # handles the drawing when the trigger is pulled
   def hit hits
@@ -128,11 +122,9 @@ class Game
     # Draw each duck as a white square
     if hits >= @frameDelay and hits < @frameDelay*(@ducks.count) + @frameDelay 
       puts "******** drawOffset: #{@drawOffset} ****************"
-      
-      #@ducks.map &:color_black
-      #@ducks.draw @screen
       if hits % @frameDelay == 0
         @drawOffset += 1 
+        # displays each duck for the alloted frameDelay
         @ducks.each_with_index do |duck, index| 
           if (index == @drawOffset ) 
             puts "drawOffset: #{@drawOffset}, index that is white: #{index}"
@@ -145,10 +137,10 @@ class Game
         end
       end
 
-      # displays each duck for the alloted frameDelay
-      #@ducks.draw @screen
       puts "P1 #{@whoPulledTrigger}, #{@player1Hit}"
       puts "P2 #{@whoPulledTrigger}, #{@player2Hit}"
+      
+      # who killed the duck
       if @whoPulledTrigger == "1" and @player1Hit == "1"
         @player1Score += 1 
         @whoPulledTrigger = "0"
@@ -159,6 +151,7 @@ class Game
         @whoPulledTrigger = "0"
         @killDuck = true
       end
+
       @player1Hit = "3" 
       @player2Hit = "3"
 
@@ -174,7 +167,7 @@ class Game
       @drawOffset = -1
       @whoPulledTrigger = 0
       @ducks.map &:duck
-      @background.blit @screen,[0,0]
+      @background.blit @screen, [0,0]
       hits = 0
     end
     return hits
@@ -251,7 +244,6 @@ class Game
         end
       end
 
-
       count += secondsPassed
       if count > sec 
         @ducks.map &:switch
@@ -263,7 +255,6 @@ class Game
         sec = num
       end
 
-
       if @hitCount == 0
         @ducks.undraw @screen, @background
         @ducks.update secondsPassed, @walls
@@ -272,6 +263,7 @@ class Game
       end
 
       @ducks.draw @screen
+
       # call the hit code
       @hitCount = self.hit @hitCount
 
@@ -279,7 +271,6 @@ class Game
         5.times do
           duck1 = Duck.new @screen, [ 200,  100 , 110]
           @ducks << duck1
-
         end
       end
 
@@ -290,4 +281,3 @@ end
 
 game = Game.new
 game.start
-
