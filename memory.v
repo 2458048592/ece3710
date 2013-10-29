@@ -5,7 +5,7 @@
 module memory(
 	input CLK, CLR, w0, w1, e0, e1,
 	input [9:0] addr0, addr1,
-	input [17:0] data0, data1,
+	input [17:0] data_in0, data_in1,
 	output reg [17:0] out0, out1
 	);
 	
@@ -13,21 +13,21 @@ module memory(
 		
 	always @ (posedge CLK) begin
 		if (e0 == 1'b1) begin
-			if (w0) begin RAM[addr0] <= data0; out0 <= data0; end
+			if (w0) begin RAM[addr0] <= data_in0; out0 <= data_in0; end
 			else out0 <= RAM[addr0];
 		end
 	end
 	
 	always @ (posedge CLK) begin
 		if (e1 == 1'b1) begin
-			if (w1) begin RAM[addr1] <= data1; out1 <= data1; end
+			if (w1) begin RAM[addr1] <= data_in1; out1 <= data_in1; end
 			else out1 <= RAM[addr1];
 		end
 	end
 endmodule
 
 // If there are 32 blocks of memory, then this will instantiate 30 of them for the Instruction
-// and the Data Memory blocks.  Since this instantiates 30 blocks, it requires a decoder on the
+// and the data_in Memory blocks.  Since this instantiates 30 blocks, it requires a decoder on the
 // write signal input and a mux on the data coming out of each memory block instance.  The
 // convention for the use of this memory will be: instruction memory will be accessed using
 // w0, addr0, and data0 held in blocks 0 through 27 (00000 and 11011), while data memory will
@@ -35,10 +35,11 @@ endmodule
 module memory2(
 	input CLK, CLR, w0, w1, e0, e1,
 	input [14:0] addr0, addr1,
-	input [17:0] data0, data1,
+	input [17:0] data_in0, data_in1,
 	output reg [17:0] out0, out1
 	);
 	
+
 	reg w0_0, w0_1, w1_0, w1_1, w2_0, w2_1, w3_0, w3_1, w4_0, w4_1, w5_0, w5_1, w6_0, w6_1, w7_0, w7_1, w8_0, w8_1, w9_0, w9_1, 
 			w10_0, w10_1, w11_0, w11_1, w12_0, w12_1, w13_0, w13_1, w14_0, w14_1, w15_0, w15_1, w16_0, w16_1, w17_0, w17_1, w18_0, w18_1, w19_0, w19_1, 
 			w20_0, w20_1, w21_0, w21_1, w22_0, w22_1, w23_0, w23_1, w24_0, w24_1, w25_0, w25_1, w26_0, w26_1, w27_0, w27_1, w28_0, w28_1, w29_0, w29_1;
@@ -51,36 +52,36 @@ module memory2(
 			out10_0, out10_1, out11_0, out11_1, out12_0, out12_1, out13_0, out13_1, out14_0, out14_1, out15_0, out15_1, out16_0, out16_1, out17_0, out17_1, out18_0, out18_1, out19_0, out19_1, 
 			out20_0, out20_1, out21_0, out21_1, out22_0, out22_1, out23_0, out23_1, out24_0, out24_1, out25_0, out25_1, out26_0, out26_1, out27_0, out27_1, out28_0, out28_1, out29_0, out29_1;
 	
-	memory m0 (CLK, CLR, w0_0, w0_1, e0_0, e0_1, addr0[9:0], addr1[9:0], data0, data1, out0_0, out0_1);
-	memory m1 (CLK, CLR, w1_0, w1_1, e1_0, e1_1, addr0[9:0], addr1[9:0], data0, data1, out1_0, out1_1);
-	memory m2 (CLK, CLR, w2_0, w2_1, e2_0, e2_1, addr0[9:0], addr1[9:0], data0, data1, out2_0, out2_1);
-	memory m3 (CLK, CLR, w3_0, w3_1, e3_0, e3_1, addr0[9:0], addr1[9:0], data0, data1, out3_0, out3_1);
-	memory m4 (CLK, CLR, w4_0, w4_1, e4_0, e4_1, addr0[9:0], addr1[9:0], data0, data1, out4_0, out4_1);
-	memory m5 (CLK, CLR, w5_0, w5_1, e5_0, e5_1, addr0[9:0], addr1[9:0], data0, data1, out5_0, out5_1);
-	memory m6 (CLK, CLR, w6_0, w6_1, e6_0, e6_1, addr0[9:0], addr1[9:0], data0, data1, out6_0, out6_1);
-	memory m7 (CLK, CLR, w7_0, w7_1, e7_0, e7_1, addr0[9:0], addr1[9:0], data0, data1, out7_0, out7_1);
-	memory m8 (CLK, CLR, w8_0, w8_1, e8_0, e8_1, addr0[9:0], addr1[9:0], data0, data1, out8_0, out8_1);
-	memory m9 (CLK, CLR, w9_0, w9_1, e9_0, e9_1, addr0[9:0], addr1[9:0], data0, data1, out9_0, out9_1);
-	memory m10(CLK, CLR, w10_0, w10_1, e10_0, e10_1, addr0[9:0], addr1[9:0], data0, data1, out10_0, out10_1);
-	memory m11(CLK, CLR, w11_0, w11_1, e11_0, e11_1, addr0[9:0], addr1[9:0], data0, data1, out11_0, out11_1);
-	memory m12(CLK, CLR, w12_0, w12_1, e12_0, e12_1, addr0[9:0], addr1[9:0], data0, data1, out12_0, out12_1);
-	memory m13(CLK, CLR, w13_0, w13_1, e13_0, e13_1, addr0[9:0], addr1[9:0], data0, data1, out13_0, out13_1);
-	memory m14(CLK, CLR, w14_0, w14_1, e14_0, e14_1, addr0[9:0], addr1[9:0], data0, data1, out14_0, out14_1);
-	memory m15(CLK, CLR, w15_0, w15_1, e15_0, e15_1, addr0[9:0], addr1[9:0], data0, data1, out15_0, out15_1);
-	memory m16(CLK, CLR, w16_0, w16_1, e16_0, e16_1, addr0[9:0], addr1[9:0], data0, data1, out16_0, out16_1);
-	memory m17(CLK, CLR, w17_0, w17_1, e17_0, e17_1, addr0[9:0], addr1[9:0], data0, data1, out17_0, out17_1);
-	memory m18(CLK, CLR, w18_0, w18_1, e18_0, e18_1, addr0[9:0], addr1[9:0], data0, data1, out18_0, out18_1);
-	memory m19(CLK, CLR, w19_0, w19_1, e19_0, e19_1, addr0[9:0], addr1[9:0], data0, data1, out19_0, out19_1);
-	memory m20(CLK, CLR, w20_0, w20_1, e20_0, e20_1, addr0[9:0], addr1[9:0], data0, data1, out20_0, out20_1);
-	memory m21(CLK, CLR, w21_0, w21_1, e21_0, e21_1, addr0[9:0], addr1[9:0], data0, data1, out21_0, out21_1);
-	memory m22(CLK, CLR, w22_0, w22_1, e22_0, e22_1, addr0[9:0], addr1[9:0], data0, data1, out22_0, out22_1);
-	memory m23(CLK, CLR, w23_0, w23_1, e23_0, e23_1, addr0[9:0], addr1[9:0], data0, data1, out23_0, out23_1);
-	memory m24(CLK, CLR, w24_0, w24_1, e24_0, e24_1, addr0[9:0], addr1[9:0], data0, data1, out24_0, out24_1);
-	memory m25(CLK, CLR, w25_0, w25_1, e25_0, e25_1, addr0[9:0], addr1[9:0], data0, data1, out25_0, out25_1);
-	memory m26(CLK, CLR, w26_0, w26_1, e26_0, e26_1, addr0[9:0], addr1[9:0], data0, data1, out26_0, out26_1);
-	memory m27(CLK, CLR, w27_0, w27_1, e27_0, e27_1, addr0[9:0], addr1[9:0], data0, data1, out27_0, out27_1);
-	memory m28(CLK, CLR, w28_0, w28_1, e28_0, e28_1, addr0[9:0], addr1[9:0], data0, data1, out28_0, out28_1);
-	memory m29(CLK, CLR, w29_0, w29_1, e29_0, e29_1, addr0[9:0], addr1[9:0], data0, data1, out29_0, out29_1);
+	memory m0 (CLK, CLR, w0_0, w0_1, e0_0, e0_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out0_0, out0_1);
+	memory m1 (CLK, CLR, w1_0, w1_1, e1_0, e1_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out1_0, out1_1);
+	memory m2 (CLK, CLR, w2_0, w2_1, e2_0, e2_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out2_0, out2_1);
+	memory m3 (CLK, CLR, w3_0, w3_1, e3_0, e3_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out3_0, out3_1);
+	memory m4 (CLK, CLR, w4_0, w4_1, e4_0, e4_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out4_0, out4_1);
+	memory m5 (CLK, CLR, w5_0, w5_1, e5_0, e5_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out5_0, out5_1);
+	memory m6 (CLK, CLR, w6_0, w6_1, e6_0, e6_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out6_0, out6_1);
+	memory m7 (CLK, CLR, w7_0, w7_1, e7_0, e7_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out7_0, out7_1);
+	memory m8 (CLK, CLR, w8_0, w8_1, e8_0, e8_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out8_0, out8_1);
+	memory m9 (CLK, CLR, w9_0, w9_1, e9_0, e9_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out9_0, out9_1);
+	memory m10(CLK, CLR, w10_0, w10_1, e10_0, e10_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out10_0, out10_1);
+	memory m11(CLK, CLR, w11_0, w11_1, e11_0, e11_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out11_0, out11_1);
+	memory m12(CLK, CLR, w12_0, w12_1, e12_0, e12_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out12_0, out12_1);
+	memory m13(CLK, CLR, w13_0, w13_1, e13_0, e13_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out13_0, out13_1);
+	memory m14(CLK, CLR, w14_0, w14_1, e14_0, e14_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out14_0, out14_1);
+	memory m15(CLK, CLR, w15_0, w15_1, e15_0, e15_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out15_0, out15_1);
+	memory m16(CLK, CLR, w16_0, w16_1, e16_0, e16_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out16_0, out16_1);
+	memory m17(CLK, CLR, w17_0, w17_1, e17_0, e17_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out17_0, out17_1);
+	memory m18(CLK, CLR, w18_0, w18_1, e18_0, e18_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out18_0, out18_1);
+	memory m19(CLK, CLR, w19_0, w19_1, e19_0, e19_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out19_0, out19_1);
+	memory m20(CLK, CLR, w20_0, w20_1, e20_0, e20_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out20_0, out20_1);
+	memory m21(CLK, CLR, w21_0, w21_1, e21_0, e21_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out21_0, out21_1);
+	memory m22(CLK, CLR, w22_0, w22_1, e22_0, e22_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out22_0, out22_1);
+	memory m23(CLK, CLR, w23_0, w23_1, e23_0, e23_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out23_0, out23_1);
+	memory m24(CLK, CLR, w24_0, w24_1, e24_0, e24_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out24_0, out24_1);
+	memory m25(CLK, CLR, w25_0, w25_1, e25_0, e25_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out25_0, out25_1);
+	memory m26(CLK, CLR, w26_0, w26_1, e26_0, e26_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out26_0, out26_1);
+	memory m27(CLK, CLR, w27_0, w27_1, e27_0, e27_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out27_0, out27_1);
+	memory m28(CLK, CLR, w28_0, w28_1, e28_0, e28_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out28_0, out28_1);
+	memory m29(CLK, CLR, w29_0, w29_1, e29_0, e29_1, addr0[9:0], addr1[9:0], data_in0, data_in1, out29_0, out29_1);
 	
 	always @ (*) begin
 	

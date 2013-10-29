@@ -29,10 +29,12 @@ module memory2_test_file_readin;
 	reg CLR;
 	reg w0;
 	reg w1;
+	reg e0;
+	reg e1;
 	reg [14:0] addr0;
 	reg [14:0] addr1;
-	reg [17:0] data0;
-	reg [17:0] data1;
+	reg [17:0] data_in0;
+	reg [17:0] data_in1;
 
 	// Outputs
 	wire [17:0] out0;
@@ -43,11 +45,13 @@ module memory2_test_file_readin;
 		.CLK(CLK), 
 		.CLR(CLR), 
 		.w0(w0), 
-		.w1(w1), 
+		.w1(w1),
+		.e0(e0),
+		.e1(e1),
 		.addr0(addr0), 
 		.addr1(addr1), 
-		.data0(data0), 
-		.data1(data1), 
+		.data_in0(data0), 
+		.data_in1(data1), 
 		.out0(out0), 
 		.out1(out1)
 	);
@@ -61,33 +65,33 @@ module memory2_test_file_readin;
 		w1 = 0;
 		addr0 = 0;
 		addr1 = 0;
-		data0 = 0;
-		data1 = 0;
+		data_in0 = 0;
+		data_in1 = 0;
 
 		// Wait 100 ns for global reset to finish
 		#100;
         
 		// Add stimulus here
 		//Write the number for the address into the address
-		w0=1;
+		/*w0=1;
 		for(i=0; i<30720; i=i+1)
 		begin
 			addr0 = i;
 			data0 = i;
 			#2;
-		end
+		end*/
 		
 		//Check that the reading was correct
 		w0 = 0;
-		for(i=0; i<30720; i=i+1)
+		for(i=0; i<30; i=i+1)
 		begin
 			#2;
 			addr0 = i;
 			#2;
-			if(i != out0)
-				begin
-					$display("ERROR--ADDR0: %0d, OUT0: %0d", addr0, out0);
-				end
+			//if(i != out0)
+				//begin
+					$display("ADDR0: %0d, OUT0: %0d", addr0, out0);
+				//end
 		end
 	$display("done");
 	end

@@ -8,17 +8,19 @@
 module controller_integrated(
 	input CLK, CLR,
 	input [17:0] inst, out1,
-	output w1, e1,
-	output [15:0] A, // A[14:0] is addr1 for the memory module
+	output w1, e1, // w1 is writeToMemory
+	output [15:0] addr1, // A[14:0] is addr1 for the memory module
 	output [15:0] data1,
-	output [4:0] FLAGS
+	output [4:0] FLAGS,
+	output [15:0] B, aluOut // for debugging
+
     );
 	 	 
-	 wire [15:0] B, Y;
+	// wire [15:0] A, B, aluOut;
 	 wire [7:0] OP;
 	 //wire [15:0]
 	 
-	 ALU _alu(FLAGS[4], A, B, OP, Y, FLAGS[4], FLAGS[3], FLAGS[2], FLAGS[1], FLAGS[0]);
+	 ALU _alu(FLAGS[4], addr1, B, OP, aluOut, FLAGS[4], FLAGS[3], FLAGS[2], FLAGS[1], FLAGS[0]);
 //	module ALU(
 //	 input c,
 //    input signed [15:0] a,
@@ -68,7 +70,7 @@ module controller_integrated(
 //    );
 	
 	mux16_to_1_16bit ASelect(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out,
-							r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegA, A);
+							r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegA, addr1);
 	
 	
 	wire [15:0] RegB;
@@ -96,7 +98,7 @@ module controller_integrated(
 //	);
 
 	mux2_to_1_16bit ImmMux(RegB, Imm, selectImm, B);
-	mux2_to_1_16bit ResultMux(Y, out1[15:0], selectResult, data1);
+	mux2_to_1_16bit ResultMux(aluOut, out1[15:0], selectResult, data1);
 //	module mux2_to_1_16bit(
 //	input [15:0] a0,
 //	input [15:0] a1,
