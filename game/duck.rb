@@ -52,7 +52,7 @@ class Duck
 
 
 
-  def switch 
+  def switch_vel 
     i = [1, 1]
     case rand(9)
     when 0

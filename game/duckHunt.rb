@@ -246,7 +246,7 @@ class Game
 
       count += secondsPassed
       if count > sec 
-        @ducks.map &:switch
+        @ducks.map &:switch_vel
       end
       if count > sec
         count = 0 
