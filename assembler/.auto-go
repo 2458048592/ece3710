@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+ruby asm.rb test1.asm > t1.txt
+ruby test.rb t1.txt 

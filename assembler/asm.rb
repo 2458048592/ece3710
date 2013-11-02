@@ -22,12 +22,17 @@ instr_types = {
   :OR =>    :r_type,
   :XOR =>   :r_type,
   :NOT =>   :r_type,
-  :LSH =>   :shift,
+  :LSH =>   :r_type,
   :LSHI =>  :i_shift,         # Imm is unsigned
-  :RSH =>   :shift,         
+  :RSH =>   :r_type,         
   :RSHI =>  :i_shift,          # Imm is unsigned
-  :ALSH =>  :shift,           # Interprets RSrc as Unsigned
-  :ARSH =>  :shift,           # Interprets RSrc as Unsigned
+  :ALSH =>  :r_type,           # Interprets RSrc as Unsigned
+  :ARSH =>  :r_type,           # Interprets RSrc as Unsigned
+  :LUI  =>  :i_type,
+  :LOAD =>  :mem,
+  :STOR =>  :mem,
+  :MOV  =>  :r_type,
+  :MOVI =>  :i_type,
 }
 
 instr_bits = {
@@ -48,12 +53,17 @@ instr_bits = {
   :OR => 0b00000010,
   :XOR => 0b00000011,
   :NOT => 0b00001111,
-  :LSH => 0b100001000,
+  :LSH => 0b10000100,
   :LSHI => 0b10000000, # Imm is unsigned
   :RSH => 0b10001100,
   :RSHI => 0b10000001, # Imm is unsigned
   :ALSH => 0b10000101, # Interprets RSrc as Unsigned
   :ARSH => 0b10001101, # Interprets RSrc as Unsigned
+  :LUI  => 0b11110000,
+  :LOAD => 0b01000000,
+  :STOR => 0b01000100,
+  :MOV  => 0b00001101,
+  :MOVI => 0b11010000,
 }
 
 alu_instr = {
@@ -102,7 +112,7 @@ parsed.each do |data|
   raise "No bits for #{inst}" unless instr_bit
   case type
   when :r_type
-		result = (instr_bit & 0xf0) << ( 4 ) # append the top 4 bits of the op-code to bit 15-12
+		result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
     result += get_reg( args[0], 0) # append Rsrc
     result += get_reg( args[1], 1) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
@@ -110,6 +120,16 @@ parsed.each do |data|
 		result = (instr_bit & 0xf0) << ( 8 ) 
 	  result += (args[0].to_i & 0xff) # append 8 bit immediate value 
     result += get_reg( args[1], 1) # append Rdest	
+  when:i_shift
+		result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
+    result += (0xf & args[0].to_i) # append Rammount
+    result += get_reg( args[1], 1) # append Rdest
+    result += (instr_bit & 0x0f) << (4) # append op-code ext
+  when :mem
+		result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
+    result += get_reg( args[1], 0) # append Rsrc
+    result += get_reg( args[0], 1) # append Rdest
+    result += (instr_bit & 0x0f) << (4) # append op-code ext
   else
     raise "Unsupported instruction #{inst}"
   end
