@@ -123,19 +123,3 @@ module mux2_to_1_16bit(
 	end
 endmodule
 
-// this is an incomplete block memory to be completed later
-module block_Mem(
-	input CLK, CLR, w,
-	input [3:0] addr,
-	input [15:0] data,
-	output [15:0] out
-	);
-	
-	reg [15:0] RAM [15:0];
-	assign out = RAM[addr];
-	
-	always @ (posedge CLK) begin
-		//TODO: CLR
-		if (w) RAM[addr] <= data;
-	end
-endmodule

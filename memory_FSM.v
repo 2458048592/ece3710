@@ -49,7 +49,21 @@ module memory_FSM(
 //	input [14:0] addr0, addr1,
 //	input [17:0] data0, data1,
 //	output reg [17:0] out0, out1
-	memory2 mem_block(clk,clr,w0,w1,1'b1,1'b1,addr0,addr1,data0,data1,out0,out1);
+/*
+ // Port A
+    input   wire                a_clk,
+    input   wire                a_wr,
+    input   wire    [ADDR-1:0]  a_addr,
+    input   wire    [DATA-1:0]  a_din,
+    output  reg     [DATA-1:0]  a_dout,
+     
+    // Port B
+    input   wire                b_clk,
+    input   wire                b_wr,
+    input   wire    [ADDR-1:0]  b_addr,
+    input   wire    [DATA-1:0]  b_din,
+    output  reg     [DATA-1:0]  b_dout*/
+	memory mem_block(clk,w0,addr0,data0,out0,clk,w1,addr1,data1,out1);
 	
 //	input [15:0] a0,
 //	input [15:0] a1,

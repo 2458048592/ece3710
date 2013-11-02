@@ -4,10 +4,10 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   16:47:09 10/03/2013
+// Create Date:   09:35:14 11/02/2013
 // Design Name:   memory
-// Module Name:   /home/shelese/Documents/dan/xilinx/projects/ece3710/lab2/memory_test.v
-// Project Name:  lab2
+// Module Name:   /home/dan/Documents/xilinx_projects/CPU/memory_test.v
+// Project Name:  CPU
 // Target Device:  
 // Tool versions:  
 // Description: 
@@ -25,73 +25,76 @@
 module memory_test;
 
 	// Inputs
-	reg CLK;
-	reg CLR;
-	reg w0;
-	reg w1;
-	reg [9:0] addr0;
-	reg [9:0] addr1;
-	reg [17:0] data0;
-	reg [17:0] data1;
+	reg a_clk;
+	reg a_wr;
+	reg [13:0] a_addr;
+	reg [17:0] a_din;
+	reg b_clk;
+	reg b_wr;
+	reg [13:0] b_addr;
+	reg [17:0] b_din;
 
 	// Outputs
-	wire [17:0] out0;
-	wire [17:0] out1;
+	wire [17:0] a_dout;
+	wire [17:0] b_dout;
 
 	// Instantiate the Unit Under Test (UUT)
 	memory uut (
-		.CLK(CLK), 
-		.CLR(CLR), 
-		.w0(w0), 
-		.w1(w1), 
-		.addr0(addr0), 
-		.addr1(addr1), 
-		.data0(data0), 
-		.data1(data1), 
-		.out0(out0), 
-		.out1(out1)
+		.a_clk(a_clk), 
+		.a_wr(a_wr), 
+		.a_addr(a_addr), 
+		.a_din(a_din), 
+		.a_dout(a_dout), 
+		.b_clk(b_clk), 
+		.b_wr(b_wr), 
+		.b_addr(b_addr), 
+		.b_din(b_din), 
+		.b_dout(b_dout)
 	);
-
+	integer i;
 	initial begin
 		// Initialize Inputs
-		CLK = 0;
-		CLR = 0;
-		w0 = 0;
-		w1 = 0;
-		addr0 = 0;
-		addr1 = 0;
-		data0 = 0;
-		data1 = 0;
-		
+		a_clk = 0;
+		a_wr = 0;
+		a_addr = 0;
+		a_din = 0;
+		b_clk = 0;
+		b_wr = 0;
+		b_addr = 0;
+		b_din = 0;
+
 		// Wait 100 ns for global reset to finish
 		#100;
-		
-		// Write the data to the address
-		w0 = 1;
-		data0 = 42;
-		addr0 = 1;
-		#2;
-		// Read the data from the address
-		w0 = 0;
-		data0 = 0;
-		addr0 = 1;
-		#2;
         
+		a_wr = 1;
 		// Add stimulus here
+		a_addr = 0;
+		a_din = 18'b000000000000000010;
 		
-		/* TODO
-		when enable is zero, is the output still what was written
+	/*	for(i=0; i<30720; i=i+1)
+		begin
+			a_addr = i;
+			a_din = i;
+			#2;
+		end
 		
-		2 writes
-		
-		constantly read and write to same addresss
-		
-		*/
-
+		//Check that the reading was correct
+		for(i=0; i<30; i=i+1)
+		begin
+			#2;
+			a_addr = i;
+			#2;
+			//if(i != out0)
+				//begin
+					$display("A_ADDR: %0d, A_DOUT: %0d", a_addr, a_dout);
+				//end
+		end
+	$display("done");
+*/
 	end
-      
+	
 	always
-		#1 CLK = ~CLK;
-		
+		#1 a_clk = ~a_clk;
+      
 endmodule
 

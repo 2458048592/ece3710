@@ -53,12 +53,12 @@ module CPU(
 	*/
 	mux2_to_1_16bit Address0Mux(pc_addr, addr0_ext, load_program, addr0);
 
-	memory2 mem_block(CLK,CLR,load_program ,w1, // write
-									  1'b1 /*always enable */,e1, // enable
+	/*memory2 mem_block(CLK,CLR,load_program ,w1, // write
+									  1'b1 ,e1, // enable
 									  addr0,addr1,					// address
 									  write_data0,write_data1,		// write data
-									  inst,out1);						// memory out data
-	
+									  inst,out1);					// memory out data
+	*/
 	/* Inputs and outputs for the controller
 	input CLK, CLR,
 	input [17:0] inst, out1,
