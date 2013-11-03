@@ -8,7 +8,7 @@
 module controller_integrated(
 	input CLK, CLR,
 	input [17:0] inst, out1,
-	output w1, e1, // w1 is writeToMemory
+	output w1,  // w1 is writeToMemory
 	output [15:0] addr1, // A[14:0] is addr1 for the memory module
 	output [15:0] data1,
 	output [4:0] FLAGS,
@@ -46,7 +46,7 @@ module controller_integrated(
 	wire [3:0] readRegA, readRegB, loadReg;
 	wire selectImm, selectResult;
 	
-	decoder _decoder(inst, OP, Imm, selectImm, selectResult, w1, e1, readRegA, readRegB, loadReg);
+	decoder _decoder(inst, OP, Imm, selectImm, selectResult, w1, readRegA, readRegB, loadReg);
 //	module decoder(
 //    input [17:0] inst,
 //    output reg [7:0] op,
