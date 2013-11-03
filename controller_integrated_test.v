@@ -72,6 +72,8 @@ module controller_integrated_test;
 		#2;
 		inst = 16'h4201;  //load $2, $1
 		#2;
+		inst = 16'h4201;  //load $2, $1
+		#2;
 		if(addr1 != 16'b000000111111111)
 				begin
 					$display("ERROR2: Addr1 was %0d; expected 511", addr1);
@@ -87,6 +89,12 @@ module controller_integrated_test;
 				end
 		inst = 16'h522a; // addi 42, $2
 		#2;
+		inst = 16'h0212; // and $2, $2
+		#2;
+		if(data1 != 8'h2a) // 42
+				begin
+					$display("ERROR3.1: data1 was %0d; expected 42", data1);
+				end
 		inst = 16'h4241; // stor $2, $1 
 		#2;
 		if(addr1 != 16'b0000000000010100)
@@ -98,6 +106,12 @@ module controller_integrated_test;
 		if(addr1 != 16'b0000000000010100)
 				begin
 					$display("ERROR5: Addr1 was %0d; expected 20", addr1);
+				end
+		inst = 16'h0212; // and $2, $2
+		#2;
+		if(data1 != 8'h2a) // 42
+				begin
+					$display("ERROR5.1: data1 was %0d; expected 42", data1);
 				end
 		inst = 16'h4203;  //load $2, $3
 		#2;
