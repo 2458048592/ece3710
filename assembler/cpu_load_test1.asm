@@ -1,0 +1,24 @@
+addui 22, $3 
+load $2, $3  
+load $2, $3  
+addi 2, $2
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addui 1, $5 
+addi 1, $5 # 22

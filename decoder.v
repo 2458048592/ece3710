@@ -293,9 +293,9 @@ module decoder(
 						end
 						STOR_1: begin
 							// STOR takes the value stored in RDest and stores it in mem[RAddr]
-							// where RAddr = inst[11:8] and RDest = inst[3:0]
+							// where RAddr = inst[3:0] and RDest = inst[11:8]
 							op = {RTYPE, OR_1};
-							readRegA = inst[11:8];
+							readRegA = inst[3:0];
 							readRegB = inst[3:0];
 							loadReg = inst[11:8];
 							w1 = 1'b1;
