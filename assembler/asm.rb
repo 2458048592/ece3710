@@ -1,5 +1,16 @@
 #!/usr/bin/ruby -w
 
+require 'optparse'
+
+$verbose = false
+$binary = false
+OptionParser.new do |opt|
+  opt.on('-v','--verbose') { |b| $verbose = b }
+  opt.on('-b','--binary') { |b| $binary = b }
+  opt.on('-h','--help') { puts opt; exit }
+  opt.parse!
+end
+
 file = ARGV.shift
 
 raise "Pass file name as first argument" unless file
@@ -66,10 +77,6 @@ instr_bits = {
   :MOVI => 0b11010000,
 }
 
-alu_instr = {
-  :add => 0b100000,
-  :sub => 0b100010,
-}
 
 # position 0 is Rsrc, position 1 is Rdest
 def get_reg( reg, pos )
@@ -133,5 +140,14 @@ parsed.each do |data|
   else
     raise "Unsupported instruction #{inst}"
   end
-  printf "%016B %s\n", result, data[:line]
+   
+  if ($verbose and $binary)
+    printf "%016b %s\n", result, data[:line]
+  elsif ($verbose)
+    printf "%04x %s\n", result, data[:line]
+  elsif ($binary)
+    printf "%016b\n", result
+  else
+    printf "%04x\n", result
+  end
 end

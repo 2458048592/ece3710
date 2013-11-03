@@ -1,4 +1,10 @@
 #!/bin/bash
 set -e
-ruby asm.rb test1.asm > t1.txt
-ruby test.rb t1.txt 
+
+ruby asm.rb cpu_load_sto_test.asm > ../../CPU/cpu_inst.mem
+ruby asm.rb -v cpu_load_sto_test.asm 
+
+
+#test the assembler
+#ruby asm.rb asm_inst_test > inst.txt
+#ruby asm_test.rb inst.txt 

@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module controller_integrated(
 	input CLK, CLR,
-	input [17:0] inst, out1,
+	input [17:0] inst, external_din,
 	output w1,  // w1 is writeToMemory
 	output [15:0] addr1, // A[14:0] is addr1 for the memory module
 	output [15:0] data1,
@@ -21,41 +21,13 @@ module controller_integrated(
 	 //wire [15:0]
 	 
 	 ALU _alu(FLAGS[4], addr1, B, OP, aluOut, FLAGS[4], FLAGS[3], FLAGS[2], FLAGS[1], FLAGS[0]);
-//	module ALU(
-//	 input c,
-//    input signed [15:0] a,
-//    input signed [15:0] b,
-//	 input [7:0] op,
-//    output reg [15:0] y,
-//    output reg C, L, F, Z, N
-//    );
 
-	//wire w0, w1;
-	//wire [14:0] addr0, addr1;
-	//wire [17:0] data0, data1, out0, out1;
-
-	//memory2 _RAM(CLK, CLR, w0, w1, A[14:0], A[14:0], data0, data1, out0, out1);
-//	module memory2(
-//	input CLK, CLR, w0, w1,
-//	input [14:0] addr0, addr1,
-//	input [17:0] data0, data1,
-//	output reg [17:0] out0, out1
-//	);
 
 	wire [15:0] Imm;
 	wire [3:0] readRegA, readRegB, loadReg;
 	wire selectImm, selectResult;
 	
 	decoder _decoder(inst, OP, Imm, selectImm, selectResult, w1, readRegA, readRegB, loadReg);
-//	module decoder(
-//    input [17:0] inst,
-//    output reg [7:0] op,
-//	 output reg [15:0] Imm, // Imm needs to be sign-extended or 0-extended when applicable
-//	 output reg selectImm, selectResult, w1,
-//	 output reg [3:0] readRegA,
-//	 output reg [3:0] readRegB,
-//	 output reg [3:0] loadReg
-//    );
 	
 	//wire [15:0] result;
 	wire [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out;
@@ -63,11 +35,6 @@ module controller_integrated(
 	
 	RegFile _regfile(CLK, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1,
 							 data1, enWrite, reset, r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out);
-//	module RegFile(
-//	 input CLK,
-//	 input [15:0] r0in, r1in, r2in, r3in, r4in, r5in, r6in, r7in, r8in, r9in, r10in, r11in, r12in, r13in, r14in, r15in, enWrite, reset,
-//	 output [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out
-//    );
 	
 	mux16_to_1_16bit ASelect(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out,
 							r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegA, addr1);
@@ -76,40 +43,10 @@ module controller_integrated(
 	wire [15:0] RegB;
 	mux16_to_1_16bit BSelect(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out,
 							r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegB, RegB);
-//	module mux16_to_1_16bit(
-//	input [15:0] a0,
-//	input [15:0] a1,
-//	input [15:0] a2,
-//	input [15:0] a3,
-//	input [15:0] a4,
-//	input [15:0] a5,
-//	input [15:0] a6,
-//	input [15:0] a7,
-//	input [15:0] a8,
-//	input [15:0] a9,
-//	input [15:0] a10,
-//	input [15:0] a11,
-//	input [15:0] a12,
-//	input [15:0] a13,
-//	input [15:0] a14,
-//	input [15:0] a15,
-//	input [3:0] select,
-//	output reg [15:0] out
-//	);
+
 
 	mux2_to_1_16bit ImmMux(RegB, Imm, selectImm, B);
-	mux2_to_1_16bit ResultMux(aluOut, out1[15:0], selectResult, data1);
-//	module mux2_to_1_16bit(
-//	input [15:0] a0,
-//	input [15:0] a1,
-//	input sel,
-//	output reg [15:0] b
-//	);
-
-//	always @ (*) begin
-//		data1 <= result;
-//		addr1 <= A[14:0];
-//	end
+	mux2_to_1_16bit ResultMux(aluOut, external_din[15:0], selectResult, data1);
 
 	always @ (*) begin
 		if (CLR == 1'b1) begin reset <= 16'b1111111111111111; enWrite <= 16'b0; end

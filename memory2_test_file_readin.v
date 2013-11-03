@@ -4,15 +4,15 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   17:15:45 10/08/2013
-// Design Name:   memory2
-// Module Name:   C:/Users/Zach/Documents/Xilinx/ALU/memory2_test_file_readin.v
-// Project Name:  ALU
+// Create Date:   09:35:14 11/02/2013
+// Design Name:   memory
+// Module Name:   /home/dan/Documents/xilinx_projects/CPU/memory_test.v
+// Project Name:  CPU
 // Target Device:  
 // Tool versions:  
 // Description: 
 //
-// Verilog Test Fixture created by ISE for module: memory2
+// Verilog Test Fixture created by ISE for module: memory
 //
 // Dependencies:
 // 
@@ -25,78 +25,66 @@
 module memory_test_file_readin;
 
 	// Inputs
-	reg CLK;
-	reg CLR;
-	reg w0;
-	reg w1;
-	reg e0;
-	reg e1;
-	reg [14:0] addr0;
-	reg [14:0] addr1;
-	reg [17:0] data_in0;
-	reg [17:0] data_in1;
+	reg a_clk;
+	reg a_wr;
+	reg [13:0] a_addr;
+	reg [17:0] a_din;
+	reg b_clk;
+	reg b_wr;
+	reg [13:0] b_addr;
+	reg [17:0] b_din;
 
 	// Outputs
-	wire [17:0] out0;
-	wire [17:0] out1;
+	wire [17:0] a_dout;
+	wire [17:0] b_dout;
 
 	// Instantiate the Unit Under Test (UUT)
-	memory2 uut (
-		.CLK(CLK), 
-		.CLR(CLR), 
-		.w0(w0), 
-		.w1(w1),
-		.e0(e0),
-		.e1(e1),
-		.addr0(addr0), 
-		.addr1(addr1), 
-		.data_in0(data0), 
-		.data_in1(data1), 
-		.out0(out0), 
-		.out1(out1)
+	memory uut (
+		.a_clk(a_clk), 
+		.a_wr(a_wr), 
+		.a_addr(a_addr), 
+		.a_din(a_din), 
+		.a_dout(a_dout), 
+		.b_clk(b_clk), 
+		.b_wr(b_wr), 
+		.b_addr(b_addr), 
+		.b_din(b_din), 
+		.b_dout(b_dout)
 	);
-	
 	integer i;
 	initial begin
 		// Initialize Inputs
-		CLK = 0;
-		CLR = 0;
-		w0 = 0;
-		w1 = 0;
-		addr0 = 0;
-		addr1 = 0;
-		data_in0 = 0;
-		data_in1 = 0;
+		a_clk = 0;
+		a_wr = 0;
+		a_addr = 0;
+		a_din = 0;
+		b_clk = 0;
+		b_wr = 0;
+		b_addr = 0;
+		b_din = 0;
+		
 
 		// Wait 100 ns for global reset to finish
 		#100;
-        
-		// Add stimulus here
-		//Write the number for the address into the address
-		/*w0=1;
-		for(i=0; i<30720; i=i+1)
-		begin
-			addr0 = i;
-			data0 = i;
-			#2;
-		end*/
-		
+    
 		//Check that the reading was correct
-		w0 = 0;
-		for(i=0; i<30; i=i+1)
+		for(i=0; i< 10; i=i+1)
 		begin
+			a_addr = i;
 			#2;
-			addr0 = i;
-			#2;
-			//if(i != out0)
-				//begin
-					$display("ADDR0: %0d, OUT0: %0d", addr0, out0);
-				//end
+
+			$display("A_ADDR: %0d, A_DOUT: %16b", a_addr, a_dout);
+
+			
 		end
 	$display("done");
+
 	end
 	
-   always
-		#1 CLK = ~CLK;
+	always begin
+		#1 a_clk = ~a_clk;
+		b_clk = ~b_clk;
+	end
+      
 endmodule
 

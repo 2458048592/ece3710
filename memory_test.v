@@ -67,34 +67,46 @@ module memory_test;
 		#100;
         
 		a_wr = 1;
+		b_wr = 1;
 		// Add stimulus here
 		a_addr = 0;
 		a_din = 18'b000000000000000010;
 		
-	/*	for(i=0; i<30720; i=i+1)
+		for(i=0; i< (2 ** 14) /2; i=i+1)
 		begin
 			a_addr = i;
 			a_din = i;
+			b_addr = i + (2 ** 14)/2;
+			b_din =  i + (2 ** 14)/2;
 			#2;
 		end
 		
+		a_wr = 0;
+		b_wr = 0;
 		//Check that the reading was correct
-		for(i=0; i<30; i=i+1)
+		for(i=0; i< (2 ** 14) / 2; i=i+1)
 		begin
 			#2;
 			a_addr = i;
+			b_addr = i + (2 ** 14)/2;
 			#2;
-			//if(i != out0)
-				//begin
+			if(i != a_dout)
+				begin
 					$display("A_ADDR: %0d, A_DOUT: %0d", a_addr, a_dout);
-				//end
+				end
+			if(i + (2 ** 14)/2 != b_dout)
+				begin
+					$display("B_ADDR: %0d, B_DOUT: %0d",b_addr, b_dout);
+				end
 		end
 	$display("done");
-*/
+
 	end
 	
-	always
+	always begin
 		#1 a_clk = ~a_clk;
+		b_clk = ~b_clk;
+	end
       
 endmodule
 

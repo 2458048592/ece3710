@@ -21,10 +21,9 @@
 module CPU(
     input CLK,
     input CLR,
-	 input load_program,
 	 output [15:0] B, aluOut, // for debugging
-	 output [17:0] inst, a_din, a_dout, b_din, b_dout, // for debugging
-	 output [14:0] pc_addr, b_addr, // for debugging
+	 output [17:0] a_din, a_dout, b_din, b_dout, // for debugging
+	 output [14:0] a_addr, b_addr, // for debugging
 	 output [4:0] FLAGS
     );
 	 
@@ -36,27 +35,14 @@ module CPU(
 	wire [17:0] /*inst,*/ out1;
 	wire set_addr = 0; 
 	wire [14:0] pc_load_addr = 0;
-	wire [13:0] /* pc_addr,*/ a_addr;
+	wire [13:0] /* pc_addr,*/ c_addr, d_addr;
 
 	
 	program_counter counter(CLK,CLR,set_addr,pc_load_addr, a_addr);
 	
-	/*
-	// Port A
-    input   wire                a_clk,
-    input   wire                a_wr,
-    input   wire    [ADDR-1:0]  a_addr,
-    input   wire    [DATA-1:0]  a_din,
-    output  reg     [DATA-1:0]  a_dout,
-     
-    // Port B
-    input   wire                b_clk,
-    input   wire                b_wr,
-    input   wire    [ADDR-1:0]  b_addr,
-    input   wire    [DATA-1:0]  b_din,
-    output  reg     [DATA-1:0]  b_dout
-	 */
 	memory asm_RAM (CLK, 1'b0, a_addr, a_din, a_dout, CLK, b_wr, b_addr, b_din, b_dout);
+	//memory game_RAM (CLK, 1'b0, c_addr, c_din, c_dout, CLK, 1'b0, d_addr, d_din, d_dout);
+
 	/* Inputs and outputs for the controller
 	input CLK, CLR,
 	input [17:0] inst, out1,

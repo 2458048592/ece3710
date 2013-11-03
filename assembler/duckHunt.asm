@@ -6,8 +6,8 @@ top_of_game_loop:
 # undraw_duck
 #   @ducks.undraw @screen, @background # dont know how to undraw
 #
-#   $1 = postion_x
-#   $2 = postion_y
+#   $1 = $postion_x
+#   $2 = $postion_y
 ############################################    
 undraw_duck:
   #@todo undraw the duck
@@ -19,11 +19,11 @@ undraw_duck:
 # update_duck
 #   calculates a new duck position 
 #
-#   $1 = postion_x
-#   $2 = postion_y
+#   $1 = $postion_x
+#   $2 = $postion_y
 ############################################    
 update_duck: 
-  load postion_x, $1
+  load postion_x, $1_position_x
   load postion_y, $2
   add $1, 5 # move the duck 5 pixels in x direction
   add $2, 5
@@ -32,8 +32,8 @@ update_duck:
 # draw_duck
 #   draws a duck at the postion 
 #
-#   $1 = postion_x
-#   $2 = postion_y
+#   $1 = $postion_x
+#   $2 = $postion_y
 ############################################    
 draw_duck:
   # @todo check the is_duck_white? and draw accordingly
@@ -43,7 +43,7 @@ draw_duck:
 #   checks if the trigger was pulled
 #     1 = pulled, 0 otherwise
 #
-#   $3 = gun_trigger_bool
+#   $3 = $gun_trigger_bool
 ###################################
 observe_trigger: 
   load gun_trigger, $3 # load I/O 
