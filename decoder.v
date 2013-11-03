@@ -72,6 +72,19 @@ module decoder(
 	//parameter LOAD = 2'b10; // This is a read instruction and reads the value in memory[RAddr] and stores in RDest
 	//parameter STOR = 2'b11; // This is a write instruction and writes the value in RDest to memory[RAddr]
 	
+	// MEM is the opcode, JCOND and SCOND are the secondary codes, JUC through BLE are stored in bits [3:0]
+	// JCOND will be absolute memory jumps
+	// SCOND will be relative memory jumps
+	parameter JCOND = 4'b1100; // JCOND uses unsigned comparison for BEQ through BLT
+	//parameter SCOND = 4'b0100; // SCOND is the same as the MEM and is a signed comparison for BEQ through BLE
+	parameter JUC = 4'b1110; // JUC jumps directly 
+	parameter BEQ = 4'b0000;
+	parameter BNEQ = 4'b0001;
+	//parameter BGT = 4'b0110;
+	//parameter BLT = 4'b0111;
+	//parameter BGE = 4'b1101;
+	//parameter BLE = 4'b1100;
+	
 	always @ (*) begin
 		w1 = 1'b0;
 		selectResult = 1'b0;
@@ -300,6 +313,44 @@ module decoder(
 							loadReg = inst[11:8];
 							w1 = 1'b1;
 						end
+						JCOND: begin
+							// These should all essentially be the same
+							case (inst[3:0])
+								JUC: begin
+									// get the address out of inst[11:8] and throw it up to the PC counter
+									op = {RTYPE, OR_1};
+									readRegA = inst[11:8];
+									readRegB = inst[11:8];
+									loadReg = inst[11:8];
+								end
+								BEQ: begin
+									// Check the flags after a CMP operation
+									// get the address out of inst[11:8] and throw it up the PC counter if
+									// Z = 1
+								
+									op = {RTYPE, OR_1};
+									readRegA = inst[11:8];
+									readRegB = inst[11:8];
+									loadReg = inst[11:8];
+								end
+								BNEQ: begin
+									// Check the flags after a CMP operation
+									// get the address out of inst[11:8] and throw it up to the PC counter if
+									// Z = 0;
+								
+									op = {RTYPE, OR_1};
+									readRegA = inst[11:8];
+									readRegB = inst[11:8];
+									loadReg = inst[11:8];
+								end
+								default: begin
+								
+								end
+							endcase
+						end
+//						BCOND: begin
+//							
+//						end
 						default: begin
 							op = {RTYPE, OR_1};
 							readRegA = inst[11:8];

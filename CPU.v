@@ -37,8 +37,9 @@ module CPU(
 	wire [14:0] pc_load_addr = 0;
 	wire [13:0] /* pc_addr,*/ c_addr, d_addr;
 
-	
-	program_counter counter(CLK,CLR,set_addr,pc_load_addr, a_addr);
+	// b_addr is the output of the controller_integrated, which comes from RegA input to
+	// the ALU.
+	program_counter counter(CLK,CLR,set_addr, b_addr, PC_inc, a_addr);
 	
 	memory asm_RAM (CLK, 1'b0, a_addr, a_din, a_dout, CLK, b_wr, b_addr, b_din, b_dout);
 	//memory game_RAM (CLK, 1'b0, c_addr, c_din, c_dout, CLK, 1'b0, d_addr, d_din, d_dout);
@@ -50,7 +51,9 @@ module CPU(
 	output [15:0] addr1, // A[14:0] is addr1 for the memory module
 	output [15:0] data1,
 	output [4:0] FLAGS*/
-	controller_integrated controller(CLK,CLR,a_dout,external_din,b_wr,b_addr,b_din,FLAGS,B,aluOut);
+	// PC_inc is a signal from the controller to either increment the PC or keep it the same for
+	// memory instructions
+	controller_integrated controller(CLK,CLR,a_dout,external_din,b_wr,b_addr,b_din,FLAGS,B,aluOut, PC_inc, set_addr);
 
 
 endmodule

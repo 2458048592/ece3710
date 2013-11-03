@@ -23,6 +23,7 @@ module program_counter(
     input CLR,
 	 input set_addr,
 	 input [14:0] in_addr,
+	 input PC_inc,
     output reg[14:0] out_addr
     );
 	 
@@ -33,7 +34,7 @@ module program_counter(
 			if (set_addr)
 				out_addr <= in_addr;
 			else
-				out_addr <= out_addr + 15'b000000000000001;
+				out_addr <= out_addr + PC_inc;
 		end
 	 end
 
