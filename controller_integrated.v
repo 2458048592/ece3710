@@ -10,7 +10,7 @@ module controller_integrated(
 	input [17:0] inst, external_din,
 	output w1,  // w1 is writeToMemory
 	output [15:0] addr1, // A[14:0] is addr1 for the memory module
-	output [15:0] data1,
+	output [17:0] data1,
 	output [4:0] FLAGS,
 	output [15:0] B, aluOut // for debugging
 

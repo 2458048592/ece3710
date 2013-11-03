@@ -142,12 +142,12 @@ parsed.each do |data|
   end
    
   if ($verbose and $binary)
-    printf "%016b %s\n", result, data[:line]
+    printf "%018b %s\n", result, data[:line]
   elsif ($verbose)
-    printf "%04x %s\n", result, data[:line]
+    printf "%05x %s\n", result, data[:line]
   elsif ($binary)
-    printf "%016b\n", result
+    printf "%018b\n", result
   else
-    printf "%04x\n", result
+    printf "%05x\n", result
   end
 end
