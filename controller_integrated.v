@@ -115,34 +115,32 @@ module instruction_FSM ( CLK, CLR, inst, FLAGS, PC_inc, JAddrSelect);
 		else PS <= NS;
 	end
 	
-	// Present State
 	always @ (PS) begin
 		case (PS)
-			2'b00: NS = 2'b01;
-			2'b01: NS = 2'b10;
-			2'b10: NS = 2'b11;
-			2'b11: NS = 2'b00;
+			2'b00: NS <= 2'b01;
+			2'b01: NS <= 2'b10;
+			2'b10: NS <= 2'b11;
+			2'b11: NS <= 2'b00;
 		endcase
 	end
 	
 	always @ (PS, inst, FLAGS) begin
-		PC_inc = 1'b1;
-		JAddrSelect = 1'b0;
+		PC_inc <= 1'b1;
+		JAddrSelect <= 1'b0;
 		case (inst[15:12])
 			MEM: begin
-				PC_inc = 1'b0;
 				case (inst[7:4])
 					LOAD_1: begin
-						if (PS == 3) begin PC_inc = 1'b1; end
-						else begin PC_inc = 1'b0; end
+						if (PS == 3) begin PC_inc <= 1'b1; end
+						else begin PC_inc <= 1'b0; end
 					end
 					STOR_1: begin
-						if (PS == 3) begin PC_inc = 1'b1; end
-						else begin PC_inc = 1'b0; end
+						if (PS == 3) begin PC_inc <= 1'b1; end
+						else begin PC_inc <= 1'b0; end
 					end
 					JCOND: begin
-						JAddrSelect = 1'b1;
-						PC_inc = 1'b1;
+						JAddrSelect <= 1'b1;
+						PC_inc <= 1'b1;
 						// C, L, F, Z, N
 						case (inst[3:0])
 							JUC: begin end
@@ -152,12 +150,12 @@ module instruction_FSM ( CLK, CLR, inst, FLAGS, PC_inc, JAddrSelect);
 								// until the next posedge CLK
 								// Since this is a BEQ, then if the Z Flag is 1, the arguments
 								// to the CMP operation were equal
-								if (FLAGS[1] != 1) JAddrSelect = 1'b0;
+								if (FLAGS[1] != 1) JAddrSelect <= 1'b0;
 							end
 							BNEQ: begin
 								// Since this is a BNEQ, then if the Z Flag is 0, the arguments
 								// to the CMP operation were not equal
-								if (FLAGS[1] != 0) JAddrSelect = 1'b0;
+								if (FLAGS[1] != 0) JAddrSelect <= 1'b0;
 							end
 							// other functionality can be added easily here to check the other flags for the GE, GT, LE, and LT
 							// Branches.
