@@ -4,34 +4,43 @@
 // Engineer: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module hVideo( CLK, CLR, hSync, vCntEna, hBright, Hcnt, HA );
+module hVideo( CLK, CLR, hSync, vBright, hBright, Hcnt );
 	// CLK is a 10MHz square-wave clock
-	input CLK, CLR;
-	output reg hSync, vCntEna, hBright;
-	output [6:0] HA;
-	output reg [8:0] Hcnt; // counter from 0 to 299
+	input CLK, CLR, vBright;
+	output reg hSync, hBright;
+	output reg [11:0] Hcnt; // counter from 0 to 2990
 	
-	always @ (posedge CLK, posedge CLR) begin
-		if (CLR) begin Hcnt <= 0; hSync <= 1'b1; vCntEna <= 1'b0; hBright <= 1'b0; end
+	parameter HFRONT_PORCH = 94; // 94 10ns clock cycles = 0.94 us
+	parameter HBACK_PORCH = 189; // 189 10ns clock cycles = 1.89 us
+	parameter HSYNC = 377; // 377 10ns clock cycles = 3.77 us
+	parameter HDISPLAY = 2517; // 2517 10ns clock cycles = 25.17 us
+	parameter SCANTIME = 3177; // 3177 10ns clock cycles = 31.77 us
+	
+	initial begin
+		hBright = 1'b0;
+		hSync = 1'b1;
+		Hcnt <= 0;
+	end
+	
+	always @ (posedge CLK) begin
+		if (CLR) Hcnt <= 0;
 		else begin
-			if (Hcnt < 299) begin 
-				Hcnt <= Hcnt + 1; hSync <= 1'b1; vCntEna <= 1'b0; hBright <= 1'b0;
-			
-				if (Hcnt == 1) hSync <= 1'b0;
-				else if (Hcnt  < 20) hSync <= 1'b0;
-				else hSync <= 1'b1;
-			
-				if (Hcnt == 5) vCntEna <= 1'b1;
-				else vCntEna <= 1'b0;
-
-				if (Hcnt == 127) hBright <= 1'b1;
-				else if (Hcnt < 255 && Hcnt > 127) hBright <= 1'b1;
-				else hBright <= 1'b0;
+			if (vBright) begin
+				if (Hcnt < SCANTIME) Hcnt <= Hcnt + 1;
+				else Hcnt <= 0;
 			end
-			else begin Hcnt <= 0; hSync <= 1'b1; vCntEna <= 1'b0; hBright <= 1'b0; end
+			else Hcnt <= 0;
 		end
 	end
 	
-	assign HA = Hcnt[6:0];
+	always @ (Hcnt) begin
+		if (Hcnt < (SCANTIME - HFRONT_PORCH) && Hcnt > (HSYNC + HBACK_PORCH)) hBright <= 1'b1;
+		else hBright <= 1'b0;
+	end
+	
+	always @ (Hcnt) begin
+		if (Hcnt  < HSYNC) hSync <= 1'b0;
+		else hSync <= 1'b1;	
+	end
 
 endmodule

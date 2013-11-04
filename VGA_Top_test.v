@@ -6,43 +6,53 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module vTestBench;
+module VGA_Top_test;
 
 	// Inputs
 	reg CLK;
 	reg CLR;
 
 	// Outputs
+	wire hSync;
+	wire nhSync;
+	wire hBright;
 	wire vSync;
+	wire nvSync;
 	wire vBright;
-	wire [20:0] Vcnt;
+	wire VidOut;
 
 	// Instantiate the Unit Under Test (UUT)
-	vVideo uut (
+	VGA_Top uut (
 		.CLK(CLK), 
 		.CLR(CLR), 
+		.hSync(hSync), 
+		.nhSync(nhSync), 
+		.hBright(hBright), 
 		.vSync(vSync), 
+		.nvSync(nvSync), 
 		.vBright(vBright), 
-		.Vcnt(Vcnt)
+		.VidOut(VidOut)
 	);
 
 	initial begin
 		// Initialize Inputs
 		CLK = 0;
 		CLR = 0;
-        
+
+		// Wait 100 ns for global reset to finish
+		#100;
+      
 		// Add stimulus here
 		CLR = 1'b1;
 		#10;
 		CLR = 1'b0;
-		
-		#4000000;
-		$display("Finished.");
+		#10000000;
 		$finish;
 	end
 	
-	always #1 CLK = ~CLK;
-	
+	always begin
+		#1; CLK = ~CLK;
+	end
       
 endmodule
 

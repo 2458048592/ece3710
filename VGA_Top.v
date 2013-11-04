@@ -4,7 +4,7 @@
 // Engineer: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module VGA_Top( CLK, CLR, hSync, nhSync, hBright, vSync, nvSync, vBright, VidOut );
+module VGA_Top( CLK, CLR, hSync, nhSync, hBright, vSync, nvSync, vBright, VidOut, Hcnt, Vcnt );
 	input CLK, CLR;
 	output hSync, nhSync, hBright, vSync, nvSync, vBright, VidOut;
 	
@@ -12,11 +12,10 @@ module VGA_Top( CLK, CLR, hSync, nhSync, hBright, vSync, nvSync, vBright, VidOut
 	assign nvSync = ~vSync;
 	assign VidOut = hBright && vBright;	
 	
-	wire [8:0] Hcnt;
-	wire [9:0] Vcnt;
-	wire [6:0] HA;
+	output [11:0] Hcnt;
+	output [20:0] Vcnt;
 
-	hVideo h1( CLK, CLR, hSync, vCntEna, hBright, Hcnt, HA );
-	vVideo v1( CLK, CLR, vCntEna, vSync, vBright, Vcnt );
+	hVideo h1( CLK, CLR, hSync, vBright, hBright, Hcnt );
+	vVideo v1( CLK, CLR, vSync, vBright, Vcnt );
 
 endmodule
