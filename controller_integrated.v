@@ -129,7 +129,6 @@ module instruction_FSM ( CLK, CLR, inst, FLAGS, PC_inc, JAddrSelect);
 		JAddrSelect <= 1'b0;
 		case (inst[15:12])
 			MEM: begin
-				PC_inc <= 1'b0;
 				case (inst[7:4])
 					LOAD_1: begin
 						if (PS == 3) begin PC_inc <= 1'b1; end
