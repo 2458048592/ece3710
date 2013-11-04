@@ -297,7 +297,7 @@ module decoder(
 						LOAD_1: begin
 							// LOAD takes the value stored in mem[RAddr] and loads it into RDest
 							// where RAddr = inst[3:0] and RDest = inst[11:8]
-							op = {RTYPE, MOV_1};
+							op = {RTYPE, OR_1};
 							readRegA = inst[3:0];
 							readRegB = inst[3:0];
 							loadReg = inst[11:8];

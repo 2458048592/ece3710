@@ -21,6 +21,7 @@
 module CPU(
     input CLK,
     input CLR,
+	 output PC_inc, set_addr,
 	 output [15:0] B, aluOut, // for debugging
 	 output [17:0] a_din, a_dout, b_din, b_dout, // for debugging
 	 output [14:0] a_addr, b_addr, // for debugging

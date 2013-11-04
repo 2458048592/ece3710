@@ -4,7 +4,7 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   21:49:27 11/02/2013
+// Create Date:   18:59:36 11/03/2013
 // Design Name:   CPU
 // Module Name:   /home/dan/Documents/xilinx_projects/CPU/CPU_test.v
 // Project Name:  CPU
@@ -29,6 +29,8 @@ module CPU_test;
 	reg CLR;
 
 	// Outputs
+	wire PC_inc;
+	wire set_addr;
 	wire [15:0] B;
 	wire [15:0] aluOut;
 	wire [17:0] a_din;
@@ -43,6 +45,8 @@ module CPU_test;
 	CPU uut (
 		.CLK(CLK), 
 		.CLR(CLR), 
+		.PC_inc(PC_inc), 
+		.set_addr(set_addr), 
 		.B(B), 
 		.aluOut(aluOut), 
 		.a_din(a_din), 
@@ -70,6 +74,7 @@ module CPU_test;
 	
 	always 
 		#1 CLK = ~CLK;
+
       
 endmodule
 
