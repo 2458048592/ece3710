@@ -33,7 +33,6 @@ module CPU(
 	wire [3:0] readRegA, readRegB, loadReg;
 	wire selectImm, selectResult;
 	wire [17:0] /*inst,*/ out1;
-	wire set_addr = 0; 
 	wire [14:0] pc_load_addr = 0;
 	wire [13:0] /* pc_addr,*/ c_addr, d_addr;
 

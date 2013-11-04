@@ -1,12 +1,6 @@
 movi 20, $1
-xor $2, $2
 addui 200, $3
-stor $3, $1 
-stor $3, $1 
-xor $2, $2
-xor $1, $1
-xor $2, $2
-xor $2, $2
-movi 20, $1
-load $2, $3
+stor $1, $3 
+load $2, $1
 addui 1, $2
+subi 10, $2

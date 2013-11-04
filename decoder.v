@@ -131,7 +131,7 @@ module decoder(
 								loadReg = inst[11:8];
 							end
 						AND_1: begin
-								op = {RTYPE, ADD_1};
+								op = {RTYPE, AND_1};
 								readRegA = inst[11:8];
 								readRegB = inst[3:0];
 								loadReg = inst[11:8];
@@ -297,18 +297,18 @@ module decoder(
 						LOAD_1: begin
 							// LOAD takes the value stored in mem[RAddr] and loads it into RDest
 							// where RAddr = inst[3:0] and RDest = inst[11:8]
-							op = {RTYPE, OR_1};
+							op = {RTYPE, MOV_1};
 							readRegA = inst[3:0];
 							readRegB = inst[3:0];
 							loadReg = inst[11:8];
 							// selectResult selects the value out of the memory
-							selectResult = 1'b1;
+							selectResult = 1'b0;
 						end
 						STOR_1: begin
 							// STOR takes the value stored in RDest and stores it in mem[RAddr]
-							// where RAddr = inst[3:0] and RDest = inst[11:8]
-							op = {RTYPE, OR_1};
-							readRegA = inst[3:0];
+							// where RAddr = inst[11:8] and RDest = inst[3:0]
+							op = {RTYPE, MOV_1};
+							readRegA = inst[11:8];
 							readRegB = inst[3:0];
 							loadReg = inst[11:8];
 							w1 = 1'b1;
@@ -344,7 +344,10 @@ module decoder(
 									loadReg = inst[11:8];
 								end
 								default: begin
-								
+									op = {RTYPE, OR_1};
+									readRegA = inst[11:8];
+									readRegB = inst[11:8];
+									loadReg = inst[11:8];
 								end
 							endcase
 						end
