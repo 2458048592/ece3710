@@ -44,6 +44,9 @@ instr_types = {
   :STOR =>  :mem,
   :MOV  =>  :r_type,
   :MOVI =>  :i_type,
+  :JUC  =>  :branch,
+  :BEQ  =>  :branch,
+  :BNEQ =>  :branch
 }
 
 instr_bits = {
@@ -75,6 +78,9 @@ instr_bits = {
   :STOR => 0b01000100,
   :MOV  => 0b00001101,
   :MOVI => 0b11010000,
+  :JUC  => 0b11001110,
+  :BEQ  => 0b11000000,
+  :BNEQ => 0b11000001,
 }
 
 
@@ -137,6 +143,10 @@ parsed.each do |data|
     result += get_reg( args[1], 0) # append Rsrc
     result += get_reg( args[0], 1) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
+  when :branch
+		result = 0x4 << ( 12 ) # append the top 4 bits of the op-code to bit 15-12
+    result += get_reg( args[0], 1)
+    result += instr_bit
   else
     raise "Unsupported instruction #{inst}"
   end
