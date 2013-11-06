@@ -13,7 +13,7 @@ module decoder(
     input [17:0] inst,
     output reg [7:0] op,
 	 output reg [15:0] Imm, // Imm needs to be sign-extended or 0-extended when applicable
-	 output reg selectImm, selectResult, w1,
+	 output reg selectImm, selectResult, w1, //e1,
 	 output reg [3:0] readRegA,
 	 output reg [3:0] readRegB,
 	 output reg [3:0] loadReg
@@ -85,208 +85,214 @@ module decoder(
 	//parameter BGE = 4'b1101;
 	//parameter BLE = 4'b1100;
 	
+	
 	always @ (*) begin
-		w1 = 1'b0;
-		selectResult = 1'b0;
-		selectImm = 1'b0;
-		Imm = 16'b0000000000000000;
+		w1 <= 1'b0;
+		selectResult <= 1'b0;
+		selectImm <= 1'b0;
+		Imm <= 16'b0000000000000000;
+		//e1 <= 1'b0;
+		op <= 8'b00000000;
+		readRegA <= inst[15:12];
+		readRegB <= inst[3:0];
+		loadReg <= inst[15:12];
 		if (inst[17:16] == 2'b00) begin
 			case (inst[15:12])
 				RTYPE: begin
 					case (inst[7:4])
 						ADD_1: begin
-								op = {RTYPE, ADD_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, ADD_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						ADDU_1: begin
-								op = {RTYPE, ADDU_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, ADDU_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						ADDC_1: begin
-								op = {RTYPE, ADDC_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, ADDC_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						ADDCU_1: begin
-								op = {RTYPE, ADDCU_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, ADDCU_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						SUB_1: begin
-								op = {RTYPE, SUB_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, SUB_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						CMP_1: begin
-								op = {RTYPE, CMP_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, CMP_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						AND_1: begin
-								op = {RTYPE, AND_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, ADD_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						OR_1: begin
-								op = {RTYPE, OR_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, OR_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						NOT_1: begin
-								op = {RTYPE, NOT_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, NOT_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						XOR_1: begin
-								op = {RTYPE, XOR_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, XOR_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						MOV_1: begin
-								op = {RTYPE, MOV_1};
-								readRegA = inst[3:0];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {RTYPE, MOV_1};
+								readRegA <= inst[3:0];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						default: begin
-								op = {RTYPE, OR_1};
-								readRegA = inst[11:8];
-								readRegB = inst[11:8];
-								loadReg = inst[11:8];
+								op <= {RTYPE, OR_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[11:8];
+								loadReg <= inst[11:8];
 							end
 					endcase
 				end
 				ADDI: begin
-						op = {ADDI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
+						op <= {ADDI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
 					end
 				ADDUI: begin
-						op = {ADDUI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {8'b00000000, inst[7:0]};
+						op <= {ADDUI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {8'b00000000, inst[7:0]};
 					end
 				ADDCUI: begin
-						op = {ADDCUI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {8'b00000000, inst[7:0]};
+						op <= {ADDCUI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {8'b00000000, inst[7:0]};
 					end
 				ADDCI: begin
-						op = {ADDCI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
+						op <= {ADDCI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
 					end
 				SUBI: begin
-						op = {SUBI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
+						op <= {SUBI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
 					end
 				CMPI: begin
-						op = {CMPI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
+						op <= {CMPI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
 					end
 				CMPUI: begin
-						op = {CMPUI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {8'b00000000, inst[7:0]};
+						op <= {CMPUI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {8'b00000000, inst[7:0]};
 					end
 				MOVI: begin
-						op = {MOVI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {8'b00000000, inst[7:0]};
+						op <= {MOVI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {8'b00000000, inst[7:0]};
 					end
 				LUI: begin
-						op = {LUI, inst[7:4]};
-						readRegA = inst[11:8];
-						readRegB = inst[3:0];
-						loadReg = inst[11:8];
-						selectImm = 1'b1;
-						Imm = {inst[7:0], 8'b00000000};
+						op <= {LUI, inst[7:4]};
+						readRegA <= inst[11:8];
+						readRegB <= inst[3:0];
+						loadReg <= inst[11:8];
+						selectImm <= 1'b1;
+						Imm <= {inst[7:0], 8'b00000000};
 					end
 				SHIFT: begin
 					case (inst[7:4])
 						LSH_1: begin
-								op = {SHIFT, LSH_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {SHIFT, LSH_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						LSHI_1: begin
-								op = {SHIFT, LSHI_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
-								selectImm = 1'b1;
-								Imm = {12'b000000000000, inst[3:0]};
+								op <= {SHIFT, LSHI_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
+								selectImm <= 1'b1;
+								Imm <= {12'b000000000000, inst[3:0]};
 							end
 						RSH_1: begin
-								op = {SHIFT, RSH_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {SHIFT, RSH_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						RSHI_1: begin
-								op = {SHIFT, RSHI_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
-								selectImm = 1'b1;
-								Imm = {12'b000000000000, inst[3:0]};
+								op <= {SHIFT, RSHI_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
+								selectImm <= 1'b1;
+								Imm <= {12'b000000000000, inst[3:0]};
 							end
 						ALSH_1: begin
-								op = {SHIFT, ALSH_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {SHIFT, ALSH_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						ARSH_1: begin
-								op = {SHIFT, ARSH_1};
-								readRegA = inst[11:8];
-								readRegB = inst[3:0];
-								loadReg = inst[11:8];
+								op <= {SHIFT, ARSH_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[3:0];
+								loadReg <= inst[11:8];
 							end
 						default: begin
-								op = {RTYPE, OR_1};
-								readRegA = inst[11:8];
-								readRegB = inst[11:8];
-								loadReg = inst[11:8];
+								op <= {RTYPE, OR_1};
+								readRegA <= inst[11:8];
+								readRegB <= inst[11:8];
+								loadReg <= inst[11:8];
 							end
 					endcase
 				end
@@ -297,57 +303,59 @@ module decoder(
 						LOAD_1: begin
 							// LOAD takes the value stored in mem[RAddr] and loads it into RDest
 							// where RAddr = inst[3:0] and RDest = inst[11:8]
-							op = {RTYPE, OR_1};
-							readRegA = inst[3:0];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
+							op <= {RTYPE, OR_1};
+							readRegA <= inst[3:0];
+							readRegB <= inst[3:0];
+							loadReg <= inst[11:8];
 							// selectResult selects the value out of the memory
-							selectResult = 1'b0;
+							selectResult <= 1'b1;
+							//e1 <= 1'b1;
 						end
 						STOR_1: begin
 							// STOR takes the value stored in RDest and stores it in mem[RAddr]
 							// where RAddr = inst[11:8] and RDest = inst[3:0]
-							op = {RTYPE, MOV_1};
-							readRegA = inst[11:8];
-							readRegB = inst[3:0];
-							loadReg = inst[11:8];
-							w1 = 1'b1;
+							op <= {RTYPE, OR_1};
+							readRegA <= inst[11:8];
+							readRegB <= inst[3:0];
+							loadReg <= inst[11:8];
+							w1 <= 1'b1;
+							//e1 <= 1'b1;
 						end
 						JCOND: begin
 							// These should all essentially be the same
 							case (inst[3:0])
 								JUC: begin
 									// get the address out of inst[11:8] and throw it up to the PC counter
-									op = {RTYPE, OR_1};
-									readRegA = inst[11:8];
-									readRegB = inst[11:8];
-									loadReg = inst[11:8];
+									op <= {RTYPE, OR_1};
+									readRegA <= inst[11:8];
+									readRegB <= inst[11:8];
+									loadReg <= inst[11:8];
 								end
 								BEQ: begin
 									// Check the flags after a CMP operation
 									// get the address out of inst[11:8] and throw it up the PC counter if
-									// Z = 1
+									// Z <= 1
 								
-									op = {RTYPE, OR_1};
-									readRegA = inst[11:8];
-									readRegB = inst[11:8];
-									loadReg = inst[11:8];
+									op <= {RTYPE, OR_1};
+									readRegA <= inst[11:8];
+									readRegB <= inst[11:8];
+									loadReg <= inst[11:8];
 								end
 								BNEQ: begin
 									// Check the flags after a CMP operation
 									// get the address out of inst[11:8] and throw it up to the PC counter if
-									// Z = 0;
+									// Z <= 0;
 								
-									op = {RTYPE, OR_1};
-									readRegA = inst[11:8];
-									readRegB = inst[11:8];
-									loadReg = inst[11:8];
+									op <= {RTYPE, OR_1};
+									readRegA <= inst[11:8];
+									readRegB <= inst[11:8];
+									loadReg <= inst[11:8];
 								end
 								default: begin
-									op = {RTYPE, OR_1};
-									readRegA = inst[11:8];
-									readRegB = inst[11:8];
-									loadReg = inst[11:8];
+									op <= {RTYPE, OR_1};
+									readRegA <= inst[11:8];
+									readRegB <= inst[11:8];
+									loadReg <= inst[11:8];
 								end
 							endcase
 						end
@@ -355,36 +363,38 @@ module decoder(
 //							
 //						end
 						default: begin
-							op = {RTYPE, OR_1};
-							readRegA = inst[11:8];
-							readRegB = inst[11:8];
-							loadReg = inst[11:8];
+							op <= {RTYPE, OR_1};
+							readRegA <= inst[11:8];
+							readRegB <= inst[11:8];
+							loadReg <= inst[11:8];
 						end
 					endcase
 				end
 				default: begin
-					op = {RTYPE, OR_1};
-					readRegA = inst[11:8];
-					readRegB = inst[11:8];
-					loadReg = inst[11:8];
+					op <= {RTYPE, OR_1};
+					readRegA <= inst[11:8];
+					readRegB <= inst[11:8];
+					loadReg <= inst[11:8];
 				end
 			endcase
 		end
 		else begin
 			case (inst[17:16])
 				2'b11: begin
-					op = {LUI, inst[7:4]};
-					readRegA = inst[11:8];
-					readRegB = inst[11:8];
-					loadReg = inst[11:8];
-					selectImm = 1'b1;
-					Imm = inst[15:0];
+					// might be useful to always load the result into the same register so we can use
+					// all 16 bits for the LI.
+					op <= {LUI, inst[7:4]};
+					readRegA <= inst[11:8];
+					readRegB <= inst[11:8];
+					loadReg <= inst[11:8];
+					selectImm <= 1'b1;
+					Imm <= inst[15:0];
 				end
 				default: begin
-					op = {RTYPE, OR_1};
-					readRegA = inst[11:8];
-					readRegB = inst[11:8];
-					loadReg = inst[11:8];
+					op <= {RTYPE, OR_1};
+					readRegA <= inst[11:8];
+					readRegB <= inst[11:8];
+					loadReg <= inst[11:8];
 				end
 			endcase
 		end
