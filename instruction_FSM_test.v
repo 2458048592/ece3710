@@ -15,7 +15,6 @@ module instruction_FSM_test;
 	reg [4:0] _FLAGS;
 
 	// Outputs
-	wire [2:0] PS;
 	wire PC_inc;
 	wire JAddrSelect;
 	wire loadReg;
@@ -27,8 +26,6 @@ module instruction_FSM_test;
 		.CLR(CLR), 
 		.inst(inst), 
 		._FLAGS(_FLAGS),
-		.FLAGS(FLAGS),
-		.PS(PS),
 		.PC_inc(PC_inc), 
 		.JAddrSelect(JAddrSelect), 
 		.loadReg(loadReg)

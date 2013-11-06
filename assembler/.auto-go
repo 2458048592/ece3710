@@ -7,5 +7,5 @@ ruby asm.rb -v cpu_sto_test.asm
 
 
 #test the assembler
-ruby asm.rb asm_inst_test > inst.txt
-ruby asm_test.rb inst.txt 
+#ruby asm.rb asm_inst_test > inst.txt
+#ruby asm_test.rb inst.txt 

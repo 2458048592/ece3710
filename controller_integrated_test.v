@@ -93,7 +93,7 @@ module controller_integrated_test;
 		
 		inst = 16'h0232; //xor $2, $2
 		#2;
-		if(data1 != 16'b0)
+		if(data1[15:0] != 16'b0)
 				begin
 					$display("ERROR3: data1 was %0d; expected 0", data1);
 				end
@@ -103,7 +103,7 @@ module controller_integrated_test;
 		
 		inst = 16'h0212; // and $2, $2
 		#2;
-		if(data1 != 8'h2a) // 42
+		if(data1[15:0] != 8'h2a) // 42
 				begin
 					$display("ERROR3.1: data1 was %0d; expected 42", data1);
 				end
@@ -120,7 +120,7 @@ module controller_integrated_test;
 				
 		inst = 16'h0212; // and $2, $2
 		#2;
-		if(data1 != 8'h2a) // 42
+		if(data1[15:0] != 8'h2a) // 42
 				begin
 					$display("ERROR5.1: data1 was %0d; expected 42", data1);
 				end
