@@ -13,7 +13,7 @@ module decoder(
     input [17:0] inst,
     output reg [7:0] op,
 	 output reg [15:0] Imm, // Imm needs to be sign-extended or 0-extended when applicable
-	 output reg selectImm, selectResult, w1, e1,
+	 output reg selectImm, selectResult, w1, //e1,
 	 output reg [3:0] readRegA,
 	 output reg [3:0] readRegB,
 	 output reg [3:0] loadReg
@@ -91,7 +91,7 @@ module decoder(
 		selectResult <= 1'b0;
 		selectImm <= 1'b0;
 		Imm <= 16'b0000000000000000;
-		e1 <= 1'b0;
+		//e1 <= 1'b0;
 		op <= 8'b00000000;
 		readRegA <= inst[15:12];
 		readRegB <= inst[3:0];
@@ -309,7 +309,7 @@ module decoder(
 							loadReg <= inst[11:8];
 							// selectResult selects the value out of the memory
 							selectResult <= 1'b1;
-							e1 <= 1'b1;
+							//e1 <= 1'b1;
 						end
 						STOR_1: begin
 							// STOR takes the value stored in RDest and stores it in mem[RAddr]
@@ -319,7 +319,7 @@ module decoder(
 							readRegB <= inst[3:0];
 							loadReg <= inst[11:8];
 							w1 <= 1'b1;
-							e1 <= 1'b1;
+							//e1 <= 1'b1;
 						end
 						JCOND: begin
 							// These should all essentially be the same
