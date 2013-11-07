@@ -327,6 +327,7 @@ module decoder(
 						end
 						JCOND: begin
 							// These should all essentially be the same
+							memAddr <= inst[11:8];
 							case (inst[3:0])
 								JUC: begin
 									// get the address out of inst[11:8] and throw it up to the PC counter
