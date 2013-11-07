@@ -30,6 +30,10 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, PC_inc, JAddrSelect, loadReg);
 	parameter JUC = 4'b1110; // JUC jumps directly 
 	parameter BEQ = 4'b0000;
 	parameter BNEQ = 4'b0001;
+	parameter CMP_1 = 4'b0000;
+	parameter CMP_2 = 4'b1011;
+	parameter CMPI = 4'b1011;
+	parameter CMPUI = 4'b1110; // Replaces MULI
 	
 	parameter fetch = 3'b000; // fetch is the initial state, set up the address for Instruction Memory
 	parameter decode = 3'b001; // decode is the state after getting the data_out from the Instruction Memory
@@ -120,6 +124,7 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, PC_inc, JAddrSelect, loadReg);
 					CMPUI: loadReg <= 1'b0;
 					default: loadReg <= 1'b1;
 				endcase
+			end
 			load1: begin end // Probably need to set the loadReg[4] to 0 so we don't modify the Registers
 			load2: begin PC_inc <= 1'b1; loadReg <= 1'b1; end
 			stor1: begin end // Probably need to set the loadReg[4] to 0 so we don't modify the Registers
