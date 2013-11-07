@@ -111,7 +111,15 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, PC_inc, JAddrSelect, loadReg);
 		case (PS)
 			fetch: begin end // Probably need to set the loadReg[4] to 0 so we don't modify the Registers
 			decode: begin end // Probably need to set the loadReg[4] to 0 so we don't modify the Registers
-			alu: begin PC_inc <= 1'b1; loadReg <= 1'b1; end
+			alu: begin PC_inc <= 1'b1; loadReg <= 1'b1; 
+				case (inst[15:12])
+					CMP_1: begin
+						if (inst[7:4] == CMP_2) loadReg <= 1'b0;
+					end
+					CMPI: loadReg <= 1'b0;
+					CMPUI: loadReg <= 1'b0;
+					default: loadReg <= 1'b1;
+				endcase
 			load1: begin end // Probably need to set the loadReg[4] to 0 so we don't modify the Registers
 			load2: begin PC_inc <= 1'b1; loadReg <= 1'b1; end
 			stor1: begin end // Probably need to set the loadReg[4] to 0 so we don't modify the Registers
