@@ -14,6 +14,7 @@ module decoder(
     output reg [7:0] op,
 	 output reg [15:0] Imm, // Imm needs to be sign-extended or 0-extended when applicable
 	 output reg selectImm, selectResult, w1, //e1,
+	 output reg [3:0] memAddr,
 	 output reg [3:0] readRegA,
 	 output reg [3:0] readRegB,
 	 output reg [3:0] loadReg
@@ -96,6 +97,7 @@ module decoder(
 		readRegA <= inst[11:8];
 		readRegB <= inst[3:0];
 		loadReg <= inst[11:8];
+		memAddr <= 4'b1010;
 		if (inst[17:16] == 2'b00) begin
 			case (inst[15:12])
 				RTYPE: begin
@@ -304,6 +306,7 @@ module decoder(
 							// LOAD takes the value stored in mem[RAddr] and loads it into RDest
 							// where RAddr = inst[3:0] and RDest = inst[11:8]
 							op <= {RTYPE, OR_1};
+							memAddr <= inst[3:0];
 							readRegA <= inst[3:0];
 							readRegB <= inst[3:0];
 							loadReg <= inst[11:8];
@@ -315,7 +318,8 @@ module decoder(
 							// STOR takes the value stored in RDest and stores it in mem[RAddr]
 							// where RAddr = inst[11:8] and RDest = inst[3:0]
 							op <= {RTYPE, OR_1};
-							readRegA <= inst[11:8];
+							memAddr <= inst[11:8];
+							readRegA <= inst[3:0];
 							readRegB <= inst[3:0];
 							loadReg <= inst[11:8];
 							w1 <= 1'b1;

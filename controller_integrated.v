@@ -12,7 +12,7 @@ module controller_integrated(
 	output [15:0] addr1, // A[14:0] is addr1 for the memory module
 	output [15:0] data1,
 	output [4:0] FLAGS,
-	output [15:0] B, aluOut, // for debugging
+	output [15:0] A, B, aluOut, // for debugging
 	//output [3:0] readRegA, loadReg, // for debugging
 	output PC_inc, JAddrSelect
 
@@ -20,7 +20,7 @@ module controller_integrated(
 	 	 
 	wire [7:0] OP;
 	wire [15:0] Imm;
-	wire [3:0] readRegA, readRegB, loadReg; // loadReg; // readRegA, 
+	wire [3:0] readRegA, readRegB, loadReg, memAddr; // loadReg; // readRegA, 
 	wire selectImm, selectResult;
 	wire [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out;
 	reg [15:0] enWrite, reset;	
@@ -28,15 +28,18 @@ module controller_integrated(
 	
 	instruction_FSM controller( CLK, CLR, inst, FLAGS, PC_inc, JAddrSelect, LR);
 	 
-	ALU _alu(FLAGS[4], addr1, B, OP, aluOut, FLAGS[4], FLAGS[3], FLAGS[2], FLAGS[1], FLAGS[0]);
+	ALU _alu(FLAGS[4], A, B, OP, aluOut, FLAGS[4], FLAGS[3], FLAGS[2], FLAGS[1], FLAGS[0]);
 
-	decoder _decoder(inst, OP, Imm, selectImm, selectResult, w1, readRegA, readRegB, loadReg);
+	decoder _decoder(inst, OP, Imm, selectImm, selectResult, w1, memAddr, readRegA, readRegB, loadReg);
 		
 	RegFile _regfile(CLK, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1,
 							 data1, enWrite, reset, r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out);
 	
+	mux16_to_1_16bit MemSelect(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out,
+							r9out, r10out, r11out, r12out, r13out, r14out, r15out, memAddr, addr1);
+							
 	mux16_to_1_16bit ASelect(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out,
-							r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegA, addr1);
+							r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegA, A);
 	
 	mux16_to_1_16bit BSelect(r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out,
 							r9out, r10out, r11out, r12out, r13out, r14out, r15out, readRegB, RegB);

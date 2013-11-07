@@ -3,26 +3,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer:
-//
-// Create Date:   18:59:36 11/03/2013
-// Design Name:   CPU
-// Module Name:   /home/dan/Documents/xilinx_projects/CPU/CPU_test.v
-// Project Name:  CPU
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: CPU
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
 ////////////////////////////////////////////////////////////////////////////////
 
 module CPU_test;
+
+/*module CPU(
+    input CLK,
+    input CLR,
+	 output PC_inc, set_addr,
+	 output [15:0] A, B, aluOut, // for debugging
+	 output [17:0] a_din, a_dout, b_din, b_dout, // for debugging
+	 output [15:0] a_addr, b_addr, // for debugging
+	 output [4:0] FLAGS
+    );*/
 
 	// Inputs
 	reg CLK;
@@ -31,6 +24,7 @@ module CPU_test;
 	// Outputs
 	wire PC_inc;
 	wire set_addr;
+	wire [15:0] A;
 	wire [15:0] B;
 	wire [15:0] aluOut;
 	wire [17:0] a_din;
@@ -47,6 +41,7 @@ module CPU_test;
 		.CLR(CLR), 
 		.PC_inc(PC_inc), 
 		.set_addr(set_addr), 
+		.A(A),
 		.B(B), 
 		.aluOut(aluOut), 
 		.a_din(a_din), 
