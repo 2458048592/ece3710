@@ -139,7 +139,7 @@ module decoder(
 								loadReg <= inst[11:8];
 							end
 						AND_1: begin
-								op <= {RTYPE, ADD_1};
+								op <= {RTYPE, AND_1};
 								readRegA <= inst[11:8];
 								readRegB <= inst[3:0];
 								loadReg <= inst[11:8];

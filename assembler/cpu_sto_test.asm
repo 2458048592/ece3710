@@ -5,3 +5,4 @@ xor $4, $4
 load $2, $1
 addui 1, $2
 subi 10, $2
+and $2, $2
