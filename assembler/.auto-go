@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-ruby asm.rb cpu_sto_test.asm > ../../CPU/cpu_inst.mem
-ruby asm.rb -v cpu_sto_test.asm 
+ruby asm.rb cpu_test_branch.asm > ../../CPU/cpu_inst.mem
+ruby asm.rb -v cpu_test_branch.asm 
 #ruby asm.rb -v test2.asm
 
 

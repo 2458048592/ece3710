@@ -86,7 +86,7 @@ instr_bits = {
 
 # position 0 is Rsrc, position 1 is Rdest
 def get_reg( reg, pos )
-  raise "This doesn't look like a register: #{reg}" unless reg =~ /^\$\w?(\d+)_?.*?$/ 
+  raise "This doesn't look like a register: \'#{reg}\'" unless reg =~ /^\$\w?(\d+)_?.*?$/ 
   num = $1.to_i # num is register number
   num << ( pos * 8 ) 
 end
