@@ -136,11 +136,13 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, PC_inc, JAddrSelect, loadReg);
 						// Since this is a BEQ, then if the Z Flag is 1, the arguments
 						// to the CMP operation were equal
 						if (FLAGS[1] == 1'b1) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						else PC_inc <= 1'b1;
 					end
 					BNEQ: begin
 						// Since this is a BNEQ, then if the Z Flag is 0, the arguments
 						// to the CMP operation were not equal
 						if (FLAGS[1] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						else PC_inc <= 1'b1;
 					end
 					// other functionality can be added easily here to check the other flags for the GE, GT, LE, and LT
 					// Branches.
