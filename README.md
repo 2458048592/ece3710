@@ -27,4 +27,4 @@ Memory:
 
 Assembly
  * load Rdest, Raddr # First arguement is the desination reg, the second arguement is the address to pull data from
- * store Raddr, Rdest # Opposite convention from load.
+ * stor Raddr, Rdest # Opposite convention from load.
