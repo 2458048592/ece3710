@@ -115,6 +115,8 @@ IO.read( file ).split( "\n" ).each do |line|
   counter += 1
 end
 
+line_count = 0
+
 parsed.each do |data|
   inst = data[:inst]
   args = data[:args]
@@ -154,7 +156,8 @@ parsed.each do |data|
   if ($verbose and $binary)
     printf "%018b %s\n", result, data[:line]
   elsif ($verbose)
-    printf "%05x %s\n", result, data[:line]
+    printf "%x: %05x %s\n",line_count, result, data[:line]
+    line_count += 1
   elsif ($binary)
     printf "%018b\n", result
   else

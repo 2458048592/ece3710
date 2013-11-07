@@ -250,11 +250,17 @@ XOR $2, $2
 XOR $2, $2 
 XOR $2, $2 
 XOR $2, $2 
+XOR $2, $2 
+XOR $2, $2 
+XOR $2, $2 
+XOR $2, $2 
 MOVI 42, $3
 ADDI 42, $4
 SUB $3, $4
 MOVI 2, $3
 MOVI 1, $1
-CMPUI 2, $3
+CMP $1, $3
+BEQ $1
+CMPI 2, $3
 BNEQ $1
 MOVI 42, $7
