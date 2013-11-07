@@ -10,22 +10,23 @@ module controller_integrated(
 	input [17:0] inst, external_din,
 	output w1,  // w1 is writeToMemory
 	output [15:0] addr1, // A[14:0] is addr1 for the memory module
-	output [17:0] data1,
+	output [15:0] data1,
 	output [4:0] FLAGS,
 	output [15:0] B, aluOut, // for debugging
+	//output [3:0] readRegA, loadReg, // for debugging
 	output PC_inc, JAddrSelect
 
     );
 	 	 
 	wire [7:0] OP;
 	wire [15:0] Imm;
-	wire [3:0] readRegA, readRegB, loadReg;
+	wire [3:0] readRegA, readRegB, loadReg; // loadReg; // readRegA, 
 	wire selectImm, selectResult;
 	wire [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out;
 	reg [15:0] enWrite, reset;	
 	wire [15:0] RegB;
 	
-	instruction_FSM controller( CLK, CLR, inst[15:0], FLAGS, PC_inc, JAddrSelect, LR);
+	instruction_FSM controller( CLK, CLR, inst, FLAGS, PC_inc, JAddrSelect, LR);
 	 
 	ALU _alu(FLAGS[4], addr1, B, OP, aluOut, FLAGS[4], FLAGS[3], FLAGS[2], FLAGS[1], FLAGS[0]);
 

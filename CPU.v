@@ -24,7 +24,7 @@ module CPU(
 	 output PC_inc, set_addr,
 	 output [15:0] B, aluOut, // for debugging
 	 output [17:0] a_din, a_dout, b_din, b_dout, // for debugging
-	 output [14:0] a_addr, b_addr, // for debugging
+	 output [15:0] a_addr, b_addr, // for debugging
 	 output [4:0] FLAGS
     );
 	 
@@ -39,9 +39,9 @@ module CPU(
 
 	// b_addr is the output of the controller_integrated, which comes from RegA input to
 	// the ALU.
-	program_counter counter(CLK,CLR,set_addr, b_addr, PC_inc, a_addr);
-	
-	memory asm_RAM (CLK, 1'b0, a_addr, a_din, a_dout, CLK, b_wr, b_addr, b_din, b_dout);
+	program_counter counter(CLK,CLR,set_addr, b_addr[13:0], PC_inc, a_addr[13:0]);
+		
+	memory asm_RAM (CLK, 1'b0, a_addr[13:0], a_din, a_dout, CLK, b_wr, b_addr[13:0], b_din, b_dout);
 	//memory game_RAM (CLK, 1'b0, c_addr, c_din, c_dout, CLK, 1'b0, d_addr, d_din, d_dout);
 
 	/* Inputs and outputs for the controller
@@ -53,7 +53,7 @@ module CPU(
 	output [4:0] FLAGS*/
 	// PC_inc is a signal from the controller to either increment the PC or keep it the same for
 	// memory instructions
-	controller_integrated controller(CLK,CLR,a_dout,external_din,b_wr,b_addr,b_din,FLAGS,B,aluOut, PC_inc, set_addr);
+	controller_integrated controller(CLK,CLR,a_dout,b_dout,b_wr,b_addr,b_din[15:0],FLAGS,B,aluOut, PC_inc, set_addr);
 
 
 endmodule

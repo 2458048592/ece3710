@@ -14,7 +14,7 @@
 // 4 clock cycles.
 module instruction_FSM ( CLK, CLR, inst, _FLAGS, PC_inc, JAddrSelect, loadReg);
 	input CLK, CLR;
-	input [15:0] inst;
+	input [17:0] inst;
 	input [4:0] _FLAGS;
 	output reg PC_inc, JAddrSelect, loadReg;
 	
@@ -115,9 +115,8 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, PC_inc, JAddrSelect, loadReg);
 			load1: begin end // Probably need to set the loadReg[4] to 1 so we don't modify the Registers
 			load2: begin PC_inc <= 1'b1; loadReg <= 1'b1; end
 			stor1: begin end // Probably need to set the loadReg[4] to 1 so we don't modify the Registers
-			stor2: begin PC_inc <= 1'b1; loadReg <= 1'b1; end
+			stor2: begin PC_inc <= 1'b1; loadReg <= 1'b0; end
 			jump: begin
-				loadReg <= 1'b0;
 				//JAddrSelect <= 1'b1;
 				// C, L, F, Z, N
 				case (inst[3:0])
@@ -128,21 +127,20 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, PC_inc, JAddrSelect, loadReg);
 						// until the next posedge CLK
 						// Since this is a BEQ, then if the Z Flag is 1, the arguments
 						// to the CMP operation were equal
-						if (FLAGS[1] == 1'b1) begin JAddrSelect <= 1'b1; end
+						if (FLAGS[1] == 1'b1) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
 					end
 					BNEQ: begin
 						// Since this is a BNEQ, then if the Z Flag is 0, the arguments
 						// to the CMP operation were not equal
-						if (FLAGS[1] == 1'b0) begin JAddrSelect <= 1'b1; end
+						if (FLAGS[1] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
 					end
 					// other functionality can be added easily here to check the other flags for the GE, GT, LE, and LT
 					// Branches.
-					default: begin PC_inc <= 1'b1; JAddrSelect <= 1'b0; end
+					default: begin PC_inc <= 1'b1; JAddrSelect <= 1'b0; loadReg <= 1'b0; end
 				endcase
 			end
 			default: begin
 				PC_inc <= 1'b1;
-				loadReg <= 1'b0;
 			end
 		endcase
 	end

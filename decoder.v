@@ -93,9 +93,9 @@ module decoder(
 		Imm <= 16'b0000000000000000;
 		//e1 <= 1'b0;
 		op <= 8'b00000000;
-		readRegA <= inst[15:12];
+		readRegA <= inst[11:8];
 		readRegB <= inst[3:0];
-		loadReg <= inst[15:12];
+		loadReg <= inst[11:8];
 		if (inst[17:16] == 2'b00) begin
 			case (inst[15:12])
 				RTYPE: begin

@@ -37,8 +37,8 @@ module CPU_test;
 	wire [17:0] a_dout;
 	wire [17:0] b_din;
 	wire [17:0] b_dout;
-	wire [14:0] a_addr;
-	wire [14:0] b_addr;
+	wire [15:0] a_addr;
+	wire [15:0] b_addr;
 	wire [4:0] FLAGS;
 
 	// Instantiate the Unit Under Test (UUT)
