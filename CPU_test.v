@@ -20,8 +20,11 @@ module CPU_test;
 	// Inputs
 	reg CLK;
 	reg CLR;
+	reg button;
 
 	// Outputs
+	wire [6:0] seg7;
+   wire [3:0] select;
 	wire PC_inc;
 	wire set_addr;
 	wire [15:0] A;
@@ -39,8 +42,12 @@ module CPU_test;
 	CPU uut (
 		.CLK(CLK), 
 		.CLR(CLR), 
+		.button(button),
+		.seg7(seg7),
+		.select(select),
 		.PC_inc(PC_inc), 
 		.set_addr(set_addr), 
+		.divclk(divclk),
 		.A(A),
 		.B(B), 
 		.aluOut(aluOut), 
