@@ -13,19 +13,17 @@ module hTestBench;
 	reg CLR;
 
 	// Outputs
-	wire hSync;
-	wire vCntEna;
-	wire hBright;
-	wire [6:0] HA;
+	wire VCntEna;
+	wire HSync;
+	wire [9:0] HPix;
 
 	// Instantiate the Unit Under Test (UUT)
-	hVideo uut (
+	hCounter uut (
 		.CLK(CLK), 
 		.CLR(CLR), 
-		.hSync(hSync), 
-		.vCntEna(vCntEna), 
-		.hBright(hBright), 
-		.HA(HA)
+		.VCntEna(VCntEna), 
+		.HSync(HSync), 
+		.HPix(HPix)
 	);
 
 	initial begin
@@ -33,23 +31,14 @@ module hTestBench;
 		CLK = 0;
 		CLR = 0;
 
-		// Wait 10 ns for global reset to finish
-		#10;
-		
-		CLR = 1'b0;
-		#500;
-		CLR = 1'b1;
-		#51;
-		CLR = 1'b0;
-		#10000;
-			$display("Finished");
-			$finish;
+		// Wait 100 ns for global reset to finish
+		#100;
         
 		// Add stimulus here
 
 	end
+   
+	always begin CLK = ~CLK; #1; end
 	
-	always begin CLK = ~CLK; #5; end
-      
 endmodule
 

@@ -11,38 +11,47 @@ module vTestBench;
 	// Inputs
 	reg CLK;
 	reg CLR;
+	reg VCntEna;
 
 	// Outputs
-	wire vSync;
-	wire vBright;
-	wire [20:0] Vcnt;
+	wire VSync;
+	wire [9:0] VPix;
 
 	// Instantiate the Unit Under Test (UUT)
-	vVideo uut (
+	vCounter uut (
 		.CLK(CLK), 
 		.CLR(CLR), 
-		.vSync(vSync), 
-		.vBright(vBright), 
-		.Vcnt(Vcnt)
+		.VCntEna(VCntEna), 
+		.VSync(VSync), 
+		.VPix(VPix)
 	);
+	
+	integer i,j;
 
 	initial begin
 		// Initialize Inputs
 		CLK = 0;
 		CLR = 0;
-        
-		// Add stimulus here
-		CLR = 1'b1;
-		#10;
-		CLR = 1'b0;
+		VCntEna = 0;
+		i = 0;
+		j = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
 		
-		#4000000;
-		$display("Finished.");
+		for (j=0; j<60; j=j+1) begin
+			for (i=0; i<521; i=i+1) begin
+				VCntEna = 1'b1;
+				#2;
+				VCntEna = 1'b0;
+				#2;
+			end
+		end
 		$finish;
+
 	end
 	
-	always #1 CLK = ~CLK;
-	
+	always begin CLK = ~CLK; #1; end
       
 endmodule
 
