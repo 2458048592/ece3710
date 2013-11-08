@@ -21,6 +21,9 @@
 module CPU(
     input CLK,
     input CLR,
+	 input button,
+    output [6:0] seg7,
+    output [3:0] select,
 	 output PC_inc, set_addr,
 	 output [15:0] A, B, aluOut, // for debugging
 	 output [17:0] a_din, a_dout, b_din, b_dout, // for debugging
@@ -56,5 +59,7 @@ module CPU(
 	output PC_inc, JAddrSelect);*/
 	controller_integrated controller(CLK,CLR,a_dout,b_dout,b_wr,/*b_addr,*/b_addr, b_din[15:0],FLAGS, A,B,aluOut, PC_inc, set_addr);
 
+	mux2_to_1_16bit muxX(aluOut,a_addr,button,display);
+	SSD_decoder decoder(CLK, CLR, display, seg7, select);
 
 endmodule

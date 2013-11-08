@@ -4,9 +4,11 @@ require 'optparse'
 
 $verbose = false
 $binary = false
+$test = false
 OptionParser.new do |opt|
   opt.on('-v','--verbose') { |b| $verbose = b }
   opt.on('-b','--binary') { |b| $binary = b }
+  opt.on('-t','--binary') { |b| $test = b }
   opt.on('-h','--help') { puts opt; exit }
   opt.parse!
 end
@@ -86,8 +88,9 @@ instr_bits = {
 
 # position 0 is Rsrc, position 1 is Rdest
 def get_reg( reg, pos )
-  raise "This doesn't look like a register: \'#{reg}\'" unless reg =~ /^\$\w?(\d+)_?.*?$/ 
+  raise "This doesn't look like a register: \'#{reg}\'" unless reg =~ /^\$[a-z]?(\d{1,2})_?.*?$/ 
   num = $1.to_i # num is register number
+  #print "reg: #{reg}, pos #{pos} num: #{num} $1: #{$1}\n"
   num << ( pos * 8 ) 
 end
 
@@ -132,7 +135,13 @@ parsed.each do |data|
     result += get_reg( args[1], 1) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
 	when :i_type
+    #puts " args[0] = #{args[0]}"
 		result = (instr_bit & 0xf0) << ( 8 ) 
+
+    if (labels.has_key?(args[0]))
+        print "Label: #{args[0]} = #{labels[args[0]]}\n" if $verbose
+        args[0] = labels[args[0]]
+    end
 	  result += (args[0].to_i & 0xff) # append 8 bit immediate value 
     result += get_reg( args[1], 1) # append Rdest	
   when:i_shift
@@ -155,8 +164,10 @@ parsed.each do |data|
    
   if ($verbose and $binary)
     printf "%018b %s\n", result, data[:line]
+  elsif ($verbose and $test)
+    printf "%016b %s\n", result, data[:line]
   elsif ($verbose)
-    printf "%x: %05x %s\n",line_count, result, data[:line]
+    printf "%d(%x): %05x %s\n",line_count,line_count, result, data[:line]
     line_count += 1
   elsif ($binary)
     printf "%018b\n", result

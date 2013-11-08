@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-ruby asm.rb cpu_test_branch.asm > ../../CPU/cpu_inst.mem
-ruby asm.rb -v cpu_test_branch.asm 
+ruby asm.rb demo.asm  > ../../CPU/cpu_inst.mem
+ruby asm.rb -v demo.asm  
 #ruby asm.rb -v test2.asm
 
 
 #test the assembler
-#ruby asm.rb asm_inst_test > inst.txt
+#ruby asm.rb -tv asm_inst_test.asm > inst.txt
 #ruby asm_test.rb inst.txt 

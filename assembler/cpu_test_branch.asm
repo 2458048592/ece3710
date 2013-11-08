@@ -263,4 +263,4 @@ CMP $1, $3
 BEQ $1
 CMPI 2, $3
 BNEQ $1
-MOVI 42, $7
+MOVI 107, $7
