@@ -12,10 +12,11 @@
 // 2 clock cycles before they can change.  Lifecycle for a non-memory
 // instruction is 3 clock cycles.  Lifecycles for a memory instruction is
 // 4 clock cycles.
-module instruction_FSM ( CLK, CLR, inst, _FLAGS, PC_inc, JAddrSelect, loadReg);
+module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loadReg);
 	input CLK, CLR;
 	input [17:0] inst;
-	input [4:0] _FLAGS;
+	input [4:0] _FLAGS; // Input flags from the ALU
+	output [4:0] FLAGS; // stored output flags for use with later Instructions
 	output reg PC_inc, JAddrSelect, loadReg;
 	
 	parameter MEM = 4'b0100;
