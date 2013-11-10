@@ -134,8 +134,7 @@ parsed.each do |data|
     result += get_reg( args[0], 0) # append Rsrc
     result += get_reg( args[1], 1) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
-<<<<<<< HEAD
-	when :i_type
+    when :i_type
     #puts " args[0] = #{args[0]}"
 		result = (instr_bit & 0xf0) << ( 8 ) 
 
@@ -144,11 +143,6 @@ parsed.each do |data|
         args[0] = labels[args[0]]
     end
 	  result += (args[0].to_i & 0xff) # append 8 bit immediate value 
-=======
-  when :i_type
-    result = (instr_bit & 0xf0) << ( 8 ) 
-    result += (args[0].to_i & 0xff) # append 8 bit immediate value 
->>>>>>> d3d398eb85d1182cb38e570045390a95f63bf6a7
     result += get_reg( args[1], 1) # append Rdest	
   when:i_shift
     result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
