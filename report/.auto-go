@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+pdflatex cpu_report.tex
+evince cpu_report.pdf

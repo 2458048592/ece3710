@@ -1,0 +1,47 @@
+\contentsline {section}{\numberline {1}Overview}{4}
+\contentsline {section}{\numberline {2}Memory}{4}
+\contentsline {subsection}{\numberline {2.1}Design}{4}
+\contentsline {subsection}{\numberline {2.2}Implementation}{4}
+\contentsline {subsection}{\numberline {2.3}Troubleshooting}{6}
+\contentsline {section}{\numberline {3}Instruction FSM}{6}
+\contentsline {subsection}{\numberline {3.1}Design}{6}
+\contentsline {subsection}{\numberline {3.2}Implementation}{6}
+\contentsline {subsection}{\numberline {3.3}Troubleshooting}{7}
+\contentsline {section}{\numberline {4}Decoder}{8}
+\contentsline {subsection}{\numberline {4.1}Design}{8}
+\contentsline {subsection}{\numberline {4.2}Implementation}{8}
+\contentsline {subsection}{\numberline {4.3}Troubleshooting}{9}
+\contentsline {section}{\numberline {5}Program Counter}{9}
+\contentsline {subsection}{\numberline {5.1}Design}{9}
+\contentsline {subsection}{\numberline {5.2}Implementation}{9}
+\contentsline {subsection}{\numberline {5.3}Troubleshooting}{10}
+\contentsline {section}{\numberline {6}CPU Datapath}{10}
+\contentsline {subsection}{\numberline {6.1}Design}{10}
+\contentsline {subsection}{\numberline {6.2}Implementation}{10}
+\contentsline {subsection}{\numberline {6.3}Troubleshooting}{10}
+\contentsline {section}{\numberline {7}Synthesis Results}{10}
+\contentsline {subsection}{\numberline {7.1}Memory}{10}
+\contentsline {subsection}{\numberline {7.2}Instruction FSM}{11}
+\contentsline {subsection}{\numberline {7.3}Decoder}{11}
+\contentsline {subsection}{\numberline {7.4}Program Counter}{11}
+\contentsline {section}{\numberline {A}Memory}{12}
+\contentsline {subsection}{\numberline {A.1}Module}{12}
+\contentsline {subsection}{\numberline {A.2}FSM}{12}
+\contentsline {subsection}{\numberline {A.3}Memory Load test}{13}
+\contentsline {subsection}{\numberline {A.4}Memory test}{14}
+\contentsline {section}{\numberline {B}Controller (Decoder and FSM)}{16}
+\contentsline {subsection}{\numberline {B.1}Instruction FSM Module}{16}
+\contentsline {subsection}{\numberline {B.2}Controller Module}{18}
+\contentsline {subsection}{\numberline {B.3}Decoder Module}{19}
+\contentsline {subsection}{\numberline {B.4}Controller Test}{23}
+\contentsline {subsection}{\numberline {B.5}Instruction FSM Test}{25}
+\contentsline {subsection}{\numberline {B.6}Decoder Test}{26}
+\contentsline {section}{\numberline {C}Program Counter}{27}
+\contentsline {subsection}{\numberline {C.1}Module}{27}
+\contentsline {subsection}{\numberline {C.2}Test}{28}
+\contentsline {section}{\numberline {D}CPU}{28}
+\contentsline {subsection}{\numberline {D.1}Module}{28}
+\contentsline {subsection}{\numberline {D.2}Test}{30}
+\contentsline {section}{\numberline {E}Assembly Test Code}{31}
+\contentsline {subsection}{\numberline {E.1}Load and Store}{31}
+\contentsline {subsection}{\numberline {E.2}Demo Code}{31}
