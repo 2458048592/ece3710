@@ -52,7 +52,7 @@ module memory_FSM_fib(
 	// Output 
 	always@(*) begin
 		case(PS) 
-			State31 : begin
+			State16 : begin
 				w0 = 0;
 				w1 = 0;
 				addr0 = {ext_input[4:0], 10'b0000000000};
@@ -98,22 +98,8 @@ module memory_FSM_fib(
 			State13 : NS = State14;
 			State14 : NS = State15;
 			State15 : NS = State16;
-			State16 : NS = State17;
-			State17 : NS = State18;
-			State18 : NS = State19;
-			State19 : NS = State20;
-			State20 : NS = State21;
-			State21 : NS = State22;
-			State22 : NS = State23;
-			State23 : NS = State24;
-			State24 : NS = State25;
-			State25 : NS = State26;
-			State26 : NS = State27;
-			State27 : NS = State28;
-			State28 : NS = State29;
-			State29 : NS = State30;
-			State30 : NS = State31;
-			State31 : NS = State31;
+			State16 : NS = State16;
+			
 			default : NS = State0;
 		endcase
 

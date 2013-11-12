@@ -3,6 +3,7 @@
 \usepackage{lipsum}
 \usepackage{verbatim}
 \usepackage{listings}
+\usepackage{rotating}
 \usepackage[titletoc]{appendix}
 \usepackage[left=2.5cm,top=3cm,right=2.5cm,bottom=3cm,bindingoffset=0.5cm]{geometry}
 \title{\Huge \textbf{CPU Control} \\ \normalsize \it{Memory Interface and CPU Control \\ Fetch + Decode + Control + Datapath integration}} 
@@ -118,9 +119,72 @@ The implementation of our CPU was instantiating modules and connecting them toge
 
 
 \subsection{Troubleshooting}
-Since the CPU datapath was relatively simple in design, we did not have any significant issues. We did however need to double check which wires we tied into each module. 
+Since the CPU datapath was relatively simple in design, we did not have any significant issues. We did however need to double check which wires we tied into each module. Refer to appendix \ref{test:demo} for the assembly program used to test all phases required for the lab. 
 
 
+\section{ Waveforms of test operation }
+\subsection{Phase i}
+Loads data from memory into RegFile. Refer to Figure. \ref{fig:p1}. 
+
+\subsection{Phase ii}
+Performs a series of arithmetic and logical operations. Refer to Figure. \ref{fig:p2}. 
+
+\subsection{Phase iii and Phase iv}
+Stores the result into memory and reloads the result from memory into the RegFile.  Refer to Figure. \ref{fig:p3}. 
+
+\subsection{Phase v and Phase vi}
+Performs arithmetic to set flags and uses flags to perform branches. We implemented a loop that calls a method that displays the numbers 1 to 5, each iteration. Refer to Figure. \ref{fig:p4}. 
+
+\subsection{Phase vii}
+Writes the result into memory and displays the result. Refer to Figure. \ref{fig:p5}. 
+
+\begin{center}
+\begin{sidewaysfigure}
+\caption{Load data from memory into RegFile}
+\makebox[\textwidth]{\includegraphics[width=\paperwidth]{waveforms/load_store.png}}
+\label{fig:p1}
+\end{sidewaysfigure} 
+\end{center}
+
+\begin{center}
+\begin{sidewaysfigure}
+\caption{Performs a series of arithmetic and logical operations}
+\makebox[\textwidth]{\includegraphics[width=\paperwidth]{waveforms/arithmetic.png}}
+\label{fig:p2}
+\end{sidewaysfigure} 
+\end{center}
+
+\begin{center}
+\begin{sidewaysfigure}
+\caption{Stores the result into memory and reloads the result from memory into the RegFile. }
+\makebox[\textwidth]{\includegraphics[width=\paperwidth]{waveforms/load_store2.png}}
+\label{fig:p3}
+\end{sidewaysfigure} 
+\end{center}
+
+\begin{center}
+\begin{sidewaysfigure}
+\caption{Performs arithmetic to set flags and uses flags to perform branches.}
+\makebox[\textwidth]{\includegraphics[width=\paperwidth]{waveforms/loop_setflags.png}}
+\label{fig:p4}
+\end{sidewaysfigure} 
+\end{center}
+
+\begin{center}
+\begin{sidewaysfigure}
+\caption{Perform a series of arithmetic and logical operations}
+\makebox[\textwidth]{\includegraphics[width=\paperwidth]{waveforms/branch_show.png}}
+\label{fig:p5}
+\end{sidewaysfigure} 
+\end{center}
+
+\section{Conclusion}
+The results of Lab 3 and Lab 4 were that we were able to run our own assembly programs on our CPU. We found several errors as we were testing, which we were able to correct. It would have been near impossible to test the CPU without the different components seperated into different modules. The combination of all the modules formed a complex design, which could perform interesting operations. The CPU successfully running a program we wrote was very exciting and encouraging. 
+
+
+\newpage
+\appendixname
+\appendix
 \section{Synthesis Results}
 \subsection{Memory}
 \begin{lstlisting}
@@ -177,10 +241,6 @@ Synthesizing Unit <program_counter>.
     inferred  14 D-type flip-flop(s).
     inferred   1 Multiplexer(s).
 \end{lstlisting}
-
-\newpage
-\appendixname
-\appendix
 \section{Memory}
 \subsection{Module}
 \tiny \verbatiminput{../memory.v}
@@ -217,6 +277,7 @@ Synthesizing Unit <program_counter>.
 \subsection{Load and Store}
 \tiny \verbatiminput{../assembler/cpu_sto_test.asm}
 \subsection{Demo Code}
+\label{test:demo}
 \tiny \verbatiminput{../assembler/demo.asm}
 
 \end{document}
