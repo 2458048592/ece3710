@@ -15,12 +15,13 @@ module controller_integrated(
 	output [15:0] A, B, aluOut, // for debugging
 	//output [3:0] readRegA, loadReg, // for debugging
 	output PC_inc, JAddrSelect,
-	output [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out
+	output [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out,
+	output [3:0] readRegA, readRegB, loadReg, memAddr
 	 );
 	 	 
 	wire [7:0] OP;
 	wire [15:0] Imm;
-	wire [3:0] readRegA, readRegB, loadReg, memAddr; // loadReg; // readRegA, 
+	//wire [3:0] readRegA, readRegB, loadReg, memAddr; // loadReg; // readRegA, 
 	wire selectImm, selectResult;
 	//output [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out;
 	reg [15:0] enWrite, reset;	

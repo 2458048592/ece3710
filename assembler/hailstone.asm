@@ -16,24 +16,28 @@ XOR $13, $13
 XOR $14, $14
 XOR $15, $15
 # 2. Set up an interesting set of numbers to perform the hailstone sequence
-addi 27, $0
+addi 4, $0
 movi 63, $4
 lshi 8, $4
-addi 255, $4
+addui 255, $4
+stor $4, $0
+XOR $0, $0
+addi 27, $0
+subi 1, $4
 stor $4, $0
 XOR $0, $0
 addi 42, $0
 subi 1, $4
 stor $4, $0
 XOR $0, $0
-addi 255, $0
+addui 255, $0
 subi 1, $4
 stor $4, $0
 XOR $0, $0
 addi 127, $0
 subi 1, $4
 stor $4, $0
-load $0, $4
+load $4, $0
 # 3. loop start
 Loop: movi CheckAddress, $15
 cmpi 1, $0
@@ -55,7 +59,7 @@ movi Loop, $15
 JUC $15
 CheckAddress: movi 63, $0
 lshi 8, $0
-addi 255, $0
+addui 255, $0
 movi Start, $15 # We've reached the end of the Hailstone sequence for
 cmp $0, $4		# the number, so see if we've reached the last of our
 beq $15			# interesting numbers

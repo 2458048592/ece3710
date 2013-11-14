@@ -4,10 +4,13 @@
 // Engineer: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module VGA2( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, RGB_out, HSync, VSync );
+module VGA2( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, readRegA, readRegB, loadReg, memAddr, 
+	data_addr, data_in, A, B, RGB_out, HSync, VSync );
 	input CLK, CLR;
 	input [17:0] inst;
 	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
+	input [3:0] readRegA, readRegB, loadReg, memAddr;
+	input [15:0] data_addr, data_in, A, B;
 	output [7:0] RGB_out;
 	output HSync, VSync;
 	//output [9:0] HPix, VPix;
@@ -25,7 +28,8 @@ module VGA2( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r
 	//pixelGen2 _pixelGen( CLK, CLR, maxH, maxV, HPix, VPix, RGB_out );
 	//pixelGen3 _pixelGen( CLK, CLR, HPix, VPix, RGB_out );
 	wire [9:0] HPix, VPix;
-	pixelGen3 _pixelGen( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, HPix, VPix, RGB_out );
+	pixelGen3 _pixelGen( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, HPix, VPix, RGB_out );
 	//pixelGen4 _pixelGen( CLK, CLR, maxH, maxV, HPix, VPix, RGB_out, addr1, addr2, d_out1, d_out2 );
 	
 	always @ (posedge CLK) begin
@@ -48,10 +52,12 @@ endmodule
 // 4096 memory addresses for this video memory
 // 164 for the alphabet as written, so if we start at address 256,
 // we stop at 1875
-module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, HPix, VPix, RGB_out );
+module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, HPix, VPix, RGB_out );
 	input CLK, CLR;
 	input [17:0] inst;
-	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
+	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, data_addr, data_in, A, B;
+	input [3:0] readRegA, readRegB, loadReg, memAddr;
 	input [9:0] HPix, VPix;
 	output reg [7:0] RGB_out;
 
@@ -105,304 +111,230 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 	reg [5:0] val1, val2, val3, val4, val5;
 	
 	always @ (*) begin
-		case (count)
-			1: begin
+		if (count == 1 || count == 2) begin
 				val1 = inst[17:16] + 1'b1;
 				val2 = inst[15:12] + 1'b1;
 				val3 = inst[11:8] + 1'b1;
 				val4 = inst[7:4] + 1'b1;
-				val5 = inst[3:0] + 1'b1;
-			end
-			2: begin
-				val1 = inst[17:16] + 1'b1;
-				val2 = inst[15:12] + 1'b1;
-				val3 = inst[11:8] + 1'b1;
-				val4 = inst[7:4] + 1'b1;
-				val5 = inst[3:0] + 1'b1;
-			end
-			3: begin
+				val5 = inst[3:0] + 1'b1;			
+		end
+		else if (count == 3 || count == 4) begin
 				val1 = 1'b0;
 				val2 = r0[15:12] + 1'b1;
 				val3 = r0[11:8] + 1'b1;
 				val4 = r0[7:4] + 1'b1;
 				val5 = r0[3:0] + 1'b1;
-			end
-			4: begin
-				val1 = 1'b0;
-				val2 = r0[15:12] + 1'b1;
-				val3 = r0[11:8] + 1'b1;
-				val4 = r0[7:4] + 1'b1;
-				val5 = r0[3:0] + 1'b1;
-			end
-			5: begin
+		end
+		else if (count == 5 || count == 6) begin
 				val1 = 1'b0;
 				val2 = r1[15:12] + 1'b1;
 				val3 = r1[11:8] + 1'b1;
 				val4 = r1[7:4] + 1'b1;
 				val5 = r1[3:0] + 1'b1;
-			end
-			6: begin
-				val1 = 1'b0;
-				val2 = r1[15:12] + 1'b1;
-				val3 = r1[11:8] + 1'b1;
-				val4 = r1[7:4] + 1'b1;
-				val5 = r1[3:0] + 1'b1;
-			end
-			7: begin
+		end
+		else if (count == 7 || count == 8) begin
 				val1 = 1'b0;
 				val2 = r2[15:12] + 1'b1;
 				val3 = r2[11:8] + 1'b1;
 				val4 = r2[7:4] + 1'b1;
 				val5 = r2[3:0] + 1'b1;
-			end
-			8: begin
-				val1 = 1'b0;
-				val2 = r2[15:12] + 1'b1;
-				val3 = r2[11:8] + 1'b1;
-				val4 = r2[7:4] + 1'b1;
-				val5 = r2[3:0] + 1'b1;
-			end
-			9: begin
+		end
+		else if (count == 9 || count == 10) begin
 				val1 = 1'b0;
 				val2 = r3[15:12] + 1'b1;
 				val3 = r3[11:8] + 1'b1;
 				val4 = r3[7:4] + 1'b1;
 				val5 = r3[3:0] + 1'b1;
-			end
-			10: begin
-				val1 = 1'b0;
-				val2 = r3[15:12] + 1'b1;
-				val3 = r3[11:8] + 1'b1;
-				val4 = r3[7:4] + 1'b1;
-				val5 = r3[3:0] + 1'b1;
-			end
-			11: begin
+		end
+		else if (count == 11 || count == 12) begin
 				val1 = 1'b0;
 				val2 = r4[15:12] + 1'b1;
 				val3 = r4[11:8] + 1'b1;
 				val4 = r4[7:4] + 1'b1;
 				val5 = r4[3:0] + 1'b1;
-			end
-			12: begin
-				val1 = 1'b0;
-				val2 = r4[15:12] + 1'b1;
-				val3 = r4[11:8] + 1'b1;
-				val4 = r4[7:4] + 1'b1;
-				val5 = r4[3:0] + 1'b1;
-			end
-			13: begin
+		end
+		else if (count == 13 || count == 14) begin
 				val1 = 1'b0;
 				val2 = r5[15:12] + 1'b1;
 				val3 = r5[11:8] + 1'b1;
 				val4 = r5[7:4] + 1'b1;
 				val5 = r5[3:0] + 1'b1;
-			end
-			14: begin
-				val1 = 1'b0;
-				val2 = r5[15:12] + 1'b1;
-				val3 = r5[11:8] + 1'b1;
-				val4 = r5[7:4] + 1'b1;
-				val5 = r5[3:0] + 1'b1;
-			end
-			15: begin
+		end
+		else if (count == 15 || count == 16) begin
 				val1 = 1'b0;
 				val2 = r6[15:12] + 1'b1;
 				val3 = r6[11:8] + 1'b1;
 				val4 = r6[7:4] + 1'b1;
 				val5 = r6[3:0] + 1'b1;
-			end
-			16: begin
-				val1 = 1'b0;
-				val2 = r6[15:12] + 1'b1;
-				val3 = r6[11:8] + 1'b1;
-				val4 = r6[7:4] + 1'b1;
-				val5 = r6[3:0] + 1'b1;
-			end
-			17: begin
+		end
+		else if (count == 17 || count == 18) begin
 				val1 = 1'b0;
 				val2 = r7[15:12] + 1'b1;
 				val3 = r7[11:8] + 1'b1;
 				val4 = r7[7:4] + 1'b1;
 				val5 = r7[3:0] + 1'b1;
-			end
-			18: begin
-				val1 = 1'b0;
-				val2 = r7[15:12] + 1'b1;
-				val3 = r7[11:8] + 1'b1;
-				val4 = r7[7:4] + 1'b1;
-				val5 = r7[3:0] + 1'b1;
-			end
-			19: begin
+		end
+		else if (count == 19 || count == 20) begin
 				val1 = 1'b0;
 				val2 = r8[15:12] + 1'b1;
 				val3 = r8[11:8] + 1'b1;
 				val4 = r8[7:4] + 1'b1;
 				val5 = r8[3:0] + 1'b1;
-			end
-			20: begin
-				val1 = 1'b0;
-				val2 = r8[15:12] + 1'b1;
-				val3 = r8[11:8] + 1'b1;
-				val4 = r8[7:4] + 1'b1;
-				val5 = r8[3:0] + 1'b1;
-			end
-			21: begin
+		end
+		else if (count == 21 || count == 22) begin
 				val1 = 1'b0;
 				val2 = r9[15:12] + 1'b1;
 				val3 = r9[11:8] + 1'b1;
 				val4 = r9[7:4] + 1'b1;
 				val5 = r9[3:0] + 1'b1;
-			end
-			22: begin
-				val1 = 1'b0;
-				val2 = r9[15:12] + 1'b1;
-				val3 = r9[11:8] + 1'b1;
-				val4 = r9[7:4] + 1'b1;
-				val5 = r9[3:0] + 1'b1;
-			end
-			23: begin
+		end
+		else if (count == 23 || count == 24) begin
 				val1 = 1'b0;
 				val2 = r10[15:12] + 1'b1;
 				val3 = r10[11:8] + 1'b1;
 				val4 = r10[7:4] + 1'b1;
 				val5 = r10[3:0] + 1'b1;
-			end
-			24: begin
-				val1 = 1'b0;
-				val2 = r10[15:12] + 1'b1;
-				val3 = r10[11:8] + 1'b1;
-				val4 = r10[7:4] + 1'b1;
-				val5 = r10[3:0] + 1'b1;
-			end
-			25: begin
+		end
+		else if (count == 25 || count == 26) begin
 				val1 = 1'b0;
 				val2 = r11[15:12] + 1'b1;
 				val3 = r11[11:8] + 1'b1;
 				val4 = r11[7:4] + 1'b1;
 				val5 = r11[3:0] + 1'b1;
-			end
-			26: begin
-				val1 = 1'b0;
-				val2 = r11[15:12] + 1'b1;
-				val3 = r11[11:8] + 1'b1;
-				val4 = r11[7:4] + 1'b1;
-				val5 = r11[3:0] + 1'b1;
-			end
-			27: begin
+		end
+		else if (count == 27 || count == 28) begin
 				val1 = 1'b0;
 				val2 = r12[15:12] + 1'b1;
 				val3 = r12[11:8] + 1'b1;
 				val4 = r12[7:4] + 1'b1;
 				val5 = r12[3:0] + 1'b1;
-			end
-			28: begin
-				val1 = 1'b0;
-				val2 = r12[15:12] + 1'b1;
-				val3 = r12[11:8] + 1'b1;
-				val4 = r12[7:4] + 1'b1;
-				val5 = r12[3:0] + 1'b1;
-			end
-			29: begin
+		end
+		else if (count == 29 || count == 30) begin
 				val1 = 1'b0;
 				val2 = r13[15:12] + 1'b1;
 				val3 = r13[11:8] + 1'b1;
 				val4 = r13[7:4] + 1'b1;
 				val5 = r13[3:0] + 1'b1;
-			end
-			30: begin
-				val1 = 1'b0;
-				val2 = r13[15:12] + 1'b1;
-				val3 = r13[11:8] + 1'b1;
-				val4 = r13[7:4] + 1'b1;
-				val5 = r13[3:0] + 1'b1;
-			end
-			31: begin
+		end
+		else if (count == 31 || count == 32) begin
 				val1 = 1'b0;
 				val2 = r14[15:12] + 1'b1;
 				val3 = r14[11:8] + 1'b1;
 				val4 = r14[7:4] + 1'b1;
 				val5 = r14[3:0] + 1'b1;
-			end
-			32: begin
-				val1 = 1'b0;
-				val2 = r14[15:12] + 1'b1;
-				val3 = r14[11:8] + 1'b1;
-				val4 = r14[7:4] + 1'b1;
-				val5 = r14[3:0] + 1'b1;
-			end
-			33: begin
+		end
+		else if (count == 33 || count == 34) begin
 				val1 = 1'b0;
 				val2 = r15[15:12] + 1'b1;
 				val3 = r15[11:8] + 1'b1;
 				val4 = r15[7:4] + 1'b1;
 				val5 = r15[3:0] + 1'b1;
-			end
-			34: begin
-				val1 = 1'b0;
-				val2 = r15[15:12] + 1'b1;
-				val3 = r15[11:8] + 1'b1;
-				val4 = r15[7:4] + 1'b1;
-				val5 = r15[3:0] + 1'b1;
-			end
-			default: begin
+		end
+		else if (count == 39 || count == 40) begin
+			val1 = 1'b0;
+			val2 = data_addr[15:12] + 1'b1;
+			val3 = data_addr[11:8] + 1'b1;
+			val4 = data_addr[7:4] + 1'b1;
+			val5 = data_addr[3:0] + 1'b1;
+		end
+		else if (count == 41 || count == 42) begin
+			val1 = 1'b0;
+			val2 = A[15:12] + 1'b1;
+			val3 = A[11:8] + 1'b1;
+			val4 = A[7:4] + 1'b1;
+			val5 = A[3:0] + 1'b1;
+		end
+		else if (count == 43 || count == 44) begin
+			val1 = 1'b0;
+			val2 = B[15:12] + 1'b1;
+			val3 = B[11:8] + 1'b1;
+			val4 = B[7:4] + 1'b1;
+			val5 = B[3:0] + 1'b1;
+		end
+		else if (count == 45 || count == 46) begin
+			val1 = 1'b0;
+			val2 = data_in[15:12] + 1'b1;
+			val3 = data_in[11:8] + 1'b1;
+			val4 = data_in[7:4] + 1'b1;
+			val5 = data_in[3:0] + 1'b1;
+		end
+		else begin
 				val1 = 0;
 				val2 = 0;
 				val3 = 0;
 				val4 = 0;
 				val5 = 0;
-			end
-		endcase
+		end
 	end
 	
 	always @ (*) begin
 		if (VPix == 0) begin
 			w1 = 1;
-			if (count % 2 == 1) begin
-				d_in1 = {val1, val2, val3};
+			if (count < 35 || (count >= 39 && count < 47)) begin
+				if (count % 2 == 1) begin
+					d_in1 = {val1, val2, val3};
+				end
+				else begin
+					d_in1 = {val4, val5, 6'b0};
+				end
 			end
-			else begin
-				d_in1 = {val4, val5, 6'b0};
-			end
+			else if (count == 35) d_in1 = { readRegA + 1'b1,12'b0};
+			else if (count == 36) d_in1 = { readRegB + 1'b1, 12'b0};
+			else if (count == 37) d_in1 = { loadReg + 1'b1, 12'b0};
+			else if (count == 38) d_in1 = { memAddr + 1'b1, 12'b0};
+			else d_in1 = 18'b0;
 			// when HPix or VPix is 0, we can safely write to the memory
 			// Instruction should be written at address 314
 			// R0 should be written at 341
 			// R1 should be written at 368
 			// so add 27 to the previous register to display the values
 			case (count)
-				1: addr1 = 314;
-				2: addr1 = 315;
-				3: addr1 = 341;
-				4: addr1 = 342;
-				5: addr1 = 368;
-				6: addr1 = 369;
-				7: addr1 = 395;
-				8: addr1 = 396;
-				9: addr1 = 422;
+				1: addr1 = 314; // Inst display addresses.
+				2: addr1 = 315; // Display decoded instruction at 318\
+				3: addr1 = 341; // r0 display addresses
+				4: addr1 = 342; 
+				5: addr1 = 368; // r1 display addresses
+				6: addr1 = 369; 
+				7: addr1 = 395; // r2 display addresses
+				8: addr1 = 396; 
+				9: addr1 = 422; // r3 display addresses
 				10: addr1 = 423;
-				11: addr1 = 449;
-				12: addr1 = 450;
-				13: addr1 = 476;
-				14: addr1 = 477;
-				15: addr1 = 503;
+				11: addr1 = 449; // r4 display addresses
+				12: addr1 = 450; 
+				13: addr1 = 476; // r5 display addresses
+				14: addr1 = 477; 
+				15: addr1 = 503; // r6 display addresses
 				16: addr1 = 504;
-				17: addr1 = 530;
+				17: addr1 = 530; // r7 display addresses
 				18: addr1 = 531;
-				19: addr1 = 557;
+				19: addr1 = 557; // r8 display addresses
 				20: addr1 = 558;
-				21: addr1 = 584;
+				21: addr1 = 584; // r9 display addresses
 				22: addr1 = 585;
-				23: addr1 = 611;
+				23: addr1 = 611; // r10 display addresses
 				24: addr1 = 612;
-				25: addr1 = 638;
+				25: addr1 = 638; // r11 display addresses
 				26: addr1 = 639;
-				27: addr1 = 665;
+				27: addr1 = 665; // r12 display addresses
 				28: addr1 = 666;
-				29: addr1 = 692;
+				29: addr1 = 692; // r13 display addresses
 				30: addr1 = 693;
-				31: addr1 = 719;
+				31: addr1 = 719; // r14 display addresses
 				32: addr1 = 720;
-				33: addr1 = 746;
-				34: addr1 = 747;
+				33: addr1 = 746; // r15 display addresses
+				34: addr1 = 747; 
+				35: addr1 = 348; // Display RegA at 345.  Display RegA info at 348
+				36: addr1 = 375; // Display RegB at 372.  Display RegB info at 375
+				37: addr1 = 402; // Display loadReg at 399.  Display loadReg info at 402
+				38: addr1 = 429; // Display memAddr at 426.  Display memAddr info at 429
+				39: addr1 = 482; // Display addr1 at 480.  Display addr1 info at 482
+				40: addr1 = 483;
+				41: addr1 = 352; // Display ValA at 350.  Display ValA info at 352
+				42: addr1 = 353;
+				43: addr1 = 379; // Display ValB at 377.  Display ValB info at 379
+				44: addr1 = 380;
+				45: addr1 = 487; // Display data1 at 485.  Display data1 info at 487
+				46: addr1 = 488;
 				default: addr1 = 1875;
 			endcase
 		end
@@ -430,7 +362,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 		if (CLR) begin count = 0; end
 		else begin
 			if (VPix == 10'b0) begin
-				if (count <= 34) begin
+				if (count <= 46) begin
 					count = count + 1'b1;
 				end
 				else begin

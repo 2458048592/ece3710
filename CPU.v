@@ -44,9 +44,11 @@ module CPU(
 //	 );
 
 	wire [4:0] FLAGS;
+	wire [3:0] readRegA, readRegB, loadReg, memAddr;
 	controller_integrated controller(regCLK,CLR,inst,data_out,b_wr, data_addr, data_in[15:0],FLAGS, A,B,aluOut, PC_inc, set_addr,
-		r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15);
+		r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, readRegA, readRegB, loadReg, memAddr);
 
-	VGA2 vga( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, RGB_out, HSync, VSync );
+	VGA2 vga( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, readRegA, readRegB,
+		loadReg, memAddr,data_addr, data_in[15:0], A, B, RGB_out, HSync, VSync );
 
 endmodule

@@ -40,7 +40,7 @@ module memory#(
 // Shared memory
 reg [DATA-1:0] mem [(2**ADDR)-1:0];
 initial begin
-	$readmemh("cpu_inst.mem", mem);
+	$readmemh("hailstone.mem", mem);
 end
 // Port A
 always @(posedge a_clk) begin
