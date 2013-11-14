@@ -1,4 +1,3 @@
-# 1. set all registers to 0
 Start: XOR $0, $0 # set register r0 to 0
 XOR $1, $1 # 
 XOR $2, $2 # ensure the rest of the registers are set to 0
@@ -15,34 +14,31 @@ XOR $12, $12
 XOR $13, $13
 XOR $14, $14
 XOR $15, $15
-# 2. Set up an interesting set of numbers to perform the hailstone sequence
-addi 4, $0
-movi 63, $4
+addui 254, $0 # Set up some interesting values and store them in memory
+movi 63, $4   # 254 is the last value to run
 lshi 8, $4
 addui 255, $4
 stor $4, $0
 XOR $0, $0
-addi 27, $0
+addui 128, $0 # 128 is the second to last value to run
 subi 1, $4
 stor $4, $0
 XOR $0, $0
-addi 42, $0
+addui 42, $0 # 42 is the third value to run
 subi 1, $4
 stor $4, $0
 XOR $0, $0
-addui 255, $0
+addui 65, $0 # 65 is the second value to run
 subi 1, $4
 stor $4, $0
 XOR $0, $0
-addi 127, $0
+addui 4, $0 # 4 is the first value to run
 subi 1, $4
 stor $4, $0
-load $4, $0
-# 3. loop start
+load $4, $0	# Load the first value
 Loop: movi CheckAddress, $15
 cmpi 1, $0
 beq $15
-# 4. We weren't at 1, so see if the bottom bit is 1
 mov $0, $1
 movi Even, $15
 lshi 15, $1
@@ -50,7 +46,7 @@ beq $15
 mov $0, $1 # We are Odd, so multiply by 3 and add 1
 lshi 2, $0
 addu $0, $1
-addi 1, $0
+addui 1, $0
 XOR $1, $1 # reset r1 to 0
 movi Loop, $15
 JUC $15
@@ -63,8 +59,7 @@ addui 255, $0
 movi Start, $15 # We've reached the end of the Hailstone sequence for
 cmp $0, $4		# the number, so see if we've reached the last of our
 beq $15			# interesting numbers
-# 5. increment address by 1
-addi 1, $4
+addui 1, $4
 load $0, $4
 movi Loop, $15
 JUC $15

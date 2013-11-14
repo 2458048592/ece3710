@@ -315,12 +315,12 @@ module decoder(
 							//e1 <= 1'b1;
 						end
 						STOR_1: begin
-							// STOR takes the value stored in RDest and stores it in mem[RAddr]
-							// where RAddr = inst[11:8] and RDest = inst[3:0]
+							// STOR takes the value stored in RSrc and stores it in mem[RAddr]
+							// where RSrc = inst[11:8] and RAddr = inst[3:0]
 							op <= {RTYPE, OR_1};
-							memAddr <= inst[11:8];
-							readRegA <= inst[3:0];
-							readRegB <= inst[3:0];
+							memAddr <= inst[3:0];
+							readRegA <= inst[11:8];
+							readRegB <= inst[11:8];
 							loadReg <= inst[11:8];
 							w1 <= 1'b1;
 							//e1 <= 1'b1;

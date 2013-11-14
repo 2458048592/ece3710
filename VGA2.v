@@ -5,12 +5,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module VGA2( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, readRegA, readRegB, loadReg, memAddr, 
-	data_addr, data_in, A, B, RGB_out, HSync, VSync );
+	data_addr, data_in, inst_addr, A, B, RGB_out, HSync, VSync );
 	input CLK, CLR;
 	input [17:0] inst;
 	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
 	input [3:0] readRegA, readRegB, loadReg, memAddr;
-	input [15:0] data_addr, data_in, A, B;
+	input [15:0] data_addr, data_in, A, B, inst_addr;
 	output [7:0] RGB_out;
 	output HSync, VSync;
 	//output [9:0] HPix, VPix;
@@ -29,7 +29,7 @@ module VGA2( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r
 	//pixelGen3 _pixelGen( CLK, CLR, HPix, VPix, RGB_out );
 	wire [9:0] HPix, VPix;
 	pixelGen3 _pixelGen( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
-		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, HPix, VPix, RGB_out );
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, HPix, VPix, RGB_out );
 	//pixelGen4 _pixelGen( CLK, CLR, maxH, maxV, HPix, VPix, RGB_out, addr1, addr2, d_out1, d_out2 );
 	
 	always @ (posedge CLK) begin
@@ -53,10 +53,10 @@ endmodule
 // 164 for the alphabet as written, so if we start at address 256,
 // we stop at 1875
 module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
-		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, HPix, VPix, RGB_out );
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, HPix, VPix, RGB_out );
 	input CLK, CLR;
 	input [17:0] inst;
-	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, data_addr, data_in, A, B;
+	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, data_addr, data_in, A, B, inst_addr;
 	input [3:0] readRegA, readRegB, loadReg, memAddr;
 	input [9:0] HPix, VPix;
 	output reg [7:0] RGB_out;
@@ -258,6 +258,13 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			val4 = data_in[7:4] + 1'b1;
 			val5 = data_in[3:0] + 1'b1;
 		end
+		else if (count == 47 || count == 48) begin
+			val1 = 1'b0;
+			val2 = inst_addr[15:12] + 1'b1;
+			val3 = inst_addr[11:8] + 1'b1;
+			val4 = inst_addr[7:4] + 1'b1;
+			val5 = inst_addr[3:0] + 1'b1;
+		end
 		else begin
 				val1 = 0;
 				val2 = 0;
@@ -270,7 +277,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 	always @ (*) begin
 		if (VPix == 0) begin
 			w1 = 1;
-			if (count < 35 || (count >= 39 && count < 47)) begin
+			if (count < 35 || (count >= 39 && count < 49)) begin
 				if (count % 2 == 1) begin
 					d_in1 = {val1, val2, val3};
 				end
@@ -289,8 +296,8 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			// R1 should be written at 368
 			// so add 27 to the previous register to display the values
 			case (count)
-				1: addr1 = 314; // Inst display addresses.
-				2: addr1 = 315; // Display decoded instruction at 318\
+				1: addr1 = 321; // Inst display addresses.
+				2: addr1 = 322; // Display decoded instruction at 318\
 				3: addr1 = 341; // r0 display addresses
 				4: addr1 = 342; 
 				5: addr1 = 368; // r1 display addresses
@@ -335,6 +342,8 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				44: addr1 = 380;
 				45: addr1 = 487; // Display data1 at 485.  Display data1 info at 487
 				46: addr1 = 488;
+				47: addr1 = 314; // Display PC at 314  Display PC info at 315
+				48: addr1 = 315;
 				default: addr1 = 1875;
 			endcase
 		end
@@ -362,7 +371,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 		if (CLR) begin count = 0; end
 		else begin
 			if (VPix == 10'b0) begin
-				if (count <= 46) begin
+				if (count <= 48) begin
 					count = count + 1'b1;
 				end
 				else begin
