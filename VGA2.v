@@ -77,6 +77,46 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 	assign w2 = 0;
 	//assign d_in1 = 0;
 	//assign d_in2 = 0;
+
+	parameter RTYPE = 4'b0000;
+	parameter ADD = 4'b0101;
+	parameter ADDU = 4'b0110;
+	parameter ADDC = 4'b0111;
+	parameter ADDCU = 4'b0100;
+	parameter SUB = 4'b1001;
+	parameter CMP = 4'b1011;
+	parameter AND = 4'b0001;		
+	parameter OR = 4'b0010;
+	parameter XOR = 4'b0011;
+	parameter NOT = 4'b1111;
+	parameter MOV = 4'b1101;
+	
+	parameter ADDI = 4'b0101;
+	parameter ADDCUI = 4'b1010;
+	parameter ADDCI = 4'b0111;
+	parameter ADDUI = 8'b0110;
+	parameter SUBI = 4'b1001;
+	parameter MOVI = 4'b1101;
+	parameter LUI = 4'b1111;
+	parameter CMPI = 4'b1011;
+	parameter CMPUI = 4'b1110;
+	
+	parameter SHIFT = 4'b1000;
+	parameter LSH = 4'b0100;
+	parameter LSHI = 4'b0000;
+	parameter RSH = 4'b1100;
+	parameter RSHI = 4'b0001;
+	parameter ALSH = 4'b0101;
+	parameter ARSH = 4'b1101;
+	
+	// MEM is the opcode, JCOND and SCOND are the secondary codes, JUC through BLE are stored in bits [3:0]
+	parameter MEM = 4'b0100;
+	parameter LOAD = 4'b0000;
+	parameter STOR = 4'b0100;
+	parameter JCOND = 4'b1100; // JCOND uses unsigned comparison for BEQ through BLT
+	parameter JUC = 4'b1110; // JUC jumps directly 
+	parameter BEQ = 4'b0000;
+	parameter BNEQ = 4'b0001;
 	
 	vidMemory vid_mem(CLK, w1, addr1, d_in1, d_out1, CLK, w2, addr2, d_in2, d_out2);
 	
@@ -110,7 +150,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 	// Remember to multiply the glyph code by 4 (since each glyph takes up
 	// 4 addresses.
 	
-	reg [5:0] val1, val2, val3, val4, val5;
+	reg [5:0] val1, val2, val3, val4, val5, val6;
 	
 	always @ (*) begin
 		if (count == 1 || count == 2) begin
@@ -118,7 +158,8 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val2 = inst[15:12] + 1'b1;
 				val3 = inst[11:8] + 1'b1;
 				val4 = inst[7:4] + 1'b1;
-				val5 = inst[3:0] + 1'b1;			
+				val5 = inst[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 3 || count == 4) begin
 				val1 = 1'b0;
@@ -126,6 +167,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r0[11:8] + 1'b1;
 				val4 = r0[7:4] + 1'b1;
 				val5 = r0[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 5 || count == 6) begin
 				val1 = 1'b0;
@@ -133,6 +175,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r1[11:8] + 1'b1;
 				val4 = r1[7:4] + 1'b1;
 				val5 = r1[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 7 || count == 8) begin
 				val1 = 1'b0;
@@ -140,6 +183,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r2[11:8] + 1'b1;
 				val4 = r2[7:4] + 1'b1;
 				val5 = r2[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 9 || count == 10) begin
 				val1 = 1'b0;
@@ -147,6 +191,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r3[11:8] + 1'b1;
 				val4 = r3[7:4] + 1'b1;
 				val5 = r3[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 11 || count == 12) begin
 				val1 = 1'b0;
@@ -154,6 +199,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r4[11:8] + 1'b1;
 				val4 = r4[7:4] + 1'b1;
 				val5 = r4[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 13 || count == 14) begin
 				val1 = 1'b0;
@@ -161,6 +207,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r5[11:8] + 1'b1;
 				val4 = r5[7:4] + 1'b1;
 				val5 = r5[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 15 || count == 16) begin
 				val1 = 1'b0;
@@ -168,6 +215,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r6[11:8] + 1'b1;
 				val4 = r6[7:4] + 1'b1;
 				val5 = r6[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 17 || count == 18) begin
 				val1 = 1'b0;
@@ -175,6 +223,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r7[11:8] + 1'b1;
 				val4 = r7[7:4] + 1'b1;
 				val5 = r7[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 19 || count == 20) begin
 				val1 = 1'b0;
@@ -182,6 +231,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r8[11:8] + 1'b1;
 				val4 = r8[7:4] + 1'b1;
 				val5 = r8[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 21 || count == 22) begin
 				val1 = 1'b0;
@@ -189,6 +239,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r9[11:8] + 1'b1;
 				val4 = r9[7:4] + 1'b1;
 				val5 = r9[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 23 || count == 24) begin
 				val1 = 1'b0;
@@ -196,6 +247,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r10[11:8] + 1'b1;
 				val4 = r10[7:4] + 1'b1;
 				val5 = r10[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 25 || count == 26) begin
 				val1 = 1'b0;
@@ -203,6 +255,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r11[11:8] + 1'b1;
 				val4 = r11[7:4] + 1'b1;
 				val5 = r11[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 27 || count == 28) begin
 				val1 = 1'b0;
@@ -210,6 +263,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r12[11:8] + 1'b1;
 				val4 = r12[7:4] + 1'b1;
 				val5 = r12[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 29 || count == 30) begin
 				val1 = 1'b0;
@@ -217,6 +271,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r13[11:8] + 1'b1;
 				val4 = r13[7:4] + 1'b1;
 				val5 = r13[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 31 || count == 32) begin
 				val1 = 1'b0;
@@ -224,6 +279,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r14[11:8] + 1'b1;
 				val4 = r14[7:4] + 1'b1;
 				val5 = r14[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 33 || count == 34) begin
 				val1 = 1'b0;
@@ -231,6 +287,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = r15[11:8] + 1'b1;
 				val4 = r15[7:4] + 1'b1;
 				val5 = r15[3:0] + 1'b1;
+				val6 = 6'b000000;
 		end
 		else if (count == 39 || count == 40) begin
 			val1 = 1'b0;
@@ -238,6 +295,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			val3 = data_addr[11:8] + 1'b1;
 			val4 = data_addr[7:4] + 1'b1;
 			val5 = data_addr[3:0] + 1'b1;
+			val6 = 6'b000000;
 		end
 		else if (count == 41 || count == 42) begin
 			val1 = 1'b0;
@@ -245,6 +303,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			val3 = A[11:8] + 1'b1;
 			val4 = A[7:4] + 1'b1;
 			val5 = A[3:0] + 1'b1;
+			val6 = 6'b000000;
 		end
 		else if (count == 43 || count == 44) begin
 			val1 = 1'b0;
@@ -252,6 +311,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			val3 = B[11:8] + 1'b1;
 			val4 = B[7:4] + 1'b1;
 			val5 = B[3:0] + 1'b1;
+			val6 = 6'b000000;
 		end
 		else if (count == 45 || count == 46) begin
 			val1 = 1'b0;
@@ -259,6 +319,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			val3 = data_in[11:8] + 1'b1;
 			val4 = data_in[7:4] + 1'b1;
 			val5 = data_in[3:0] + 1'b1;
+			val6 = 6'b000000;
 		end
 		else if (count == 47 || count == 48) begin
 			val1 = 1'b0;
@@ -266,6 +327,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			val3 = inst_addr[11:8] + 1'b1;
 			val4 = inst_addr[7:4] + 1'b1;
 			val5 = inst_addr[3:0] + 1'b1;
+			val6 = 6'b000000;
 		end
 		else if (count == 49 || count == 50) begin
 			val1 = (FLAGS[4] == 1'b1) ? 6'b001101 : 6'b000000;
@@ -273,47 +335,315 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			val3 = (FLAGS[2] == 1'b1) ? 6'b010000 : 6'b000000;
 			val4 = (FLAGS[1] == 1'b1) ? 6'b100100 : 6'b000000;
 			val5 = (FLAGS[0] == 1'b1) ? 6'b011000 : 6'b000000;
+			val6 = 6'b000000;
 		end
 		else if (count == 51 || count == 52) begin
-			parameter RTYPE = 4'b0000;
-			parameter ADD_1 = 4'b0101; // 
-			parameter ADDU_1 = 4'b0110;
-			parameter ADDC_1 = 4'b0111;
-			parameter ADDCU_1 = 4'b0100;
-			parameter SUB_1 = 4'b1001;
-			parameter CMP_1 = 4'b1011;
-			parameter AND_1 = 4'b0001;		
-			parameter OR_1 = 4'b0010;
-			parameter XOR_1 = 4'b0011;
-			parameter NOT_1 = 4'b1111;
-			parameter MOV_1 = 4'b1101;
-			
-			parameter ADDI = 4'b0101;
-			parameter MOVI = 4'b1101;
-			parameter LUI = 4'b1111;
-			parameter CMPI = 4'b1011;
-			parameter CMPUI = 4'b1110;
-			parameter SUBI = 4'b1001;
-			parameter ADDCUI = 4'b1010;
-			parameter ADDCI = 4'b0111;
-			parameter ADDUI = 8'b0110;
-			
-			parameter SHIFT = 4'b1000;
-			parameter LSH_1 = 4'b0100;
-			parameter LSHI_1 = 4'b0000;
-			parameter RSH_1 = 4'b1100;
-			parameter RSHI_1 = 4'b0001;
-			parameter ALSH_1 = 4'b0101;
-			parameter ARSH_1 = 4'b1101;
-			
-			// MEM is the opcode, JCOND and SCOND are the secondary codes, JUC through BLE are stored in bits [3:0]
-			parameter MEM = 4'b0100;
-			parameter LOAD_1 = 4'b0000;
-			parameter STOR_1 = 4'b0100;
-			parameter JCOND = 4'b1100; // JCOND uses unsigned comparison for BEQ through BLT
-			parameter JUC = 4'b1110; // JUC jumps directly 
-			parameter BEQ = 4'b0000;
-			parameter BNEQ = 4'b0001;
+			case (inst[15:12])
+				RTYPE: begin
+					case (inst[7:4])
+						ADD: begin
+							val1 = 6'b001011;
+							val2 = 6'b001110;
+							val3 = 6'b001110;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						ADDU: begin
+							val1 = 6'b001011;
+							val2 = 6'b001110;
+							val3 = 6'b001110;
+							val4 = 6'b011111;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						ADDC: begin
+							val1 = 6'b001011;
+							val2 = 6'b001110;
+							val3 = 6'b001110;
+							val4 = 6'b001101;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						ADDCU: begin
+							val1 = 6'b001011;
+							val2 = 6'b001110;
+							val3 = 6'b001110;
+							val4 = 6'b001101;
+							val5 = 6'b011111;
+							val6 = 6'b000000;
+						end
+						SUB: begin
+							val1 = 6'b011101;
+							val2 = 6'b011111;
+							val3 = 6'b001100;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						CMP: begin
+							val1 = 6'b001101;
+							val2 = 6'b010111;
+							val3 = 6'b011010;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						AND: begin
+							val1 = 6'b001011;
+							val2 = 6'b011000;
+							val3 = 6'b001110;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						OR: begin
+							val1 = 6'b011001;
+							val2 = 6'b011100;
+							val3 = 6'b000000;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						XOR: begin
+							val1 = 6'b100010;
+							val2 = 6'b011001;
+							val3 = 6'b011100;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						NOT: begin
+							val1 = 6'b011000;
+							val2 = 6'b011001;
+							val3 = 6'b011110;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						MOV: begin
+							val1 = 6'b010111;
+							val2 = 6'b011001;
+							val3 = 6'b100000;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						default: begin
+							val1 = 6'b000000;
+							val2 = 6'b000000;
+							val3 = 6'b000000;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+					endcase
+				end
+				SHIFT: begin
+					case (inst[7:4])
+						LSH: begin
+							val1 = 6'b010110;
+							val2 = 6'b011101;
+							val3 = 6'b010010;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						LSHI: begin
+							val1 = 6'b010110;
+							val2 = 6'b011101;
+							val3 = 6'b010010;
+							val4 = 6'b010011;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						RSH: begin
+							val1 = 6'b011100;
+							val2 = 6'b011101;
+							val3 = 6'b010010;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						RSHI: begin
+							val1 = 6'b011100;
+							val2 = 6'b011101;
+							val3 = 6'b010010;
+							val4 = 6'b010011;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						ALSH: begin
+							val1 = 6'b001011;
+							val2 = 6'b010110;
+							val3 = 6'b011101;
+							val4 = 6'b010010;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						ARSH: begin
+							val1 = 6'b001011;
+							val2 = 6'b011100;
+							val3 = 6'b011101;
+							val4 = 6'b010010;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						default: begin
+							val1 = 6'b000000;
+							val2 = 6'b000000;
+							val3 = 6'b000000;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+					endcase
+				end
+				MEM: begin
+					case (inst[7:4])
+						LOAD: begin
+							val1 = 6'b010110;
+							val2 = 6'b011001;
+							val3 = 6'b001011;
+							val4 = 6'b001110;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						STOR: begin
+							val1 = 6'b011101;
+							val2 = 6'b011110;
+							val3 = 6'b011001;
+							val4 = 6'b011100;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+						JCOND: begin
+							case (inst[3:0])
+								JUC: begin
+									val1 = 6'b010100;
+									val2 = 6'b011111;
+									val3 = 6'b001101;
+									val4 = 6'b000000;
+									val5 = 6'b000000;
+									val6 = 6'b000000;
+								end
+								BEQ: begin
+									val1 = 6'b001100;
+									val2 = 6'b001111;
+									val3 = 6'b011011;
+									val4 = 6'b000000;
+									val5 = 6'b000000;
+									val6 = 6'b000000;
+								end
+								BNEQ: begin
+									val1 = 6'b001100;
+									val2 = 6'b011000;
+									val3 = 6'b001111;
+									val4 = 6'b011011;
+									val5 = 6'b000000;
+									val6 = 6'b000000;
+								end
+								default: begin
+									val1 = 6'b000000;
+									val2 = 6'b000000;
+									val3 = 6'b000000;
+									val4 = 6'b000000;
+									val5 = 6'b000000;
+									val6 = 6'b000000;
+								end
+							endcase
+						end
+						default: begin
+							val1 = 6'b000000;
+							val2 = 6'b000000;
+							val3 = 6'b000000;
+							val4 = 6'b000000;
+							val5 = 6'b000000;
+							val6 = 6'b000000;
+						end
+					endcase
+				end
+				ADDI: begin
+					val1 = 6'b001011;
+					val2 = 6'b001110;
+					val3 = 6'b001110;
+					val4 = 6'b010011;
+					val5 = 6'b000000;
+					val6 = 6'b000000;
+				end
+				ADDUI: begin
+					val1 = 6'b001011;
+					val2 = 6'b001110;
+					val3 = 6'b001110;
+					val4 = 6'b011111;
+					val5 = 6'b010011;
+					val6 = 6'b000000;
+				end
+				ADDCI: begin
+					val1 = 6'b001011;
+					val2 = 6'b001110;
+					val3 = 6'b001110;
+					val4 = 6'b001101;
+					val5 = 6'b010011;
+					val6 = 6'b000000;
+				end
+				ADDCUI: begin
+					val1 = 6'b001011;
+					val2 = 6'b001110;
+					val3 = 6'b001110;
+					val4 = 6'b001101;
+					val5 = 6'b011111;
+					val6 = 6'b010011;
+				end
+				SUBI: begin
+					val1 = 6'b011101;
+					val2 = 6'b011111;
+					val3 = 6'b001100;
+					val4 = 6'b010011;
+					val5 = 6'b000000;
+					val6 = 6'b000000;
+				end
+				MOVI: begin
+					val1 = 6'b010111;
+					val2 = 6'b011001;
+					val3 = 6'b100000;
+					val4 = 6'b010011;
+					val5 = 6'b000000;
+					val6 = 6'b000000;
+				end
+				LUI: begin
+					val1 = 6'b010110;
+					val2 = 6'b011111;
+					val3 = 6'b010011;
+					val4 = 6'b000000;
+					val5 = 6'b000000;
+					val6 = 6'b000000;
+				end
+				CMPI: begin
+					val1 = 6'b001101;
+					val2 = 6'b010111;
+					val3 = 6'b011010;
+					val4 = 6'b010011;
+					val5 = 6'b000000;
+					val6 = 6'b000000;
+				end
+				CMPUI: begin
+					val1 = 6'b001101;
+					val2 = 6'b010111;
+					val3 = 6'b011010;
+					val4 = 6'b011111;
+					val5 = 6'b010011;
+					val6 = 6'b000000;
+				end
+				default: begin
+					val1 = 6'b000000;
+					val2 = 6'b000000;
+					val3 = 6'b000000;
+					val4 = 6'b000000;
+					val5 = 6'b000000;
+					val6 = 6'b000000;
+				end
+			endcase
 		end
 		else begin
 				val1 = 0;
@@ -321,13 +651,14 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				val3 = 0;
 				val4 = 0;
 				val5 = 0;
+				val6 = 0;
 		end
 	end
 	
 	always @ (*) begin
 		if (VPix == 0) begin
 			w1 = 1;
-			if (count < 35 || (count >= 39 && count < 51)) begin
+			if (count < 35 || (count >= 39 && count < 53)) begin
 				if (count % 2 == 1) begin
 					d_in1 = {val1, val2, val3};
 				end
@@ -396,6 +727,8 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				48: addr1 = 315;
 				49: addr1 = 537; // Display FLAGS at 534.  Display FLAGS info at 536
 				50: addr1 = 538;
+				51: addr1 = 324; // Display decoded instruction text
+				52: addr1 = 325;
 				default: addr1 = 1875;
 			endcase
 		end
@@ -423,7 +756,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 		if (CLR) begin count = 0; end
 		else begin
 			if (VPix == 10'b0) begin
-				if (count <= 50) begin
+				if (count <= 53) begin
 					count = count + 1'b1;
 				end
 				else begin
