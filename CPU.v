@@ -49,6 +49,6 @@ module CPU(
 		r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, readRegA, readRegB, loadReg, memAddr);
 
 	VGA2 vga( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, readRegA, readRegB,
-		loadReg, memAddr,data_addr, data_in[15:0], inst_addr[13:0], A, B, RGB_out, HSync, VSync );
+		loadReg, memAddr,data_addr, data_in[15:0], inst_addr[13:0], A, B, FLAGS, RGB_out, HSync, VSync );
 
 endmodule

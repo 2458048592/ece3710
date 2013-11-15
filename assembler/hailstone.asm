@@ -18,39 +18,41 @@ addui 254, $0 # Set up some interesting values and store them in memory
 movi 63, $4   # 254 is the last value to run
 lshi 8, $4
 addui 255, $4
-stor $4, $0
+stor $0, $4
 XOR $0, $0
 addui 128, $0 # 128 is the second to last value to run
 subi 1, $4
-stor $4, $0
+stor $0, $4
 XOR $0, $0
 addui 42, $0 # 42 is the third value to run
 subi 1, $4
-stor $4, $0
+stor $0, $4
 XOR $0, $0
 addui 65, $0 # 65 is the second value to run
 subi 1, $4
-stor $4, $0
+stor $0, $4
 XOR $0, $0
 addui 4, $0 # 4 is the first value to run
 subi 1, $4
-stor $4, $0
-load $4, $0	# Load the first value
+stor $0, $4
+load $0, $4	# Load the first value
 Loop: movi CheckAddress, $15
 cmpi 1, $0
 beq $15
 mov $0, $1
 movi Even, $15
 lshi 15, $1
+XOR $2, $2
+cmp $2, $1
 beq $15
 mov $0, $1 # We are Odd, so multiply by 3 and add 1
-lshi 2, $0
-addu $0, $1
+lshi 1, $0
+addu $1, $0
 addui 1, $0
 XOR $1, $1 # reset r1 to 0
 movi Loop, $15
 JUC $15
-Even: rshi 2, $0 # we are Even, so divide by 2
+Even: rshi 1, $0 # we are Even, so divide by 2
 movi Loop, $15
 JUC $15
 CheckAddress: movi 63, $0

@@ -5,12 +5,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module VGA2( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, readRegA, readRegB, loadReg, memAddr, 
-	data_addr, data_in, inst_addr, A, B, RGB_out, HSync, VSync );
+	data_addr, data_in, inst_addr, A, B, FLAGS, RGB_out, HSync, VSync );
 	input CLK, CLR;
 	input [17:0] inst;
 	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
 	input [3:0] readRegA, readRegB, loadReg, memAddr;
 	input [15:0] data_addr, data_in, A, B, inst_addr;
+	input [4:0] FLAGS;
 	output [7:0] RGB_out;
 	output HSync, VSync;
 	//output [9:0] HPix, VPix;
@@ -29,7 +30,7 @@ module VGA2( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r
 	//pixelGen3 _pixelGen( CLK, CLR, HPix, VPix, RGB_out );
 	wire [9:0] HPix, VPix;
 	pixelGen3 _pixelGen( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
-		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, HPix, VPix, RGB_out );
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, FLAGS, HPix, VPix, RGB_out );
 	//pixelGen4 _pixelGen( CLK, CLR, maxH, maxV, HPix, VPix, RGB_out, addr1, addr2, d_out1, d_out2 );
 	
 	always @ (posedge CLK) begin
@@ -53,11 +54,12 @@ endmodule
 // 164 for the alphabet as written, so if we start at address 256,
 // we stop at 1875
 module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
-		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, HPix, VPix, RGB_out );
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, FLAGS, HPix, VPix, RGB_out );
 	input CLK, CLR;
 	input [17:0] inst;
 	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, data_addr, data_in, A, B, inst_addr;
 	input [3:0] readRegA, readRegB, loadReg, memAddr;
+	input [4:0] FLAGS;
 	input [9:0] HPix, VPix;
 	output reg [7:0] RGB_out;
 
@@ -265,6 +267,54 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			val4 = inst_addr[7:4] + 1'b1;
 			val5 = inst_addr[3:0] + 1'b1;
 		end
+		else if (count == 49 || count == 50) begin
+			val1 = (FLAGS[4] == 1'b1) ? 6'b001101 : 6'b000000;
+			val2 = (FLAGS[3] == 1'b1) ? 6'b010110 : 6'b000000;
+			val3 = (FLAGS[2] == 1'b1) ? 6'b010000 : 6'b000000;
+			val4 = (FLAGS[1] == 1'b1) ? 6'b100100 : 6'b000000;
+			val5 = (FLAGS[0] == 1'b1) ? 6'b011000 : 6'b000000;
+		end
+		else if (count == 51 || count == 52) begin
+			parameter RTYPE = 4'b0000;
+			parameter ADD_1 = 4'b0101; // 
+			parameter ADDU_1 = 4'b0110;
+			parameter ADDC_1 = 4'b0111;
+			parameter ADDCU_1 = 4'b0100;
+			parameter SUB_1 = 4'b1001;
+			parameter CMP_1 = 4'b1011;
+			parameter AND_1 = 4'b0001;		
+			parameter OR_1 = 4'b0010;
+			parameter XOR_1 = 4'b0011;
+			parameter NOT_1 = 4'b1111;
+			parameter MOV_1 = 4'b1101;
+			
+			parameter ADDI = 4'b0101;
+			parameter MOVI = 4'b1101;
+			parameter LUI = 4'b1111;
+			parameter CMPI = 4'b1011;
+			parameter CMPUI = 4'b1110;
+			parameter SUBI = 4'b1001;
+			parameter ADDCUI = 4'b1010;
+			parameter ADDCI = 4'b0111;
+			parameter ADDUI = 8'b0110;
+			
+			parameter SHIFT = 4'b1000;
+			parameter LSH_1 = 4'b0100;
+			parameter LSHI_1 = 4'b0000;
+			parameter RSH_1 = 4'b1100;
+			parameter RSHI_1 = 4'b0001;
+			parameter ALSH_1 = 4'b0101;
+			parameter ARSH_1 = 4'b1101;
+			
+			// MEM is the opcode, JCOND and SCOND are the secondary codes, JUC through BLE are stored in bits [3:0]
+			parameter MEM = 4'b0100;
+			parameter LOAD_1 = 4'b0000;
+			parameter STOR_1 = 4'b0100;
+			parameter JCOND = 4'b1100; // JCOND uses unsigned comparison for BEQ through BLT
+			parameter JUC = 4'b1110; // JUC jumps directly 
+			parameter BEQ = 4'b0000;
+			parameter BNEQ = 4'b0001;
+		end
 		else begin
 				val1 = 0;
 				val2 = 0;
@@ -277,7 +327,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 	always @ (*) begin
 		if (VPix == 0) begin
 			w1 = 1;
-			if (count < 35 || (count >= 39 && count < 49)) begin
+			if (count < 35 || (count >= 39 && count < 51)) begin
 				if (count % 2 == 1) begin
 					d_in1 = {val1, val2, val3};
 				end
@@ -297,7 +347,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 			// so add 27 to the previous register to display the values
 			case (count)
 				1: addr1 = 321; // Inst display addresses.
-				2: addr1 = 322; // Display decoded instruction at 318\
+				2: addr1 = 322; // Display decoded instruction at 324
 				3: addr1 = 341; // r0 display addresses
 				4: addr1 = 342; 
 				5: addr1 = 368; // r1 display addresses
@@ -342,8 +392,10 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 				44: addr1 = 380;
 				45: addr1 = 487; // Display data1 at 485.  Display data1 info at 487
 				46: addr1 = 488;
-				47: addr1 = 314; // Display PC at 314  Display PC info at 315
+				47: addr1 = 314; // Display PC at 314.  Display PC info at 315
 				48: addr1 = 315;
+				49: addr1 = 537; // Display FLAGS at 534.  Display FLAGS info at 536
+				50: addr1 = 538;
 				default: addr1 = 1875;
 			endcase
 		end
@@ -371,7 +423,7 @@ module pixelGen3( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r
 		if (CLR) begin count = 0; end
 		else begin
 			if (VPix == 10'b0) begin
-				if (count <= 48) begin
+				if (count <= 50) begin
 					count = count + 1'b1;
 				end
 				else begin
