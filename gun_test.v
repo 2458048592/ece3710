@@ -4,10 +4,10 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   23:35:23 11/14/2013
+// Create Date:   11:50:51 11/15/2013
 // Design Name:   gun
 // Module Name:   /home/dan/Documents/xilinx_projects/CPU/gun_test.v
-// Project Name:  CPU
+// Project Name:  lab2
 // Target Device:  
 // Tool versions:  
 // Description: 
@@ -30,14 +30,14 @@ module gun_test;
 	reg trigger;
 
 	// Outputs
-	wire trigger_state;
+	wire LED;
 
 	// Instantiate the Unit Under Test (UUT)
 	gun uut (
 		.clk(clk), 
 		.CLR(CLR), 
 		.trigger(trigger), 
-		.trigger_state(trigger_state)
+		.LED(LED)
 	);
 
 	initial begin
@@ -46,8 +46,7 @@ module gun_test;
 		CLR = 0;
 		trigger = 0;
 
-			
-	#10;
+		#10;
 		CLR = 1;
 		#2 CLR =0;
 		
@@ -86,6 +85,7 @@ module gun_test;
       
 	always 
 		#1 clk = ~clk;
+      
       
 endmodule
 

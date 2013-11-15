@@ -21,22 +21,25 @@
 module gun_top(
     input CLK,
     input CLR,
-    input trigger,
-	 output reg LED
-   // output [6:0] seg7,
-   // output [3:0] select
+    input p1_trigger,
+	 input p1_sens,
+	 input p2_trigger,
+	 input p2_sens,
+	 output p1_shot,
+	 output p1_hit,
+	 output p2_shot,
+	 output p2_hit
+
     );
-	 	reg [26:0] regCLKCount;
-	reg regCLK;
-	always @ (*) begin
-		if (CLR) begin regCLKCount = 27'b0; regCLK = 0; end
-		else begin
-			if (regCLKCount < 1) begin regCLKCount = regCLKCount + 1'b1; regCLK = 0; end
-			else begin regCLKCount = 27'b0; regCLK = 1'b1; end
-		end
-	end
 	 
-	gun da_gun(CLK,CLR,trigger,LED);
-	//SSD_decoder decoder(CLK, CLR, {15'b0, display}, seg7, select);
+	 
+	gun p1_gun(CLK,CLR,p1_trigger,p1_shot);
+	gun p1_gun_sens(CLK,CLR,p1_sens,p1_hit);
+
+	gun p2_gun(CLK,CLR,p2_trigger,p2_shot);
+	gun p2_gun_sens(CLK,CLR,p2_sens,p2_hit);
+
+
+	
 
 endmodule

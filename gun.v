@@ -22,11 +22,7 @@ module gun(
     input clk,
 	 input CLR,
     input trigger,  // "trigger" is the glitchy, asynchronous to clk, active low push-button signal
-
-    // from which we make three outputs, all synchronous to the clock
-    output reg trigger_state // 1 as long as the push-button is active (down)
-   // output trigger_down,  // 1 for one clock cycle when the push-button goes down (i.e. just pushed)
-   // output trigger_up   // 1 for one clock cycle when the push-button goes up (i.e. just released)
+	 output shot
 );
 
 	// First use two flip-flops to synchronize the trigger signal the "clk" clock domain
@@ -34,8 +30,8 @@ module gun(
 	reg trigger_sync_1; always @(posedge clk) trigger_sync_1 <= trigger_sync_0;
 
 	// Next declare a 16-bits counter
-	reg [1:0] trigger_cnt;
-
+	reg [15:0] trigger_cnt;
+	reg trigger_state; // 1 as long as the push-button is active (down)
 	// When the push-button is pushed or released, we increment the counter
 	// The counter has to be maxed out before we decide that the push-button state has changed
 
@@ -46,7 +42,6 @@ module gun(
 		if(CLR) begin
 			trigger_cnt <= 0;
 			trigger_state <= 0;
-			//trigger_cnt_max <= 0;
 		end
 		if(trigger_idle) begin
 			 trigger_cnt <= 0;  // nothing's going on
@@ -61,7 +56,5 @@ module gun(
 		end
 	end
 
-	assign trigger_down = ~trigger_idle & trigger_cnt_max & ~trigger_state;
-	assign trigger_up   = ~trigger_idle & trigger_cnt_max &  trigger_state;
-	
+	assign shot = trigger_state;
 endmodule
