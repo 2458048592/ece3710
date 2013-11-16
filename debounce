@@ -1,0 +1,39 @@
+always@(posedge CLK) begin 
+		if (CLR) begin
+			lastDebounceTime <= 0;
+			count <= 0;
+			buttonState <= 0;
+			ledState <= 0;
+		end
+		else begin 
+			
+		  // If the switch changed, due to noise or pressing:
+		  if (trigger != lastButtonState) begin
+			 // reset the debouncing timer
+			 lastDebounceTime <= count;
+		  end 
+		  
+		  if ((count - lastDebounceTime) > 10) begin
+			 // whatever the reading is at, it's been there for longer
+			 // than the debounce delay, so take it as the actual current state:
+
+			 // if the button state has changed:
+			 if (trigger != buttonState) begin
+				buttonState <= trigger;
+
+				// only toggle the LED if the new button state is HIGH
+				if (buttonState == 1'b1) begin
+				  ledState <= ~ledState;
+				end
+			 end
+		  end
+		  count <= count + 1'b1;
+		  lastDebounceTime <= lastDebounceTime;
+		  // set the LED:
+		 // digitalWrite(ledPin, ledState);
+
+		  // save the reading.  Next time through the loop,
+		  // it'll be the lastButtonState:
+		  lastButtonState <= trigger;
+	  end
+  end
