@@ -8,6 +8,14 @@ module CPU(
     input CLR,
 	 input PAUSE,
 	 input STEP,
+	 input p1_trigger,
+	 input p1_sens,
+	 input p2_trigger,
+	 input p2_sens,
+	 output p1_shot,
+	 output p1_hit,
+	 output p2_shot,
+	 output p2_hit,
 	 //input button,
 	 output [7:0] RGB_out,
 	 output HSync, VSync
@@ -40,7 +48,17 @@ module CPU(
 
 	program_counter counter(selectCLK,CLR,set_addr, data_addr[13:0], PC_inc, inst_addr[13:0]);
 		
-	memory_map asm_RAM (CLR, selectCLK, 1'b0, inst_addr, a_din, inst, regCLK, b_wr, data_addr, data_in, data_out);	
+// input   wire 						CLR, 
+//	 input 	wire						p1_trigger,
+//	 input 	wire						p1_sens,
+//	 input 	wire						p2_trigger,
+//	 input 	wire						p2_sens,
+//	 output 								p1_shot,
+//	 output 								p1_hit,
+//	 output 								p2_shot,
+//	 output 								p2_hit,
+	 memory_map asm_RAM (CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit,
+								selectCLK, 1'b0, inst_addr, a_din, inst, regCLK, b_wr, data_addr, data_in, data_out);	
 
 //module controller_integrated(
 //	input CLK, CLR,
