@@ -26,7 +26,7 @@ module SSD_decoder(
 		if (clr) 
 			divclk <= 0;
 		else begin
-			if (count == 1) begin // set to 100000 for every 1 ms
+			if (count == 100000) begin // set to 100000 for every 1 ms
 				count <= 0;
 				if (divclk >= 3)
 					divclk <= 0;
