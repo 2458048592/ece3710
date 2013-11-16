@@ -113,6 +113,7 @@ module memory_map#(
 ) (
 
 // guns
+	input   wire 						CLK, 
 	 input   wire 						CLR, 
 	 input 	wire						p1_trigger,
 	 input 	wire						p1_sens,
@@ -147,7 +148,7 @@ module memory_map#(
 // output      		[DATA-1:0]  b_dout_m,
 //	   output      reg		[DATA-1:0]  b_dout_w
 
-	gun_top guns(a_clk, CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit);
+	gun_top guns(CLK, CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit);
  	memory asm_RAM (a_clk, a_wr, a_addr, a_din, a_dout, a_clk, b_wr, b_addr, b_din, b_dout_m);	
 	
 	mux2_to_1_16bit gun_mux(b_dout_m, b_dout_w, select, b_dout);

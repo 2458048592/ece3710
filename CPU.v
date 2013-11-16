@@ -57,7 +57,7 @@ module CPU(
 //	 output 								p1_hit,
 //	 output 								p2_shot,
 //	 output 								p2_hit,
-	 memory_map asm_RAM (CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit,
+	 memory_map asm_RAM (CLK, CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit,
 								selectCLK, 1'b0, inst_addr, a_din, inst, regCLK, b_wr, data_addr, data_in, data_out);	
 
 //module controller_integrated(
