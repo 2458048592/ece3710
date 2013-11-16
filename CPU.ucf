@@ -30,3 +30,25 @@ NET "STEP" LOC = D9;
 NET "STEP" IOSTANDARD = LVCMOS33;
 NET "PAUSE" LOC = T5;
 NET "PAUSE" IOSTANDARD = LVCMOS33;
+
+#guns
+
+NET "p1_trigger" LOC = P11;
+NET "p1_trigger" PULLUP;
+NET "p1_sens" LOC = N10;
+NET "p1_sens" PULLUP;
+
+NET "p1_shot" LOC = U16;
+NET "p1_shot" IOSTANDARD = LVCMOS33;
+NET "p1_hit" LOC = V16;
+NET "p1_hit" IOSTANDARD = LVCMOS33;
+
+NET "p2_trigger" LOC = L3;
+NET "p2_trigger" PULLUP;
+NET "p2_sens" LOC = L4;
+NET "p2_sens" PULLUP;
+
+NET "p2_shot" LOC = T11;
+NET "p2_shot" IOSTANDARD = LVCMOS33;
+NET "p2_hit" LOC = R11;
+NET "p2_hit" IOSTANDARD = LVCMOS33;
