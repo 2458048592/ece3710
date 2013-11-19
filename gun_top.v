@@ -34,10 +34,10 @@ module gun_top(
 	 
 	 
 	gun p1_gun(CLK,CLR,p1_trigger,p1_shot);
-	gun p1_gun_sens(CLK,CLR,p1_sens,p1_hit);
+	sensor p1_gun_sens(CLK,CLR,p1_sens,p1_hit);
 
 	gun p2_gun(CLK,CLR,p2_trigger,p2_shot);
-	gun p2_gun_sens(CLK,CLR,p2_sens,p2_hit);
+	sensor p2_gun_sens(CLK,CLR,p2_sens,p2_hit);
 
 
 	
