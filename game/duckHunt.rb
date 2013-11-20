@@ -17,7 +17,7 @@ class Game
   def initialize
     @demo = false
 
-    @serialEnable = true
+    @serialEnable = false
 
     @player1Score = 0
     @player2Score = 0

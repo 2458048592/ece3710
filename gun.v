@@ -58,3 +58,41 @@ module gun(
 
 	assign shot = trigger_state;
 endmodule
+
+module sensor(
+    input clk,
+	 input CLR,
+    input sensor,  // "trigger" is the glitchy, asynchronous to clk, active low push-button signal
+	 output hit
+);
+
+	// Next declare a 16-bits counter
+	reg [20:0] sensor_cnt; //1,670,000
+	reg sensor_state; 
+	wire sensor_cnt_max = &sensor_cnt;	// true when all bits of sensor_cnt are 1's
+
+	always @(posedge clk) begin
+		if(CLR) begin
+			sensor_cnt <= 0;
+			sensor_state <= 0;
+		end
+		else begin
+			if(sensor) begin
+				sensor_state <= 1;
+				sensor_cnt <= 0;
+			end
+			else begin
+				if(sensor_cnt_max) begin
+					sensor_state <= 0;
+					sensor_cnt <= 0;
+				end
+				else begin 
+					sensor_cnt <= sensor_cnt + 1'd1;
+					sensor_state <= sensor_state;
+				end
+			end
+		end
+	end
+	
+	assign hit = sensor_state;
+endmodule
