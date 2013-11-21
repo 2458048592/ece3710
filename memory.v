@@ -179,12 +179,13 @@ module memory_map#(
  // Port B
     input   wire                b_clk,
     input   wire                b_wr,
-    input   wire    [ADDR-1:0]  b_addr,
+    input   wire    [15:0]  b_addr,
     input   wire    [DATA-1:0]  b_din,
     output      		[DATA-1:0]  b_dout
 	 
  );
  
+	parameter VGA = 4'hf; // 4 msb of b_addr are mapped to VGA memory
 	parameter p1_trig_addr = 14'd254; // 254
 	parameter p1_sen_addr = 14'd255; // 255
 	wire  [DATA-1:0] b_dout_m;
@@ -194,7 +195,7 @@ module memory_map#(
 //	   output      reg		[DATA-1:0]  b_dout_w
 
 	gun_top guns(CLK, CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit);
- 	memory asm_RAM (a_clk, a_wr, a_addr, a_din, a_dout, a_clk, b_wr, b_addr, b_din, b_dout_m);	
+ 	memory asm_RAM (a_clk, a_wr, a_addr, a_din, a_dout, a_clk, b_wr, b_addr[ADDR-1:0], b_din, b_dout_m);	
 	
 	mux2_to_1_16bit gun_mux(b_dout_m, b_dout_w, select, b_dout);
 	
@@ -203,6 +204,9 @@ module memory_map#(
 			select = 1'b1;
 		end
 		else if(b_addr == p1_sen_addr) begin 
+			select = 1'b1;
+		end
+		else if(b_addr[15:12] == VGA) begin 
 			select = 1'b1;
 		end
 		else begin
@@ -222,19 +226,13 @@ module memory_map#(
 			else if(b_addr == p1_sen_addr) begin 
 				b_dout_w <= p1_hit;
 			end
+			else if(b_addr[15:12] == VGA) begin 
+				b_dout_w <= b_din;
+			end
 			else begin
 				b_dout_w <= 18'b0;
 			end
-			
-//			if( p1_trigger) begin
-//				
-//			end		
-//			else if (p1_sens) begin
-//				b_dout_w <= p1_hit;
-//			end
-//			else begin
-//				b_dout_w <= 18'b0;
-//			end
+
 		end
 	end	
 	

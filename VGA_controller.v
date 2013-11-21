@@ -22,26 +22,36 @@
 module VGA(
 	input CLK,
 	input CLR,
-	output hSync,
-	output vSync,
-	output [7:0] rgb
+	input [15:0] addr1,
+	input [17:0] d_in1,
+	input w1,
+	output HSync,
+	output VSync,
+	output [7:0] RGB_out,
+	output [17:0] d_out2,
+	output [10:0] addr2
+
 	);
 	
 	wire [9:0] hCount, vCount;
 	wire bright;
-	VGA_controller control(CLK,CLR, hSync, vSync, bright, hCount, vCount);
-	VGA_Bitgen bits(bright, 8'b0, hCount, vCount, rgb);
+	VGA_controller control(CLK,CLR, HSync, VSync, bright, hCount, vCount);
+	VGA_Bitgen bits(bright, d_out2, d_out2, hCount, vCount, RGB_out);
+	
+	Address_map man_addr(CLK, CLR, bright, addr1[10:0], d_in1, w1, hCount, vCount, d_out2);
 	
 endmodule 
+
+
 module VGA_controller(
     input CLK,
     input CLR,
 //	 output reg 	     clkDivPulse,
 //	 output reg [9:0] hTickCounter,
 //	 output reg [9:0] vLineCounter,
-    output reg hSync,
+    output reg HSync,
 	 
-    output reg vSync,
+    output reg VSync,
     output reg bright,
     output reg [9:0] hCount,
     output reg [9:0] vCount
@@ -50,8 +60,8 @@ module VGA_controller(
 	
 // ***********************************************************
 	initial begin
-	 hSync  = 1; // Active low signal for the VGA port
-	 vSync  = 1; // Active low signal for the VGA port
+	 HSync  = 1; // Active low signal for the VGA port
+	 VSync  = 1; // Active low signal for the VGA port
 	bright = 0; // Active high signal for the Bitgen circuit
 	hCount = 0; // Horizontal pixel counter for the Bitgen circuit 
     vCount = 0; // Vertical pixel cunter for the Bitgen circuit
@@ -96,7 +106,7 @@ module VGA_controller(
 	 // Horizontal and verical clock tick counters
 
 	 /* 
-	  * For the ease of generating the hSync and Vsync signals
+	  * For the ease of generating the HSync and VSync signals
 	  * create two counters that count up to 800 for horizontal tick
 	  * and (one line) and 521 for verital ticks every time you finish 
 	  * a line. 
@@ -188,11 +198,11 @@ module VGA_controller(
 		end
 	  
 	 // ***************************************************************
-	 // Generate the hSync, vSync and bright signals
+	 // Generate the HSync, VSync and bright signals
 	 
 	 /* 
 	  * Based on the current counts on the hTickCounter and vLineCounter
-	  * you can set the hSync, vSync and bright signal. Note that this 
+	  * you can set the HSync, VSync and bright signal. Note that this 
 	  * block is combinational, looks at the state of the counters and 
 	  * reacts on the them to generate the outputs rigth away.
 	  *
@@ -212,18 +222,18 @@ module VGA_controller(
 	 
 	  	always@(*) begin
 			if (hTickCounter <= hPulseWidth - 1) begin // subtract one because it starts at 0
-				hSync = 0;
+				HSync = 0;
 				bright = 0;
 				hCountEnable = 0;
 			end 
 			else if (hTickCounter > (hPulseWidth + hBackPorch - 1) && hTickCounter <= (hPulseWidth + hBackPorch + hPix -1)) begin
 				bright = 1;
 				hCountEnable = 1;
-				hSync = 1;
+				HSync = 1;
 
 			end
 			else begin
-				hSync = 1;
+				HSync = 1;
 				bright = 0;
 				hCountEnable = 0;
 			end
@@ -231,16 +241,16 @@ module VGA_controller(
 		
 		always@(*) begin
 			if (vLineCounter <= vPulseWidth - 1) begin // subtract one because it starts at 0
-				vSync = 0;
+				VSync = 0;
 				vCountEnable = 0;
 			end
 			else if (vLineCounter > (vPulseWidth + vBackPorch - 1) && vLineCounter <= (vPulseWidth + vBackPorch + vPix -1)) begin
 				//bright = 1;
-				vSync = 1;
+				VSync = 1;
 				vCountEnable = 1;
 			end
 			else begin
-				vSync = 1;
+				VSync = 1;
 				//bright = 0;
 				vCountEnable = 0;
 			end
@@ -251,33 +261,52 @@ module VGA_controller(
 endmodule
 
 module VGA_Bitgen(input            bright, 
-						input 	  [7:0] pixelData,
+						input 	  [17:0] pixelData,
+						input		  [3:0] move, // 3 - up 2 - down 1 - left 0 - right
 						input 	  [9:0] hCount, vCount,
-						output reg [7:0] rgb);
+						output reg [7:0] RGB_out);
 	 
 	 // ***********************************************************
 	 parameter BLACK   = 8'b000_000_00; // 8-bit black color
 	 parameter WHITE	= 8'b111_111_11;
 	 parameter RED		= 8'b111_000_00;
 	 parameter GREEN = 8'b000_111_00;
-	 parameter BLUE = 8'b000_000_00;
+	 parameter BLUE = 8'b000_000_11;
 	 
 	 // ***********************************************************
-	 // Cobminational rgb setter
-	 
+	 // Cobminational RGB_out setter
 	 /* 
 	  * As described in the tutorial this circuit is a simple combinational
-	  * block that sets the 8-bit rgb based on some pixel data.
+	  * block that sets the 8-bit RGB_out based on some pixel data.
 	  */
 	  always@(*)
 			if(~bright)
-				rgb = BLACK;
+				RGB_out = BLACK;
 			else if (((hCount >= 100) && (hCount <= 300)) && ((vCount >= 150) && (vCount <= 350)))
-				rgb = WHITE;
+				RGB_out = pixelData[7:0];
 			else 
-				rgb = RED;
+				RGB_out = BLACK;
 	  
 	  
 	 // ***************************************************************
 	 
+endmodule
+
+module Address_map(input    CLK, 
+						input 	CLR,
+						input    bright,
+						input [10:0]addr1,
+						input [17:0]d_in1,
+						input w1,
+						input  [9:0] hCount, vCount,
+						output [17:0]d_out2);
+					
+	reg [10:0] addr2;				
+	vidMemory vid_mem(CLK, w1, addr1, d_in1, d_out1, CLK, 1'b0, addr2, d_in2, d_out2);
+		
+	 always@(*)
+		if (((hCount >= 100) && (hCount <= 300)) && ((vCount >= 150) && (vCount <= 350)))
+				addr2 = 11'd253;
+			
+					
 endmodule

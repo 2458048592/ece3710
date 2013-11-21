@@ -36,7 +36,7 @@ module memory_map_test;
 	reg [17:0] a_din;
 	reg b_clk;
 	reg b_wr;
-	reg [13:0] b_addr;
+	reg [15:0] b_addr;
 	reg [17:0] b_din;
 
 	// Outputs
@@ -91,8 +91,9 @@ module memory_map_test;
 		
 		p1_trigger = 1;
 		p1_sens = 1;
+		b_din = 28;
 		#12;
-		b_addr = 8'd254;
+		b_addr = 16'hf0fd;
 		#6;
 		b_addr = 8'd10;
 		p1_trigger = 0;
