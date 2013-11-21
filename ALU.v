@@ -11,10 +11,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ALU(
-         input c,
+    input c,
     input signed [15:0] a,
     input signed [15:0] b,
-         input [7:0] op,
+    input [7:0] op,
     output reg [15:0] y,
     output reg C, L, F, Z, N
     );
