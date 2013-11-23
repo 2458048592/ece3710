@@ -4,7 +4,7 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   18:33:05 11/03/2013
+// Create Date:   09:59:44 11/23/2013
 // Design Name:   controller_integrated
 // Module Name:   /home/dan/Documents/xilinx_projects/CPU/controller_integrated_test.v
 // Project Name:  CPU
@@ -34,12 +34,32 @@ module controller_integrated_test;
 	wire w1;
 	wire [15:0] addr1;
 	wire [15:0] data1;
-	wire [4:0] FLAGS;
+	wire [4:0] stored_flags;
+	wire [15:0] A;
 	wire [15:0] B;
 	wire [15:0] aluOut;
-	wire [3:0] readRegA, loadReg;
 	wire PC_inc;
 	wire JAddrSelect;
+	wire [15:0] r0out;
+	wire [15:0] r1out;
+	wire [15:0] r2out;
+	wire [15:0] r3out;
+	wire [15:0] r4out;
+	wire [15:0] r5out;
+	wire [15:0] r6out;
+	wire [15:0] r7out;
+	wire [15:0] r8out;
+	wire [15:0] r9out;
+	wire [15:0] r10out;
+	wire [15:0] r11out;
+	wire [15:0] r12out;
+	wire [15:0] r13out;
+	wire [15:0] r14out;
+	wire [15:0] r15out;
+	wire [3:0] readRegA;
+	wire [3:0] readRegB;
+	wire [3:0] loadReg;
+	wire [3:0] memAddr;
 
 	// Instantiate the Unit Under Test (UUT)
 	controller_integrated uut (
@@ -50,13 +70,32 @@ module controller_integrated_test;
 		.w1(w1), 
 		.addr1(addr1), 
 		.data1(data1), 
-		.FLAGS(FLAGS), 
+		.stored_flags(stored_flags), 
+		.A(A), 
 		.B(B), 
 		.aluOut(aluOut), 
-		.readRegA(readRegA),
-		.loadReg(loadReg),
 		.PC_inc(PC_inc), 
-		.JAddrSelect(JAddrSelect)
+		.JAddrSelect(JAddrSelect), 
+		.r0out(r0out), 
+		.r1out(r1out), 
+		.r2out(r2out), 
+		.r3out(r3out), 
+		.r4out(r4out), 
+		.r5out(r5out), 
+		.r6out(r6out), 
+		.r7out(r7out), 
+		.r8out(r8out), 
+		.r9out(r9out), 
+		.r10out(r10out), 
+		.r11out(r11out), 
+		.r12out(r12out), 
+		.r13out(r13out), 
+		.r14out(r14out), 
+		.r15out(r15out), 
+		.readRegA(readRegA), 
+		.readRegB(readRegB), 
+		.loadReg(loadReg), 
+		.memAddr(memAddr)
 	);
 
 	initial begin
@@ -64,7 +103,7 @@ module controller_integrated_test;
 		CLK = 0;
 		CLR = 0;
 		inst = 0;
-		external_din = 18'b0;
+		external_din = 0;
 
 		CLR = 1;
 		#3 CLR = 0;

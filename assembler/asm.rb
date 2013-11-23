@@ -13,9 +13,9 @@ OptionParser.new do |opt|
   opt.parse!
 end
 
-file = ARGV.shift
+$file = ARGV.shift
 
-raise "Pass file name as first argument" unless file
+raise "Pass file name as first argument" unless $file
 
 instr_types = {
   :ADD =>   :r_type,
@@ -87,8 +87,8 @@ instr_bits = {
 
 
 # position 0 is Rsrc, position 1 is Rdest
-def get_reg( reg, pos )
-  raise "This doesn't look like a register: \'#{reg}\'" unless reg =~ /^\$[a-z]?(\d{1,2})_?.*?$/ 
+def get_reg( reg, pos, line )
+  raise "This doesn't look like a register: \'#{reg}\'\n**#{line} in #{$file}\n" unless reg =~ /^\$[a-z]?(\d{1,2})_?.*?$/ 
   num = $1.to_i # num is register number
   #print "reg: #{reg}, pos #{pos} num: #{num} $1: #{$1}\n"
   num << ( pos * 8 ) 
@@ -99,7 +99,9 @@ labels = {}
 
 # read in the file
 counter = 0
-IO.read( file ).split( "\n" ).each do |line|
+debug_line_count = 0
+IO.read( $file ).split( "\n" ).each do |line|
+  debug_line_count += 1
   next if line =~ /^\s*$/
   next if line =~ /^\s*#/
   raise "Invalid line: #{line}" unless line =~ /^\s*((\w+):)?\s*(\w+)\s(.*?)\s*(#.*|$)/
@@ -111,7 +113,8 @@ IO.read( file ).split( "\n" ).each do |line|
     :inst => inst,
     :args => args,
     :line => line,
-    :addr => counter
+    :addr => counter,
+    :debug => debug_line_count
   } )
   # labels is a hash
   labels[label] = counter if label
@@ -123,7 +126,7 @@ line_count = 0
 parsed.each do |data|
   inst = data[:inst]
   args = data[:args]
-  my_addr = data[:addr]
+  error_message = "Error with \'#{inst} #{args[0]}, #{args[1]}\' on line #{data[:debug]}"
 
   type = instr_types[ inst ]
   instr_bit = instr_bits[ inst ]
@@ -131,8 +134,8 @@ parsed.each do |data|
   case type
   when :r_type
     result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
-    result += get_reg( args[0], 0) # append Rsrc
-    result += get_reg( args[1], 1) # append Rdest
+    result += get_reg( args[0], 0, error_message) # append Rsrc
+    result += get_reg( args[1], 1, error_message) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
     when :i_type
     #puts " args[0] = #{args[0]}"
@@ -143,20 +146,20 @@ parsed.each do |data|
         args[0] = labels[args[0]]
     end
 	  result += (args[0].to_i & 0xff) # append 8 bit immediate value 
-    result += get_reg( args[1], 1) # append Rdest	
+    result += get_reg( args[1], 1, error_message) # append Rdest	
   when:i_shift
     result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
     result += (0xf & args[0].to_i) # append Rammount
-    result += get_reg( args[1], 1) # append Rdest
+    result += get_reg( args[1], 1, error_message) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
   when :mem
     result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
-    result += get_reg( args[1], 0) # append Rsrc
-    result += get_reg( args[0], 1) # append Rdest
+    result += get_reg( args[1], 0, error_message) # append Rsrc
+    result += get_reg( args[0], 1, error_message) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
   when :branch
     result = 0x4 << ( 12 ) # append the top 4 bits of the op-code to bit 15-12
-    result += get_reg( args[0], 1)
+    result += get_reg( args[0], 1, error_message)
     result += instr_bit
   else
     raise "Unsupported instruction #{inst}"

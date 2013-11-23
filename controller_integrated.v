@@ -28,7 +28,7 @@ module controller_integrated(
 	wire [15:0] RegB;
 	wire [4:0] FLAGS;
 	
-	instruction_FSM controller( CLK, CLR, inst, FLAGS, stored_flags, PC_inc, JAddrSelect, LR);
+	instruction_FSM controller(CLK, CLR, inst, FLAGS, stored_flags, PC_inc, JAddrSelect, LR);
 	 
 	ALU _alu(stored_flags[4], A, B, OP, aluOut, FLAGS[4], FLAGS[3], FLAGS[2], FLAGS[1], FLAGS[0]);
 

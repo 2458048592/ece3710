@@ -4,7 +4,7 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   11:14:15 11/20/2013
+// Create Date:   09:57:40 11/23/2013
 // Design Name:   CPU
 // Module Name:   /home/dan/Documents/xilinx_projects/CPU/CPU_test.v
 // Project Name:  CPU
@@ -42,11 +42,8 @@ module CPU_test;
 	wire [7:0] RGB_out;
 	wire HSync;
 	wire VSync;
-	wire [15:0] data_addr;
-	wire [13:0] inst_addr;
-	wire [17:0] data_out;
-	wire [17:0] inst;
-	wire b_wr;
+	wire [6:0] seg7;
+	wire [3:0] select;
 
 	// Instantiate the Unit Under Test (UUT)
 	CPU uut (
@@ -65,11 +62,8 @@ module CPU_test;
 		.RGB_out(RGB_out), 
 		.HSync(HSync), 
 		.VSync(VSync), 
-		.data_addr(data_addr),
-		.inst_addr(inst_addr),
-		.data_out(data_out), 
-		.inst(inst),
-		.b_wr(b_wr)
+		.seg7(seg7), 
+		.select(select)
 	);
 
 	initial begin

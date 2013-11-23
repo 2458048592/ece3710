@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-ruby asm.rb beq.asm  > ../../CPU/cpu_inst.mem
-ruby asm.rb -v beq.asm  
+ruby asm.rb vga.asm  > ../../CPU/cpu_inst.mem
+ruby asm.rb -v vga.asm  
 #ruby asm.rb -v test2.asm
 
 
