@@ -4,6 +4,13 @@ movi Skip_trig, $12_skip_t
 movi TOP, $r15
 movi 0, $8_score
 
+Set_pos: lui 240, $2
+movi 252, $1
+or $1, $2
+lui 255, $14_arg
+movi 255, $3
+or $3, $14_arg
+stor $14_arg, $2
 
 
 TOP: movi 254, $1_trig # {

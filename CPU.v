@@ -83,7 +83,7 @@ module CPU(
 	VGA2 vga( CLK, CLR, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, readRegA, readRegB,
 		loadReg, memAddr,data_addr, data_in[15:0], inst_addr[13:0], A, B, FLAGS, RGB_out, HSync, VSync );
 	
-	//VGA vga(CLK, CLR, data_addr, data_out, b_wr, HSync, VSync, RGB_out);
+//	VGA vga(CLK, CLR, data_addr, data_out, b_wr, HSync, VSync, RGB_out);
 	SSD_decoder decoder(CLK, CLR, r8, seg7, select);
 
 endmodule

@@ -36,9 +36,9 @@ module VGA(
 	wire [9:0] hCount, vCount;
 	wire bright;
 	VGA_controller control(CLK,CLR, HSync, VSync, bright, hCount, vCount);
-	VGA_Bitgen bits(bright, d_out2, d_out2, hCount, vCount, RGB_out);
+	VGA_Bitgen bits(bright, d_out2, d_out1, hCount, vCount, RGB_out);
 	
-	Address_map man_addr(CLK, CLR, bright, addr1[10:0], d_in1, w1, hCount, vCount, d_out2);
+	Address_map man_addr(CLK, CLR, bright, addr1[10:0], d_in1, w1, hCount, vCount, d_out2, d_out1);
 	
 endmodule 
 
@@ -262,7 +262,7 @@ endmodule
 
 module VGA_Bitgen(input            bright, 
 						input 	  [17:0] pixelData,
-						input		  [3:0] move, // 3 - up 2 - down 1 - left 0 - right
+						input		  [17:0] position, // 3 - up 2 - down 1 - left 0 - right
 						input 	  [9:0] hCount, vCount,
 						output reg [7:0] RGB_out);
 	 
@@ -282,7 +282,7 @@ module VGA_Bitgen(input            bright,
 	  always@(*)
 			if(~bright)
 				RGB_out = BLACK;
-			else if (((hCount >= 100) && (hCount <= 300)) && ((vCount >= 150) && (vCount <= 350)))
+			else if (((hCount >= position[7:0]) && (hCount <= position[7:0] + 50)) && ((vCount >= position[15:8]) && (vCount <= position[15:8] + 50)))
 				RGB_out = pixelData[7:0];
 			else 
 				RGB_out = BLACK;
@@ -299,14 +299,20 @@ module Address_map(input    CLK,
 						input [17:0]d_in1,
 						input w1,
 						input  [9:0] hCount, vCount,
-						output [17:0]d_out2);
+						output [17:0]d_out2, d_out1,
+						output [10:0] out_addr1);
 					
-	reg [10:0] addr2;				
-	vidMemory vid_mem(CLK, w1, addr1, d_in1, d_out1, CLK, 1'b0, addr2, d_in2, d_out2);
+	reg [10:0] addr2;	
+	reg [10:0] read_addr1;	
+	//reg [10:0] out_addr1;
+	mux2_to_1_16bit addr1_mux(addr1, read_addr1, bright, out_addr1);
+	vidMemory vid_mem(CLK, w1, out_addr1, d_in1, d_out1, CLK, 1'b0, addr2, d_in2, d_out2);
 		
-	 always@(*)
-		if (((hCount >= 100) && (hCount <= 300)) && ((vCount >= 150) && (vCount <= 350)))
+	 always@(*) begin
+	//	if (((hCount >= 100) && (hCount <= 300)) && ((vCount >= 150) && (vCount <= 350))) begin
 				addr2 = 11'd253;
-			
+				read_addr1 = 11'd252;
+	//		end
+		end
 					
 endmodule

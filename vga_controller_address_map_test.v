@@ -36,6 +36,9 @@ module vga_controller_address_map_test;
 
 	// Outputs
 	wire [17:0] d_out2;
+	wire [17:0] d_out1;
+	wire [10:0] out_addr1;
+
 
 	// Instantiate the Unit Under Test (UUT)
 	Address_map uut (
@@ -47,7 +50,9 @@ module vga_controller_address_map_test;
 		.w1(w1), 
 		.hCount(hCount), 
 		.vCount(vCount), 
-		.d_out2(d_out2)
+		.d_out2(d_out2),
+		.d_out1(d_out1),
+		.out_addr1(out_addr1)
 	);
 
 	initial begin
