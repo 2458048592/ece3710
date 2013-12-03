@@ -177,7 +177,7 @@ module decoder(
 					endcase
 				end
 				ADDI: begin
-						op <= {ADDI, inst[7:4]};
+						op <= {ADDI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];
@@ -185,7 +185,7 @@ module decoder(
 						Imm <= {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
 					end
 				ADDUI: begin
-						op <= {ADDUI, inst[7:4]};
+						op <= {ADDUI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];
@@ -193,7 +193,7 @@ module decoder(
 						Imm <= {8'b00000000, inst[7:0]};
 					end
 				ADDCUI: begin
-						op <= {ADDCUI, inst[7:4]};
+						op <= {ADDCUI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];
@@ -201,7 +201,7 @@ module decoder(
 						Imm <= {8'b00000000, inst[7:0]};
 					end
 				ADDCI: begin
-						op <= {ADDCI, inst[7:4]};
+						op <= {ADDCI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];
@@ -209,7 +209,7 @@ module decoder(
 						Imm <= {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
 					end
 				SUBI: begin
-						op <= {SUBI, inst[7:4]};
+						op <= {SUBI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];
@@ -217,7 +217,7 @@ module decoder(
 						Imm <= {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
 					end
 				CMPI: begin
-						op <= {CMPI, inst[7:4]};
+						op <= {CMPI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];
@@ -225,7 +225,7 @@ module decoder(
 						Imm <= {inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7], inst[7:0]};
 					end
 				CMPUI: begin
-						op <= {CMPUI, inst[7:4]};
+						op <= {CMPUI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];
@@ -233,7 +233,7 @@ module decoder(
 						Imm <= {8'b00000000, inst[7:0]};
 					end
 				MOVI: begin
-						op <= {MOVI, inst[7:4]};
+						op <= {MOVI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];
@@ -241,7 +241,7 @@ module decoder(
 						Imm <= {8'b00000000, inst[7:0]};
 					end
 				LUI: begin
-						op <= {LUI, inst[7:4]};
+						op <= {LUI, 4'b0};
 						readRegA <= inst[11:8];
 						readRegB <= inst[3:0];
 						loadReg <= inst[11:8];

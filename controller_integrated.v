@@ -8,7 +8,7 @@
 module controller_integrated(
 	input CLK, CLR,
 	input [17:0] inst, external_din,
-	output w1,  // w1 is writeToMemory
+	output reg w1,  // w1 is writeToMemory
 	output [15:0] addr1, // A[14:0] is addr1 for the memory module
 	output [15:0] data1,
 	output [4:0] stored_flags,
@@ -28,11 +28,21 @@ module controller_integrated(
 	wire [15:0] RegB;
 	wire [4:0] FLAGS;
 	
-	instruction_FSM controller(CLK, CLR, inst, FLAGS, stored_flags, PC_inc, JAddrSelect, LR);
+	instruction_FSM controller( CLK, CLR, inst, FLAGS, stored_flags, PC_inc, JAddrSelect, LR);
 	 
 	ALU _alu(stored_flags[4], A, B, OP, aluOut, FLAGS[4], FLAGS[3], FLAGS[2], FLAGS[1], FLAGS[0]);
 
-	decoder _decoder(inst, OP, Imm, selectImm, selectResult, w1, memAddr, readRegA, readRegB, loadReg);
+	wire _w1;
+	decoder _decoder(inst, OP, Imm, selectImm, selectResult, _w1, memAddr, readRegA, readRegB, loadReg);
+		
+	always @ (*) begin
+		if (addr1[15:14] == 2'b10 || addr1[15:14] == 2'b11) begin
+			w1 = 1'b0;
+		end
+		else begin
+			w1 = _w1;
+		end
+	end
 		
 	RegFile _regfile(CLK, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1, data1,
 							 data1, enWrite, reset, r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out);
