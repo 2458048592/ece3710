@@ -15,7 +15,7 @@ class Game
   include Rubygame
 
   def initialize
-    @demo = false
+    @demo = true
 
     @serialEnable = false
 

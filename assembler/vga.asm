@@ -36,7 +36,7 @@ bneq $13_color
 movi 28, $a14 # set arg as green
 
 #  if (normBool) {
-cmpi 0, $9_norm_bool 
+cmp 0, $9_norm_bool 
 bneq $r15
 #  } else {
 movi 1, $9_norm_bool
@@ -64,8 +64,8 @@ movi Skip_score, $3
 #}
 #else {
 #  if (sensor) {
-cmpi 1, $11_sens 
-bneq $3
+cmpi 0, $11_sens 
+beq $3
 #  }
 #  else {
 addi 1, $8_score

@@ -1,6 +1,8 @@
-movi 0, $1
+movi 2, $1
 movi Branch, $5
-cmpi 0, $1
+cmpi 2, $1
+beq $5
+cmpi 2, $1
 beq $5
 xor $0, $0
 xor $0, $0
