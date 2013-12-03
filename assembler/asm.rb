@@ -126,7 +126,8 @@ line_count = 0
 parsed.each do |data|
   inst = data[:inst]
   args = data[:args]
-  error_message = "Error with \'#{inst} #{args[0]}, #{args[1]}\' on line #{data[:debug]}"
+  debug_line = data[:debug]
+  error_message = "Error with \'#{inst} #{args[0]}, #{args[1]}\' on line #{debug_line}"
 
   type = instr_types[ inst ]
   instr_bit = instr_bits[ inst ]
@@ -170,7 +171,7 @@ parsed.each do |data|
   elsif ($verbose and $test)
     printf "%016b %s\n", result, data[:line]
   elsif ($verbose)
-    printf "%d(%x): %05x %s\n",line_count,line_count, result, data[:line]
+    printf "[%-3x = %-3d] %05x       %-3d %s\n", line_count,line_count, result, debug_line, data[:line]
     line_count += 1
   elsif ($binary)
     printf "%018b\n", result
