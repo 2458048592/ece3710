@@ -5,16 +5,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 module spriteGen(CLK, CLR, spriteHPix, spriteVPix, alpha, sprite);
 	input CLK, CLR;
-	input [3:0] spriteHPix, spriteVPix;
+	input [4:0] spriteHPix, spriteVPix;
 	output [7:0] sprite;
 	
-	reg [5:0] addr1;
+	reg [7:0] addr1;
 	reg [17:0] d_out1;
 	//memory _spritemem(CLK, 1'b0, addr1, d_in1, d_out1, CLK, 1'b0, addr2, d_in2, d_out2);
-	reg [17:0] _spriteROM [63:0];
+	reg [17:0] _spriteROM [255:0];
 	
 	initial begin
-		$readmemb("sprites.mem", _spriteROM);
+		//$readmemb("sprites.mem", _spriteROM);
+		$readmemh("duck.mem", _spriteROM);
 	end
 	
 	always @ (posedge CLK) begin
@@ -25,7 +26,7 @@ module spriteGen(CLK, CLR, spriteHPix, spriteVPix, alpha, sprite);
 	end
 	
 	always @ (*) begin
-		addr1 = spriteHPix[3:2] + {spriteVPix, 2'b0};
+		addr1 = spriteHPix[4:2] + {spriteVPix, 3'b0};
 	end
 	
 	output reg alpha;

@@ -118,7 +118,8 @@ module memory#(
 reg [DATA-1:0] mem [(2**ADDR)-1:0];
 initial begin
 	//$readmemh("hailstone.mem", mem);
-	$readmemh("videotest.mem", mem);
+	//$readmemh("videotest.mem", mem);
+	$readmemh("glyphMove.mem", mem);
 end
 // Port A
 always @(posedge a_clk) begin
