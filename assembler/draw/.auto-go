@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+ruby duck2mem.rb
