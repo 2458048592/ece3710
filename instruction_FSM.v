@@ -54,7 +54,7 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 		if (CLR) begin PS <= fetch; FLAGS <= _FLAGS; end
 		else begin
 			PS <= NS;
-			if (PS == fetch) FLAGS <= _FLAGS;
+			if (PS == alu || PS == stor2 || PS == load2 || PS == jump) FLAGS <= _FLAGS;
 			else FLAGS <= FLAGS;
 		end
 	end
