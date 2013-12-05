@@ -34,12 +34,18 @@ module VGA2( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10,
 			VLocation = 10'b0;
 		end
 		else begin
-			if (data_addr[15:14] == 2'b11) begin
-				case (data_addr[2:0])
-					3'b000: begin HLocation = data_in[9:0]; VLocation = VLocation; end
-					3'b001: begin HLocation = HLocation; VLocation = data_in[9:0]; end
-					default: begin HLocation = HLocation; VLocation = VLocation; end
-				endcase
+			if (inst[15:12] == 4'b0100 && inst[7:4] == 4'b0100) begin
+				if (data_addr[15:14] == 2'b11) begin
+					case (data_addr[2:0])
+						3'b000: begin HLocation = data_in[9:0]; VLocation = VLocation; end
+						3'b001: begin HLocation = HLocation; VLocation = data_in[9:0]; end
+						default: begin HLocation = HLocation; VLocation = VLocation; end
+					endcase
+				end
+				else begin
+					HLocation = HLocation;
+					VLocation = VLocation;
+				end
 			end
 			else begin
 				HLocation = HLocation;
@@ -48,7 +54,7 @@ module VGA2( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10,
 		end
 	end
 	
-	parameter spriteSize = 6'd32;
+	parameter spriteSize = 7'd64;
 	
 	// spriteHPix is calculated by taking HPix - XLocation % Sprite size
 	assign spriteHPix = (HPix - HLocation)%spriteSize;

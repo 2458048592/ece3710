@@ -81,10 +81,10 @@ module decoder(
 	parameter JUC = 4'b1110; // JUC jumps directly 
 	parameter BEQ = 4'b0000;
 	parameter BNEQ = 4'b0001;
-	//parameter BGT = 4'b0110;
-	//parameter BLT = 4'b0111;
-	//parameter BGE = 4'b1101;
-	//parameter BLE = 4'b1100;
+	parameter BGT = 4'b0110;
+	parameter BLT = 4'b0111;
+	parameter BGE = 4'b1101;
+	parameter BLE = 4'b1100;
 	
 	
 	always @ (*) begin
@@ -347,6 +347,46 @@ module decoder(
 									loadReg <= inst[11:8];
 								end
 								BNEQ: begin
+									// Check the flags after a CMP operation
+									// get the address out of inst[11:8] and throw it up to the PC counter if
+									// Z <= 0;
+								
+									op <= {RTYPE, OR_1};
+									readRegA <= inst[11:8];
+									readRegB <= inst[11:8];
+									loadReg <= inst[11:8];
+								end
+								BGT: begin
+									// Check the flags after a CMP operation
+									// get the address out of inst[11:8] and throw it up to the PC counter if
+									// Z <= 0;
+								
+									op <= {RTYPE, OR_1};
+									readRegA <= inst[11:8];
+									readRegB <= inst[11:8];
+									loadReg <= inst[11:8];
+								end
+								BLT: begin
+									// Check the flags after a CMP operation
+									// get the address out of inst[11:8] and throw it up to the PC counter if
+									// Z <= 0;
+								
+									op <= {RTYPE, OR_1};
+									readRegA <= inst[11:8];
+									readRegB <= inst[11:8];
+									loadReg <= inst[11:8];
+								end
+								BGE: begin
+									// Check the flags after a CMP operation
+									// get the address out of inst[11:8] and throw it up to the PC counter if
+									// Z <= 0;
+								
+									op <= {RTYPE, OR_1};
+									readRegA <= inst[11:8];
+									readRegB <= inst[11:8];
+									loadReg <= inst[11:8];
+								end
+								BLE: begin
 									// Check the flags after a CMP operation
 									// get the address out of inst[11:8] and throw it up to the PC counter if
 									// Z <= 0;
