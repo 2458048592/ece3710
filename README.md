@@ -34,3 +34,9 @@ Registers Convention
  * 6-13 saved values
  * 14 argument
  * 15 return value
+
+The duck can move based on CPU instructions. 
+Sprite X address 16'b1100000000000000 or lui 192
+Sprite Y address 16'b1100000000000001 or lui 192 and add 1
+
+0xC0 = 192
