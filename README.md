@@ -28,9 +28,22 @@ Memory:
 Assembly
  * load Rdest, Raddr # First arguement is the desination reg, the second arguement is the address to pull data from
  * stor Rsrc, Raddr  # Opposite convention from load.
+ * Immediates can be written as:
+  * Hex: 0xc0 or 0XC0 
+  * Binary: 0b11110000 or 0B11110000 
+
+  * Example:
+    * lui 0b11000000, $4
+    * lui 0xc0, $4
 
 Registers Convention
  * 0-5 temp
  * 6-13 saved values
  * 14 argument
  * 15 return value
+
+The duck can move based on CPU instructions. 
+Sprite X address 16'b1100000000000000 or lui 192
+Sprite Y address 16'b1100000000000001 or lui 192 and add 1
+
+0xC0 = 192
