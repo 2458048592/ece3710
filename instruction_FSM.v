@@ -31,6 +31,10 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 	parameter JUC = 4'b1110; // JUC jumps directly 
 	parameter BEQ = 4'b0000;
 	parameter BNEQ = 4'b0001;
+	parameter BGT = 4'b0110;
+	parameter BLT = 4'b0111;
+	parameter BGE = 4'b1101;
+	parameter BLE = 4'b1100;
 	parameter CMP_1 = 4'b0000;
 	parameter CMP_2 = 4'b1011;
 	parameter CMPI = 4'b1011;
@@ -148,6 +152,28 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 						// Since this is a BNEQ, then if the Z Flag is 0, the arguments
 						// to the CMP operation were not equal
 						if (FLAGS[1] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						else PC_inc <= 1'b1;
+					end
+					BGT: begin
+						// If L or N == 0, FLAGS[3] or FLAGS[0], then A is greater than B, so Jump
+						if (FLAGS[3] == 1'b0 || FLAGS[0] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						else PC_inc <= 1'b1;
+					end
+					BLT: begin
+						// If L or N == 1, FLAGS[3] or FLAGS[0], then A is less than B, so Jump
+						if (FLAGS[3] == 1'b1 || FLAGS[0] == 1'b1) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						else PC_inc <= 1'b1;
+					end
+					BGE: begin
+						// If L or N == 0, FLAGS[3] or FLAGS[0], then A is greater than B, so Jump
+						// if Z == 1, FLAGS[1], then A is equal to B, so Jump
+						if (FLAGS[1] == 1'b1 || FLAGS[3] == 1'b0 || FLAGS[0] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						else PC_inc <= 1'b1;
+					end
+					BLE: begin
+						// If L or N == 1, FLAGS[3] or FLAGS[0], then A is less than B, so Jump
+						// if Z == 1, FLAGS[1], then A is equal to B, so Jump
+						if (FLAGS[1] == 1'b1 || FLAGS[3] == 1'b1 || FLAGS[0] == 1'b1) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
 						else PC_inc <= 1'b1;
 					end
 					// other functionality can be added easily here to check the other flags for the GE, GT, LE, and LT

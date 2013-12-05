@@ -35,15 +35,32 @@ Assembly
   * Example:
     * lui 0b11000000, $4
     * lui 0xc0, $4
+ * Labels
+   * Labels must start with a letter (A-Z or a-z) 
+   * Label must end with a colon ( : ) 
+   * Labels are treated as immediates in assembly
+     * Example:
+        * movi MyLabel, $1 
+        * cmpi AnotherLabel, $1
+ * Variables
+   * A label reserves a variable's position in memory with a NOP
+   * All variables will start with VAR_
+   * Example:
+     * VAR_myVar: xor $0, $0
 
-Registers Convention
- * 0-5 temp
- * 6-13 saved values
- * 14 argument
- * 15 return value
-
-The duck can move based on CPU instructions. 
-Sprite X address 16'b1100000000000000 or lui 192
-Sprite Y address 16'b1100000000000001 or lui 192 and add 1
-
-0xC0 = 192
+ * Registers Convention
+   * 0-6 temp (0 used for nop's)
+   * 7-11 saved values
+   * 12-14 argument
+   * 15 return value
+ 
+VGA
+ * The duck can move based on CPU instructions. 
+   * Sprite X address 16'b1100000000000000 or lui 192
+   * Sprite Y address 16'b1100000000000001 or lui 192 and add 1
+ * Some conversions
+  * 192 = 0xC0 
+  * 480 = 0x1e0
+  * 240 = 0xf0
+  * 640 = 0x280
+  * 320 = 0x140

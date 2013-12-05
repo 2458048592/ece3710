@@ -76,6 +76,10 @@ module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6
 	parameter JUC = 4'b1110; // JUC jumps directly 
 	parameter BEQ = 4'b0000;
 	parameter BNEQ = 4'b0001;
+	parameter BGT = 4'b0110;
+	parameter BLT = 4'b0111;
+	parameter BGE = 4'b1101;
+	parameter BLE = 4'b1100;
 		
 	debugMemory debug_mem(CLK, w1, addr1, d_in1, d_out1, CLK, w2, addr2, d_in2, d_out2);
 	
@@ -539,6 +543,38 @@ module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6
 										val2 = 6'b011000;
 										val3 = 6'b001111;
 										val4 = 6'b011011;
+										val5 = 6'b000000;
+										val6 = 6'b000000;
+									end
+									BGE: begin
+										val1 = 6'b001100;
+										val2 = 6'b010001;
+										val3 = 6'b001111;
+										val4 = 6'b000000;
+										val5 = 6'b000000;
+										val6 = 6'b000000;
+									end
+									BLE: begin
+										val1 = 6'b001100;
+										val2 = 6'b010110;
+										val3 = 6'b001111;
+										val4 = 6'b000000;
+										val5 = 6'b000000;
+										val6 = 6'b000000;
+									end
+									BGT: begin
+										val1 = 6'b001100;
+										val2 = 6'b010001;
+										val3 = 6'b011110;
+										val4 = 6'b000000;
+										val5 = 6'b000000;
+										val6 = 6'b000000;
+									end
+									BLT: begin
+										val1 = 6'b001100;
+										val2 = 6'b010110;
+										val3 = 6'b011110;
+										val4 = 6'b000000;
 										val5 = 6'b000000;
 										val6 = 6'b000000;
 									end
