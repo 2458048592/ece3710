@@ -138,15 +138,25 @@ parsed.each do |data|
     result += get_reg( args[0], 0, error_message) # append Rsrc
     result += get_reg( args[1], 1, error_message) # append Rdest
     result += (instr_bit & 0x0f) << (4) # append op-code ext
-    when :i_type
+  when :i_type
     #puts " args[0] = #{args[0]}"
 		result = (instr_bit & 0xf0) << ( 8 ) 
+    imm = args[0]
 
-    if (labels.has_key?(args[0]))
-        print "Label: #{args[0]} = #{labels[args[0]]}\n" if $verbose
-        args[0] = labels[args[0]]
+    if (labels.has_key?(imm))
+        print "Label: #{imm} = #{labels[imm]}\n" if $verbose
+        imm = labels[imm]
+    end 
+
+    if (imm =~ /^0[xX]/)
+      imm = imm.to_i(16)
+      #print "hex parameter = #{imm}\n"
+    elsif (imm =~ /^0[bB]/)
+      imm = imm.to_i(2)
+      print "binary = #{imm}\n"
     end
-	  result += (args[0].to_i & 0xff) # append 8 bit immediate value 
+
+	  result += (imm.to_i & 0xff) # append 8 bit immediate value 
     result += get_reg( args[1], 1, error_message) # append Rdest	
   when:i_shift
     result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12

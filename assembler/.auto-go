@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-ruby asm.rb vga.asm  > ../../CPU/cpu_inst.mem
-ruby asm.rb -v vga.asm  
+ruby asm.rb figure8Move.asm  > ../../CPU/glyphMove.mem
+ruby asm.rb -v figure8Move.asm  
 #ruby asm.rb -v test2.asm
 
 
