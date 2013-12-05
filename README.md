@@ -40,8 +40,8 @@ Assembly
    * Label must end with a colon ( : ) 
    * Labels are treated as immediates in assembly
      * Example:
-       * movi MyLabel, $1
-       * cmpi AnotherLabel, $1
+        * movi MyLabel, $1 
+        * cmpi AnotherLabel, $1
 
 Registers Convention
  * 0-6 temp (0 used for nop's)
