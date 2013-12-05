@@ -41,9 +41,14 @@ Registers Convention
  * 6-13 saved values
  * 14 argument
  * 15 return value
-
-The duck can move based on CPU instructions. 
-Sprite X address 16'b1100000000000000 or lui 192
-Sprite Y address 16'b1100000000000001 or lui 192 and add 1
-
-0xC0 = 192
+ 
+VGA
+ * The duck can move based on CPU instructions. 
+   * Sprite X address 16'b1100000000000000 or lui 192
+   * Sprite Y address 16'b1100000000000001 or lui 192 and add 1
+ * Some conversions
+  * 192 = 0xC0 
+  * 480 = 0x1e0
+  * 240 = 0xf0
+  * 640 = 0x280
+  * 320 = 0x140
