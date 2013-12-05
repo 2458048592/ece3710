@@ -146,14 +146,16 @@ parsed.each do |data|
     if (labels.has_key?(imm))
         print "Label: #{imm} = #{labels[imm]}\n" if $verbose
         imm = labels[imm]
-    end 
+    elsif (imm =~ /^[a-zA-Z]+/)
+      raise "This is not a declared label #{imm} on line #{debug_line}"
+    end
 
     if (imm =~ /^0[xX]/)
       imm = imm.to_i(16)
       #print "hex parameter = #{imm}\n"
     elsif (imm =~ /^0[bB]/)
       imm = imm.to_i(2)
-      print "binary = #{imm}\n"
+      #print "binary = #{imm}\n"
     end
 
 	  result += (imm.to_i & 0xff) # append 8 bit immediate value 
