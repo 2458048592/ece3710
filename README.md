@@ -28,6 +28,13 @@ Memory:
 Assembly
  * load Rdest, Raddr # First arguement is the desination reg, the second arguement is the address to pull data from
  * stor Rsrc, Raddr  # Opposite convention from load.
+ * Immediates can be written as:
+ * 0xc0 or 0XC0 for hex
+   0b11110000 or 0B11110000 for binary.
+
+   Example:
+    lui 0b11000000, $4
+    lui 0xc0, $4
 
 Registers Convention
  * 0-5 temp
