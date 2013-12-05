@@ -37,8 +37,8 @@ Assembly
     * lui 0xc0, $4
 
 Registers Convention
- * 0-5 temp
- * 6-11 saved values
+ * 0-6 temp (0 used for nop's)
+ * 7-11 saved values
  * 12-14 argument
  * 15 return value
  
