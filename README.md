@@ -33,8 +33,8 @@ Assembly
   * Binary: 0b11110000 or 0B11110000 
 
   * Example:
-   * lui 0b11000000, $4
-   * lui 0xc0, $4
+    * lui 0b11000000, $4
+    * lui 0xc0, $4
 
 Registers Convention
  * 0-5 temp
