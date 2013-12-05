@@ -38,6 +38,9 @@ Assembly
  * Labels
    * Labels must start with a letter (A-Z or a-z) 
    * Label must end with a colon ( : ) 
+   * Labels are treated as immidates
+     * To load a label into a register do the following with any immediate instruction:
+       * movi MyLabel, $1
 
 Registers Convention
  * 0-6 temp (0 used for nop's)
