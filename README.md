@@ -35,6 +35,9 @@ Assembly
   * Example:
     * lui 0b11000000, $4
     * lui 0xc0, $4
+ * Labels
+   * Labels must start with a letter (A-Z or a-z) 
+   * Label must end with a colon ( : ) 
 
 Registers Convention
  * 0-6 temp (0 used for nop's)
