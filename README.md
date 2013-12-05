@@ -43,10 +43,10 @@ Assembly
         * movi MyLabel, $1 
         * cmpi AnotherLabel, $1
  * Variables
-   * A label reserves a variable's position in memory
+   * A label reserves a variable's position in memory with a NOP
    * All variables will start with VAR_
    * Example:
-     * VAR_myVar
+     * VAR_myVar: xor $0, $0
 
 Registers Convention
  * 0-6 temp (0 used for nop's)
