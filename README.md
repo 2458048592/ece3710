@@ -48,11 +48,11 @@ Assembly
    * Example:
      * VAR_myVar: xor $0, $0
 
-Registers Convention
- * 0-6 temp (0 used for nop's)
- * 7-11 saved values
- * 12-14 argument
- * 15 return value
+ * Registers Convention
+   * 0-6 temp (0 used for nop's)
+   * 7-11 saved values
+   * 12-14 argument
+   * 15 return value
  
 VGA
  * The duck can move based on CPU instructions. 
