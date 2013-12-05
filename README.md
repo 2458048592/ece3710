@@ -38,8 +38,8 @@ Assembly
 
 Registers Convention
  * 0-5 temp
- * 6-13 saved values
- * 14 argument
+ * 6-11 saved values
+ * 12-14 argument
  * 15 return value
  
 VGA
