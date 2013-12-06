@@ -48,7 +48,11 @@ instr_types = {
   :MOVI =>  :i_type,
   :JUC  =>  :branch,
   :BEQ  =>  :branch,
-  :BNEQ =>  :branch
+  :BNEQ =>  :branch,
+  :BGT  =>  :branch,
+  :BLT  =>  :branch,
+  :BGE  =>  :branch,
+  :BLE  =>  :branch,
 }
 
 instr_bits = {
@@ -83,6 +87,10 @@ instr_bits = {
   :JUC  => 0b11001110,
   :BEQ  => 0b11000000,
   :BNEQ => 0b11000001,
+  :BGT  => 0b11000110,
+  :BLT  => 0b11000111,
+  :BGE  => 0b11001101,
+  :BLE  => 0b11001100,
 }
 
 

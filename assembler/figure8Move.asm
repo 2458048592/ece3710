@@ -3,23 +3,37 @@
 # Duckhunt
 #
 #
-#   VAR stands for variable, just use a label to reverse a memory location
+#   VAR stands for variable, just use a label to reserve a memory location
 #
 #
 ########################################################################
 VAR_VGA_moveToX: xor $0, $0     # where to move the duck to 
 VAR_VGA_moveToY: xor $0, $0     # where to move the duck to 
 VAR_VGA_currentX: xor $0, $0    # current duck X pos
+  movi VAR_VGA_currentX, $2 
+  stor $0, $2 
 VAR_VGA_currentY: xor $0, $0    # current duck Y pos
+  movi VAR_VGA_currentY, $2 
+  stor $0, $2 
 VAR_moveDuckReturn: xor $0, $0  
 
-posOne: movi 100, $14_y # y = 240
+movi 1, $1
+movi 2, $2
+movi GREATER, $15
+cmp $1, $2
+bgt $15
+xor $0, $0
+xor $0, $0
+xor $0, $0
+GREATER: movi 0xFF, $1
+
+posOne: movi 1, $14_y # y = 240
   # x = 320
   lui 0x01, $13
   movi 0x40, $2
   or $2, $13_x
 
-  movi posTwo, $12
+  movi END, $12
 
   movi moveDuck, $15
   juc $15
@@ -69,7 +83,7 @@ moveDuck: xor $0, $0
   
     movi sleep, $15
     movi moveDuckSleepReturn, $13
-    lui 2, $14_sleepArg
+    movi 0x01, $14_sleepArg
     juc $15
     
     moveDuckSleepReturn: xor $0, $0
@@ -161,6 +175,7 @@ sleep: xor $1, $1
 
 
 
+END: xor $0, $0
 
 
 
