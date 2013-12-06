@@ -17,37 +17,44 @@ VAR_VGA_currentY: xor $0, $0    # current duck Y pos
   stor $0, $2 
 VAR_moveDuckReturn: xor $0, $0  
 
-movi 1, $1
-movi 2, $2
-movi GREATER, $15
-cmp $1, $2
-bgt $15
-xor $0, $0
-xor $0, $0
-xor $0, $0
-GREATER: movi 0xFF, $1
+topLeftCorner: movi bottomRightCorner, $12_return
+  movi 0, $14_y 
+  movi 0, $13_x
+ 
+  movi moveDuck, $15
+  juc $15
 
-posOne: movi 1, $14_y # y = 240
-  # x = 320
-  lui 0x01, $13
+topRightCorner: movi topLeftCorner, $12_return
+  movi 0, $14_y 
+
+  lui 0x02, $13
   movi 0x40, $2
-  or $2, $13_x
-
-  movi END, $12
+  or $2, $13_x # x = 640 - 64 = 576 = 0x240
 
   movi moveDuck, $15
   juc $15
 
-posTwo: movi 240, $14 
-  # x = 320
-  lui 0x01, $13
+bottomRightCorner: movi bottomLeftCorner, $12_return
+  lui 0x02, $13
   movi 0x40, $2
-  or $2, $13_x
-  movi posOne, $12
+  or $2, $13_x # x = 640 - 64 = 576 = 0x240
+  
+  lui 0x01, $14
+  movi 0xA0, $2
+  or $2, $14_y # y = 480 - 64 = 416 = 0x1A0
+  
   movi moveDuck, $15
   juc $15
 
+bottomLeftCorner: movi topRightCorner, $12_return
+  movi 0, $13_x 
 
+  lui 0x01, $14
+  movi 0xA0, $2
+  or $2, $14_y # y = 480 - 64 = 416 = 0x1A0
+
+  movi moveDuck, $15
+  juc $15
 
 
 ###################################
@@ -102,14 +109,31 @@ moveDuck: xor $0, $0
       beq $15
     # }
     # else {
-      addui 1, $1 # add 1 to pos
-      
-      xor $5, $5
+      # if (moveToX > currentX) {
+        movi addToX, $15
+        cmp $1_currentX, $3_moveToX
+        bgt $15
+      # }
+      # else {
+        movi subFromX, $15
+        juc $15
+      # }
+
+      addToX: addui 1, $1 # add 1 to pos
+        movi finishedAddSubX, $15
+        juc $15
+        
+      subFromX: subi 1, $1 #sub 1 to pos
+
+      finishedAddSubX: xor $5, $5
+
       lui 0xc0, $5
-      
       stor $1, $5_vga_addr # update VGA
+
       stor $1, $2 # save currentX
+
       movi finishedElseX, $15
+      juc $15
     # }
     
     setFinishedX: movi 0b10, $1 
@@ -130,14 +154,30 @@ moveDuck: xor $0, $0
       beq $15
     # }
     # else {
-      addui 1, $1 # add 1 to pos
+      # if (moveToY > currentY) {
+        movi addToY, $15
+        cmp $1_currentY, $3_moveToY
+        bgt $15
+      # }
+      # else {
+        movi subFromY, $15
+        juc $15
+      # }
+
+      addToY: addui 1, $1 # add 1 to pos
+        movi finishedAddSubY, $15
+        juc $15
+        
+      subFromY: subi 1, $1 #sub 1 to pos
+
+      finishedAddSubY: xor $5, $5
       
-      xor $5, $5
       lui 0xc0, $5
       addui 1, $5
-      
       stor $1, $5_vga_addr # update VGA
+
       stor $1, $2 # save currentY
+
       movi finishedElseY, $15
       juc $15
     # }
@@ -148,7 +188,8 @@ moveDuck: xor $0, $0
       finishedElseY: xor $0, $0
 
       # if (moveCompleted == 0b11) {
-        movi VAR_moveDuckReturn, $15
+        movi VAR_moveDuckReturn, $2
+        load $15, $2
         cmpi 0b11, $7
         beq $15
       # }
