@@ -53,6 +53,7 @@ instr_types = {
   :BLT  =>  :branch,
   :BGE  =>  :branch,
   :BLE  =>  :branch,
+  :BIN  =>  :binary,
 }
 
 instr_bits = {
@@ -91,6 +92,7 @@ instr_bits = {
   :BLT  => 0b11000111,
   :BGE  => 0b11001101,
   :BLE  => 0b11001100,
+  :BIN  => 0b00000000,
 }
 
 
@@ -141,6 +143,8 @@ parsed.each do |data|
   instr_bit = instr_bits[ inst ]
   raise "No bits for #{inst}" unless instr_bit
   case type
+  when :binary
+    result = args[0].to_i(2)
   when :r_type
     result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
     result += get_reg( args[0], 0, error_message) # append Rsrc
