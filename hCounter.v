@@ -20,13 +20,13 @@ module hCounter( CLK, CLR, VCntEna, HSync, HPix );
 	always @ (posedge CLK) begin
 		if (CLR) begin HCnt = 10'b0; end
 		else begin
-			if (HCnt < (SCANLINE)) begin HCnt = HCnt + 1'b1; end
+			if (HCnt < SCANLINE) begin HCnt = HCnt + 1'b1; end
 			else begin HCnt = 10'b0; end
 		end
 	end
 	
 	always @ (*) begin
-		if (HCnt == (SCANLINE)) begin
+		if (HCnt == SCANLINE) begin
 			VCntEna = 1'b1;
 		end
 		else begin

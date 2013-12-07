@@ -90,3 +90,35 @@ VGA
   * 240 = 0xf0
   * 640 = 0x280
   * 320 = 0x140
+
+!!!!!!!New Stuff!!!!!!!
+There is a new instruction: GSTOR = 4'b1100
+This is a VMEM type instruction which has 3 registers as its arguments, RTop, RBottom, and RAddr
+Usage is like this
+GSTOR $RTop, $RBottom, $RAddr
+
+RTop needs to appear out of the readRegA mux
+RBottom needs to appear out of the readRegB mux
+RAddr needs to appear out of the memAddr mux
+
+This instruction allows us to write 3 glyphs at a time to the glyphMap, overcoming a previous limitation (direct addressing).  By adding this new instruction, we can modify each individual glyph in the glyph map.
+
+This also fixes a problem where storing to VMEM was occurring when it shouldn't have (One of my previous changes was lost) in the glyph map.
+
+Also new:
+The following addresses allow us to modify the VGA/Sprite via a simple STOR instruction (don't try to LOAD, you won't get anything).
+0xc000: Sprite1 X Location (10-bit)
+0xc001: Sprite1 Y Location (10-bit)
+0xc002: display Black (1-bit)
+0xc003: display Color (8-bit)
+0xc004: sprite1 On (1-bit)
+0xc005: sprite1 White (1-bit)
+0xc006: textColor (8-bit)
+
+X and Y have not changed from the previous revision.  This adds the display Black, display Color, sprite1 On, sprite1 White, and text Color support.
+
+By setting displayBlack to 1'b1, the entire game display will be set black (this only affects Normal mode, not Debug Mode). Default == 1'b0;
+By setting displayColor to some 8-bit value, the background color will be set to that value. Default == 8'b00000000
+By setting sprite1On to 1'b0, sprite1 (the duck) will not be displayed on the background.  This is not affected by displayBlack.  Default == 1'b1;
+By setting sprite1White to 1'b1, sprite1 (the duck) will be changed to a white box 64 pixels by 64 pixels.  Default == 1'b0.
+By setting textColor to some 8-bit value, the text color will be set to that value.  Default == 8'b11111111

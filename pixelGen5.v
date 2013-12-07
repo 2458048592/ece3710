@@ -12,13 +12,15 @@
 // 164 for the alphabet as written, so if we start at address 256,
 // we stop at 1875
 module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
-		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, FLAGS, HPix, VPix, /*gAddr1,d_out2, vd_out2, gD_out1,*/ RGB_out );
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, FLAGS, HPix, VPix, displayColor, textColor, displayBlack, RGB_out );
 	input CLK, CLR, DEBUG;
 	input [17:0] inst;
 	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, data_addr, data_in, A, B, inst_addr;
 	input [3:0] readRegA, readRegB, loadReg, memAddr;
 	input [4:0] FLAGS;
 	input [9:0] HPix, VPix;
+	input [7:0] displayColor, textColor;
+	input displayBlack;
 	//input [17:0] gD_out1;
 	//output reg [7:0] gAddr1;
 	output reg [7:0] RGB_out;
@@ -80,6 +82,8 @@ module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6
 	parameter BLT = 4'b0111;
 	parameter BGE = 4'b1101;
 	parameter BLE = 4'b1100;
+	
+	parameter GSTOR = 4'b1100;
 		
 	debugMemory debug_mem(CLK, w1, addr1, d_in1, d_out1, CLK, w2, addr2, d_in2, d_out2);
 	
@@ -778,10 +782,22 @@ module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6
 	end
 	
 	always @ (*) begin
-		if (data_addr[15:14] == 2'b10) begin
+		if (inst[15:12] == MEM && inst[7:4] == STOR) begin
+			if (data_addr[15:14] == 2'b10) begin
+				addr1 = data_addr[12:0];
+				w1 = 1'b1;
+				d_in1 = {2'b0, data_in};
+			end
+			else begin
+				addr1 = 0;
+				w1 = 0;
+				d_in1 = 18'b0;
+			end
+		end
+		else if (inst[15:12] == GSTOR) begin
 			addr1 = data_addr[12:0];
 			w1 = 1'b1;
-			d_in1 = {2'b0, data_in};
+			d_in1 = {A[5:0], B[11:0]}; 
 		end
 		else begin
 			addr1 = 0;
@@ -831,11 +847,26 @@ module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6
 	always @ (*) begin
 		if (HPix == 0 || VPix == 0) begin RGB_out = 8'b00000000; end 
 		else begin
-			if (gD_out1[17 - (2 + ((HPix - 1) % 8 + (((VPix - 1) % 2) * 8)))] == 1) begin
-				RGB_out = 8'b11111111;
+			if (DEBUG == 1'b1) begin
+				if (gD_out1[17 - (2 + ((HPix - 1) % 8 + (((VPix - 1) % 2) * 8)))] == 1) begin
+					RGB_out = textColor;
+				end
+				else begin
+					RGB_out = displayColor;
+				end			
 			end
 			else begin
-				RGB_out = 8'b00000000;
+				if (displayBlack == 1'b1) begin
+					RGB_out = 8'b00000000;
+				end
+				else begin
+					if (gD_out1[17 - (2 + ((HPix - 1) % 8 + (((VPix - 1) % 2) * 8)))] == 1) begin
+						RGB_out = textColor;
+					end
+					else begin
+						RGB_out = displayColor;
+					end
+				end
 			end
 		end
 	end

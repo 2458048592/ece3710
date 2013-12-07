@@ -20,6 +20,8 @@ module decoder(
 	 output reg [3:0] loadReg
     );
 	
+	
+	
 	parameter RTYPE = 4'b0000;
 	//parameter ADD_0 = 4'b0000; 
 	parameter ADD_1 = 4'b0101;
@@ -62,6 +64,23 @@ module decoder(
 	//parameter ARSH_0 = 4'b1000;
 	parameter ARSH_1 = 4'b1101; // Interprets RSrc as Unsigned
 	
+	//1101, 0100, 1111, 0000, 0101, 0110, 1010, 0111, 1001, 1011, 1110, 1000
+	// 0000
+	// 0100
+	// 0101
+	// 0110
+	// 0111
+	// 1000
+	// 1001
+	// 1010
+	// 1011
+	// 1101
+	// 1110
+	// 1111
+	
+	// still have 0001, 0010, 0011, and 1100 free
+	// use 1100 for the new Glyph Load instruction
+	
 	parameter MEM = 4'b0100;
 	parameter LOAD_1 = 4'b0000;
 	parameter STOR_1 = 4'b0100;
@@ -69,6 +88,8 @@ module decoder(
 	// MOV_0 = 4'b0000;
 	parameter MOV_1 = 4'b1101;
 	parameter MOVI = 4'b1101;
+	
+	parameter GSTOR = 4'b1100;
 	
 	//parameter LOAD = 2'b10; // This is a read instruction and reads the value in memory[RAddr] and stores in RDest
 	//parameter STOR = 2'b11; // This is a write instruction and writes the value in RDest to memory[RAddr]
@@ -414,6 +435,18 @@ module decoder(
 							loadReg <= inst[11:8];
 						end
 					endcase
+				end
+				GSTOR: begin
+					// GSTOR needs 3 registers to work correctly
+					// RTop, RBottom, and RAddr
+					// RTop needs to be in RegA, RBottom needs to be in RegB, and RAddr will come out of MemAddr
+					// This operation cannot load values into any register, so turn off the loadRegEnable bit in
+					// decoder.
+					op <= {RTYPE, OR_1};
+					readRegA <= inst[11:8]; // RTop.  This register holds the top glyph to be stored in memory in its bottom 6 bits
+					readRegB <= inst[7:4]; // RBottom.  This register holds the bottom 2 glyphs to be stored in memory in its bottom 12 bits
+					memAddr <= inst[3:0]; // RAddr. This register holds the address for the 3 glyphs to be overwritten
+					loadReg <= inst[11:8]; // don't use this!
 				end
 				default: begin
 					op <= {RTYPE, OR_1};

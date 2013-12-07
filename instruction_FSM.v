@@ -39,6 +39,7 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 	parameter CMP_2 = 4'b1011;
 	parameter CMPI = 4'b1011;
 	parameter CMPUI = 4'b1110; // Replaces MULI
+	parameter GSTOR = 4'b1100;
 	
 	parameter fetch = 3'b000; // fetch is the initial state, set up the address for Instruction Memory
 	parameter decode = 3'b001; // decode is the state after getting the data_out from the Instruction Memory
@@ -82,6 +83,9 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 							end
 							default: begin NS <= fetch; end
 						endcase
+					end
+					GSTOR: begin
+						NS <= fetch;
 					end
 					default: begin
 						NS <= alu;
@@ -156,7 +160,7 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 					end
 					BGT: begin
 						// If L or N == 0, FLAGS[3] or FLAGS[0], then A is greater than B, so Jump
-						if (/*FLAGS[3] == 1'b0 || */FLAGS[0] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						if (FLAGS[3] == 1'b0 && FLAGS[0] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
 						else PC_inc <= 1'b1;
 					end
 					BLT: begin
@@ -167,13 +171,13 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 					BGE: begin
 						// If L or N == 0, FLAGS[3] or FLAGS[0], then A is greater than B, so Jump
 						// if Z == 1, FLAGS[1], then A is equal to B, so Jump
-						if (FLAGS[1] == 1'b1 || FLAGS[3] == 1'b0 || FLAGS[0] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						if (FLAGS[1] == 1'b1 || (FLAGS[3] == 1'b0 && FLAGS[0] == 1'b0)) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
 						else PC_inc <= 1'b1;
 					end
 					BLE: begin
 						// If L or N == 1, FLAGS[3] or FLAGS[0], then A is less than B, so Jump
 						// if Z == 1, FLAGS[1], then A is equal to B, so Jump
-						if (FLAGS[1] == 1'b1 || FLAGS[3] == 1'b1 || FLAGS[0] == 1'b1) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						if (FLAGS[1] == 1'b1 || (FLAGS[3] == 1'b1 || FLAGS[0] == 1'b1)) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
 						else PC_inc <= 1'b1;
 					end
 					// other functionality can be added easily here to check the other flags for the GE, GT, LE, and LT
