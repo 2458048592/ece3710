@@ -149,7 +149,11 @@ IO.read( $file ).split( "\n" ).each do |line|
   } )
   # labels is a hash
   labels[label] = counter if label
-  counter += 1
+  if (inst =~ /^LBN$/) 
+    counter += 3
+  else
+    counter += 1
+  end
 end
 
 def print_result(result, line_count, debug_line, data)
