@@ -54,6 +54,16 @@ Assembly
    * 7-11 saved values
    * 12-14 argument
    * 15 return value
+ * Random numbers
+   * LBN $0, $1, 0x2008  # 8bit random number   
+   * LBN $0, $1, 0x2009  # 9bit random number   
+   * LBN $0, $1, 0x2010  # 10bit random number 
+ * Guns 
+   * LBN $0, $3, 0x2000 # player 1 trigger
+   * LBN $0, $3, 0x2001 # player 1 sensor
+   * LBN $0, $3, 0x2002 # player 2 trigger
+   * LBN $0, $3, 0x2003 # palyer 2 sensor
+
  * Pseudo Instructions
    * LBN - Loads a 16-bit number into a register
      * LBN $Rsrc, $Rdest, <immediate value>
