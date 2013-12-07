@@ -59,14 +59,14 @@ Assembly
      * LBN $Rsrc, $Rdest, <immediate value>
 
      * Example:
-       * LBN $3, $1, 0x1234
-       * LBN $3, $1, my_label
+        * LBN $3, $1, 0x1234
+        * LBN $3, $1, my_label
 
-     * The assembler compiles it to 3 instructions, looks like this
-       * hex |line# |inst  |asmline#| asm   
-       * [fe  = 254] 0f143       468 LBN $3, $1, 0x4321
-       * [ff  = 255] 0d321       468 LBN $3, $1, 0x4321 
-       * [100 = 256] 00123       468 LBN $3, $1, 0x4321
+     * The assembler compiles it to 3 instructions
+       * LBN $3, $1, 0x1234
+           * LUI 0x12, $1
+           * MOVI 0x34, $3
+           * OR $3, $1
      * All labels must be loaded with LBN
    
    * NUM - initializes an immediate into memory (Useful for writing glyphs)
