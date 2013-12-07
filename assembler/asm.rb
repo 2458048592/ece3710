@@ -53,7 +53,8 @@ instr_types = {
   :BLT  =>  :branch,
   :BGE  =>  :branch,
   :BLE  =>  :branch,
-  :BIN  =>  :binary,
+  :NUM  =>  :number,
+  :LBN =>   :big_num,
 }
 
 instr_bits = {
@@ -92,7 +93,8 @@ instr_bits = {
   :BLT  => 0b11000111,
   :BGE  => 0b11001101,
   :BLE  => 0b11001100,
-  :BIN  => 0b00000000,
+  :NUM  => 0b0,
+  :LBN  => 0b00000010,
 }
 
 
@@ -103,6 +105,25 @@ def get_reg( reg, pos, line )
   #print "reg: #{reg}, pos #{pos} num: #{num} $1: #{$1}\n"
   num << ( pos * 8 ) 
 end
+
+def get_imm(imm, labels)
+  if (labels.has_key?(imm))
+      print "Label: #{imm} = #{labels[imm]}\n" if $verbose
+      imm = labels[imm]
+  elsif (imm =~ /^[a-zA-Z]+/)
+    raise "This is not a declared label #{imm} on line #{debug_line}"
+  end
+
+  if (imm =~ /^0[xX]/)
+    imm = imm.to_i(16)
+    #print "hex parameter = #{imm}\n"
+  elsif (imm =~ /^0[bB]/)
+    imm = imm.to_i(2)
+    #print "binary = #{imm}\n"
+  end
+  return imm
+end
+
 
 parsed = []
 labels = {}
@@ -131,6 +152,23 @@ IO.read( $file ).split( "\n" ).each do |line|
   counter += 1
 end
 
+def print_result(result, line_count, debug_line, data)
+  if ($verbose and $binary)
+    printf "%018b %s\n", result, data[:line]
+  elsif ($verbose and $test)
+    printf "%016b %s\n", result, data[:line]
+  elsif ($verbose)
+    printf "[%-3x = %-3d] %05x       %-3d %s\n", line_count,line_count, result, debug_line, data[:line]
+    line_count += 1
+  elsif ($binary)
+    printf "%018b\n", result
+  else
+    printf "%05x\n", result
+  end
+  return line_count
+end
+
+
 line_count = 0
 
 parsed.each do |data|
@@ -143,8 +181,29 @@ parsed.each do |data|
   instr_bit = instr_bits[ inst ]
   raise "No bits for #{inst}" unless instr_bit
   case type
-  when :binary
-    result = args[0].to_i(2)
+  when :big_num
+    imm = get_imm(args[2], labels)
+    #print imm
+    # LUI
+		result = (instr_bits["LUI".to_sym] & 0xf0) << ( 8 ) 
+	  result += ((imm.to_i & 0xff00) >> 8) # append 8 bit immediate value 
+    result += get_reg( args[1], 1, error_message) # append Rdest	
+
+    line_count = print_result(result, line_count, debug_line, data)
+    #MOVI
+		result = (instr_bits["MOVI".to_sym] & 0xf0) << ( 8 ) 
+	  result += (imm.to_i & 0x00ff) # append 8 bit immediate value 
+    result += get_reg( args[0], 1, error_message) # append Rdest	
+
+    line_count = print_result(result, line_count, debug_line, data)
+
+    # OR
+    result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
+    result += get_reg( args[0], 0, error_message) # append Rsrc
+    result += get_reg( args[1], 1, error_message) # append Rdest
+    result += (instr_bit & 0x0f) << (4) # append op-code ext
+  when :number
+    result = get_imm(args[0], labels)
   when :r_type
     result = (instr_bit & 0xf0) << ( 8 ) # append the top 4 bits of the op-code to bit 15-12
     result += get_reg( args[0], 0, error_message) # append Rsrc
@@ -153,22 +212,8 @@ parsed.each do |data|
   when :i_type
     #puts " args[0] = #{args[0]}"
 		result = (instr_bit & 0xf0) << ( 8 ) 
-    imm = args[0]
+    imm = get_imm(args[0], labels)
 
-    if (labels.has_key?(imm))
-        print "Label: #{imm} = #{labels[imm]}\n" if $verbose
-        imm = labels[imm]
-    elsif (imm =~ /^[a-zA-Z]+/)
-      raise "This is not a declared label #{imm} on line #{debug_line}"
-    end
-
-    if (imm =~ /^0[xX]/)
-      imm = imm.to_i(16)
-      #print "hex parameter = #{imm}\n"
-    elsif (imm =~ /^0[bB]/)
-      imm = imm.to_i(2)
-      #print "binary = #{imm}\n"
-    end
 
 	  result += (imm.to_i & 0xff) # append 8 bit immediate value 
     result += get_reg( args[1], 1, error_message) # append Rdest	
@@ -189,17 +234,8 @@ parsed.each do |data|
   else
     raise "Unsupported instruction #{inst}"
   end
+
+  line_count = print_result(result, line_count, debug_line, data)
    
-  if ($verbose and $binary)
-    printf "%018b %s\n", result, data[:line]
-  elsif ($verbose and $test)
-    printf "%016b %s\n", result, data[:line]
-  elsif ($verbose)
-    printf "[%-3x = %-3d] %05x       %-3d %s\n", line_count,line_count, result, debug_line, data[:line]
-    line_count += 1
-  elsif ($binary)
-    printf "%018b\n", result
-  else
-    printf "%05x\n", result
-  end
 end
+
