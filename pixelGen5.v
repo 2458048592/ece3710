@@ -835,7 +835,7 @@ module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6
 				RGB_out = 8'b11111111;
 			end
 			else begin
-				RGB_out = 8'b11000000;
+				RGB_out = 8'b00000000;
 			end
 		end
 	end

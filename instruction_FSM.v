@@ -156,7 +156,7 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 					end
 					BGT: begin
 						// If L or N == 0, FLAGS[3] or FLAGS[0], then A is greater than B, so Jump
-						if (FLAGS[3] == 1'b0 || FLAGS[0] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
+						if (/*FLAGS[3] == 1'b0 || */FLAGS[0] == 1'b0) begin JAddrSelect <= 1'b1; loadReg <= 1'b0; end
 						else PC_inc <= 1'b1;
 					end
 					BLT: begin

@@ -30,10 +30,11 @@ VAR_VGA_currentX: NUM 0b0    # current duck X pos
 VAR_VGA_currentY: NUM 0b0    # current duck Y pos
 VAR_moveDuckReturn: xor $0, $0  
 VAR_p1Score: NUM 0b000001_000001 # NUM_0
+VAR_checkGunReturn: xor $0, $0
 
 # Load in the glyphs for the screen
 
-loadPLA: movi loadYER, $12
+loadPLA: LBN $0, $12, loadYER
   LBN $2, $1, 0x8654
 
   LBN $2, $13, P
@@ -42,7 +43,7 @@ loadPLA: movi loadYER, $12
   LBN $2, $15, loadChar
   juc $15
 
-loadYER: movi START, $12
+loadYER: LBN, $0, $12, START
   LBN $2, $1, 0x8655
 
   LBN $0, $2, NUM_1
@@ -154,7 +155,7 @@ moveDuck: xor $0, $0
 
     checkGunReturn: xor $1, $1
   
-    movi sleep, $15
+    LBN $0, $15, sleep
     LBN $0, $13, moveDuckSleepReturn
     movi 0x01, $14_sleepArg
     juc $15
@@ -260,7 +261,8 @@ moveDuck: xor $0, $0
         beq $15
       # }
       # else {
-        LBN $0, $15, moveDuckLoop
+        LBN $0, $2, moveDuckLoop
+        mov $2, $15
         juc $15
       # }
   # }
@@ -372,6 +374,8 @@ duckDied: xor $0, $0
 #
 ##############################################
 checkGun: xor $0, $0
+  LBN $0, $1, VAR_checkGunReturn
+  stor $12, $1
   # $5 holds the trig and sens bools, 
   #   01 - sens
   #   10 - trig
@@ -385,7 +389,7 @@ checkGun: xor $0, $0
   load $4, $4
   lshi 6, $4
 
-  movi 255, $3
+  LBN $0, $3, 0x2001
   load $3, $3_sens # read sens
   or $3, $5 # save off the state
   addi 1, $3
@@ -400,7 +404,7 @@ checkGun: xor $0, $0
   load $4, $4
   lshi 6, $4
 
-  movi 254, $3
+  LBN $0, $3, 0x2000
   load $3, $3_trig # read trig
   mov $3, $2
   lshi 1, $2
@@ -431,7 +435,10 @@ checkGun: xor $0, $0
 
   dontIncScore: xor $0, $0
 
-  juc $12
+  LBN $0, $15, VAR_checkGunReturn
+  load $15, $15
+
+  juc $15
 
 
 

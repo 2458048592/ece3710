@@ -39,8 +39,8 @@ module memory_map#(
  
 	parameter VGA1 = 2'b10; // 2 msb of b_addr are mapped to VGA memory
 	parameter VGA2 = 2'b11;
-	parameter p1_trig_addr = 14'd254; // 254
-	parameter p1_sen_addr = 14'd255; // 255
+	parameter p1_trig_addr = 16'h2000; // 
+	parameter p1_sen_addr = 16'h2001; // 
 	wire  [DATA-1:0] b_dout_m;
 	reg  [DATA-1:0] b_dout_w;
 	reg select;
