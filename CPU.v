@@ -28,7 +28,7 @@ module CPU(
 	
 	reg [26:0] regCLKCount;
 	wire [26:0] LIMIT;
-	assign LIMIT = 1000;
+	assign LIMIT = 500;
 	reg regCLK;
 	
 	clockSetting _stepper( regCLK, CLR, STEP, CONTINUE );

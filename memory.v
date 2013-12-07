@@ -41,12 +41,19 @@ module memory_map#(
 	parameter VGA2 = 2'b11;
 	parameter p1_trig_addr = 16'h2000; // 
 	parameter p1_sen_addr = 16'h2001; // 
+	parameter p2_trig_addr = 16'h2002; // 
+	parameter p2_sen_addr = 16'h2003; // 
+	parameter random_number8bit = 16'h2008; //
+	parameter random_number9bit = 16'h2009; //
+	parameter random_number10bit = 16'h2010; //
+
 	wire  [DATA-1:0] b_dout_m;
+	wire [9:0]random_num;
 	reg  [DATA-1:0] b_dout_w;
 	reg select;
 // output      		[DATA-1:0]  b_dout_m,
 //	   output      reg		[DATA-1:0]  b_dout_w
-
+	random_num_gen(CLK, 1'b1, random_num); // always enable it 
 	gun_top guns(CLK, CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit);
  	memory asm_RAM (a_clk, a_wr, a_addr, a_din, a_dout, a_clk, b_wr, b_addr[ADDR-1:0], b_din, b_dout_m);	
 	
@@ -57,13 +64,13 @@ module memory_map#(
 	end
 	
 	always@(*) begin
-		if( b_addr == p1_trig_addr) begin
-			select = 1'b1;
-		end
-		else if(b_addr == p1_sen_addr) begin 
+		if( b_addr == p1_trig_addr || b_addr == p1_sen_addr || b_addr == p2_sen_addr || b_addr == p2_trig_addr) begin
 			select = 1'b1;
 		end
 		else if(b_addr[15:14] == VGA1 || b_addr[15:14] == VGA2) begin 
+			select = 1'b1;
+		end
+		else if(b_addr == random_number10bit || b_addr == random_number9bit || b_addr == random_number8bit  ) begin 
 			select = 1'b1;
 		end
 		else begin
@@ -83,8 +90,23 @@ module memory_map#(
 			else if(b_addr == p1_sen_addr) begin 
 				b_dout_w <= p1_hit;
 			end
+			else if( b_addr == p2_trig_addr) begin
+				b_dout_w <= p2_shot;
+			end
+			else if(b_addr == p2_sen_addr) begin 
+				b_dout_w <= p2_hit;
+			end
 			else if(b_addr[15:14] == VGA1 || b_addr[15:14] == VGA2) begin 
 				b_dout_w <= b_din;
+			end
+			else if(random_number8bit) begin 
+				b_dout_w <= random_num[7:0];
+			end
+			else if(random_number9bit) begin 
+				b_dout_w <= random_num[8:0];
+			end
+			else if(random_number10bit) begin 
+				b_dout_w <= random_num[9:0];
 			end
 			else begin
 				b_dout_w <= 18'b0;

@@ -8,10 +8,36 @@ NUM_6: NUM 0b000111
 NUM_7: NUM 0b001000
 NUM_8: NUM 0b001001
 NUM_9: NUM 0b001010
+A: NUM 0b001011
+B: NUM 0b001100
+C: NUM 0b001101
+D: NUM 0b001110
+E: NUM 0b001111
+F: NUM 0b010000
 G: NUM 0b010001
+H: NUM 0b010010
+I: NUM 0b010011
+J: NUM 0b010100
+K: NUM 0b010101
+L: NUM 0b010110
+M: NUM 0b010111
+N: NUM 0b011000
+O: NUM 0b011001
 P: NUM 0b011010
+Q: NUM 0b011011
+R: NUM 0b011100
 S: NUM 0b011101
+T: NUM 0b011110
+U: NUM 0b011111
+V: NUM 0b100000
+W: NUM 0b100001
+X: NUM 0b100010
+Y: NUM 0b100011
+Z: NUM 0b100100
+PERIOD: NUM 0b100101
+COMMA: NUM 0b100110
 COLON: NUM 0b100111
+EXCLAIMATION: NUM 0b101000 
 PLA: NUM 0b011010_010110_001011
 YER: NUM 0b100011_001111_011100
 
@@ -24,13 +50,6 @@ YER: NUM 0b100011_001111_011100
 #
 #
 ########################################################################
-VAR_VGA_moveToX: xor $0, $0     # where to move the duck to 
-VAR_VGA_moveToY: xor $0, $0     # where to move the duck to 
-VAR_VGA_currentX: NUM 0b0    # current duck X pos
-VAR_VGA_currentY: NUM 0b0    # current duck Y pos
-VAR_moveDuckReturn: xor $0, $0  
-VAR_p1Score: NUM 0b000001_000001 # NUM_0
-VAR_checkGunReturn: xor $0, $0
 
 # Load in the glyphs for the screen
 
@@ -43,7 +62,7 @@ loadPLA: LBN $0, $12, loadYER
   LBN $2, $15, loadChar
   juc $15
 
-loadYER: LBN, $0, $12, START
+loadYER: LBN $0, $12, START
   LBN $2, $1, 0x8655
 
   LBN $0, $2, NUM_1
@@ -126,6 +145,11 @@ bottomLeftCorner: LBN $0, $12_return, topRightCorner
 #     $13 moveToX
 #     $14 moveToY
 #
+VAR_VGA_moveToX: xor $0, $0     # where to move the duck to 
+VAR_VGA_moveToY: xor $0, $0     # where to move the duck to 
+VAR_VGA_currentX: NUM 0b0    # current duck X pos
+VAR_VGA_currentY: NUM 0b0    # current duck Y pos
+VAR_moveDuckReturn: xor $0, $0  
 ##################################
 moveDuck: xor $0, $0
   # Save arguments to memory
@@ -277,6 +301,8 @@ moveDuck: xor $0, $0
 #     $12 return address
 #     $14 which player
 #
+VAR_p1Score: NUM 0b000001_000001 # NUM_0
+VAR_p2Score: NUM 0b000001_000001 # NUM_0
 ##############################################
 incrementScore: xor $0, $0
   LBN $2, $1_loc, 0x8656
@@ -372,16 +398,20 @@ duckDied: xor $0, $0
 #
 #    $12 return address
 #
+VAR_checkGunReturn: xor $0, $0
 ##############################################
 checkGun: xor $0, $0
   LBN $0, $1, VAR_checkGunReturn
   stor $12, $1
   # $5 holds the trig and sens bools, 
-  #   01 - sens
-  #   10 - trig
+  #  0001 - p1 sens
+  #  0010 - p1 trig
+  #  0100 - p2 sens
+  #  1000 - p2 trig
   xor $5, $5 # reset the bools
 
-  #sens
+ 
+  # P1 sens
   LBN $2, $1_loc, 0x8662
 
   LBN $0, $4, S
@@ -395,24 +425,27 @@ checkGun: xor $0, $0
   addi 1, $3
   or $4, $3
 
-  stor $3, $1
+  stor $3, $1 # display to screen
 
-  # gun
+  # P1 gun
   LBN $2, $1_loc, 0x8663
 
   LBN $0, $4, G
   load $4, $4
   lshi 6, $4
+  LBN $0, $5, NUM_1
+  load $5, $5
+  lshi 12, $5
 
   LBN $0, $3, 0x2000
   load $3, $3_trig # read trig
   mov $3, $2
-  lshi 1, $2
+  lshi 1, $2 # offset for trig to be stored in $5
   or $2, $5 # save off the state
   addi 1, $3
   or $4, $3
 
-  stor $3, $1_loc
+  stor $3, $1_loc # display to screen
 
   # if ($5 != 3) {
     LBN $0, $15, dontIncScore
