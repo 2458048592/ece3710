@@ -51,8 +51,8 @@ Assembly
 
  * Registers Convention
    * 0-6 temp (0 used for nop's)
-   * 7-11 saved values
-   * 12-14 argument
+   * 7-9 saved values ( if you really want to save something, just store it in memory) 
+   * 10-14 argument
    * 15 return value
  * Random numbers
    * LBN $0, $1, 0x2008  # 8bit random number   
