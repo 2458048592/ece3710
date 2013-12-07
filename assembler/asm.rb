@@ -55,6 +55,7 @@ instr_types = {
   :BLE  =>  :branch,
   :NUM  =>  :number,
   :LBN =>   :big_num,
+  :GSTOR => :glyph, 
 }
 
 instr_bits = {
@@ -95,6 +96,7 @@ instr_bits = {
   :BLE  => 0b11001100,
   :NUM  => 0b0,
   :LBN  => 0b00000010,
+  :GSTOR => 0b1100_0000_0000_0000,
 }
 
 
@@ -104,6 +106,13 @@ def get_reg( reg, pos, line )
   num = $1.to_i # num is register number
   #print "reg: #{reg}, pos #{pos} num: #{num} $1: #{$1}\n"
   num << ( pos * 8 ) 
+end
+
+def get_reg_only( reg, line )
+  raise "This doesn't look like a register: \'#{reg}\'\n**#{line} in #{$file}\n" unless reg =~ /^\$[a-z]?(\d{1,2})_?.*?$/ 
+  num = $1.to_i # num is register number
+  #print "reg: #{reg}, pos #{pos} num: #{num} $1: #{$1}\n"
+  return num
 end
 
 def get_imm(imm, labels)
@@ -185,6 +194,16 @@ parsed.each do |data|
   instr_bit = instr_bits[ inst ]
   raise "No bits for #{inst}" unless instr_bit
   case type
+  when :glyph
+    result = instr_bit
+    result += get_reg( args[0], 1, error_message) # append RTop	
+    result += get_reg( args[2], 0, error_message) # append RAddr	
+    # append RBottom
+    rBottom = get_reg_only(args[1], error_message); 
+    result += (rBottom << 4)
+    
+
+
   when :big_num
     imm = get_imm(args[2], labels)
     #print imm

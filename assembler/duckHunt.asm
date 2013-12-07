@@ -53,30 +53,29 @@ YER: NUM 0b100011_001111_011100
 
 # Load in the glyphs for the screen
 
-loadPLA: LBN $0, $12, loadYER
-  LBN $2, $1, 0x8654
+loadPlayerOne: xor $0, $0
+#     $10 return address
+#     $11 Top char
+#     $12 mid char
+#     $13 bottom char
+#     $14 location
+  LBN $0, $10, loadPlayerTwo
+  LBN $0, $11, P
+  LBN $0, $12, L
+  LBN $0, $13, A
+  LBN $2, $14, 0x8654
 
-  LBN $2, $13, P
-  load $13, $13
-  mov $1, $14
   LBN $2, $15, loadChar
   juc $15
 
-loadYER: LBN $0, $12, START
-  LBN $2, $1, 0x8655
+loadPlayerTwo: xor $0, $0 
+  LBN $0, $10, START
+  LBN $0, $11, Y
+  LBN $0, $12, E
+  LBN $0, $13, R
+  LBN $2, $14, 0x8655
 
-  LBN $0, $2, NUM_1
-  load $2, $2
-  lshi 12, $2
-  LBN $0, $3, COLON
-  load $3, $3
-  lshi 6, $3
-  or $3, $2
-
-  mov $2, $13
-  mov $1, $14
-  LBN $0, $15, loadChar
-
+  LBN $2, $15, loadChar
   juc $15
 
 
@@ -88,14 +87,19 @@ loadYER: LBN $0, $12, START
 #     1620.to_s(16) => "654" 
 #
 #    Arguments
-#     $12 return address
-#     $13 char to draw (3 chars per 18 bit register)
+#     $10 return address
+#     $11 Top char
+#     $12 mid char
+#     $13 bottom char
 #     $14 location
 #
 ##############################################
 loadChar: xor $0, $0
-  stor $13, $14
-  mov $12, $15
+  lshi 6, $12
+  or $12, $13
+  GSTOR $11, $13, $14
+  mov $10, $15
+
   juc $15
 
 
@@ -415,9 +419,12 @@ checkGun: xor $0, $0
   LBN $2, $1_loc, 0x8662
 
   LBN $0, $4, S
-
   load $4, $4
   lshi 6, $4
+  LBN $0, $6, NUM_1
+  load $6, $6
+  lshi 12, $6
+  or $6, $4
 
   LBN $0, $3, 0x2001
   load $3, $3_sens # read sens
@@ -433,9 +440,10 @@ checkGun: xor $0, $0
   LBN $0, $4, G
   load $4, $4
   lshi 6, $4
-  LBN $0, $5, NUM_1
-  load $5, $5
-  lshi 12, $5
+  LBN $0, $6, NUM_1
+  load $6, $6
+  lshi 12, $6
+  or $6, $4
 
   LBN $0, $3, 0x2000
   load $3, $3_trig # read trig
@@ -472,6 +480,7 @@ checkGun: xor $0, $0
   load $15, $15
 
   juc $15
+
 
 
 
