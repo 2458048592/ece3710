@@ -42,6 +42,7 @@ Assembly
      * Example:
         * movi MyLabel, $1 
         * cmpi AnotherLabel, $1
+   * All labels must be loaded with LBN (see pseudo instruction)
  * Variables
    * A label reserves a variable's position in memory with a NOP
    * All variables will start with VAR_
@@ -53,6 +54,31 @@ Assembly
    * 7-11 saved values
    * 12-14 argument
    * 15 return value
+ * Pseudo Instructions
+   * LBN - Loads a 16-bit number into a register
+     * LBN $Rsrc, $Rdest, <immediate value>
+
+     * Example:
+       * LBN $3, $1, 0x1234
+       * LBN $3, $1, my_label
+
+     * The assembler compiles it to 3 instructions, looks like this
+       * hex |line# |inst  |asmline#| asm   
+       * [fe  = 254] 0f143       468 LBN $3, $1, 0x4321
+       * [ff  = 255] 0d321       468 LBN $3, $1, 0x4321 
+       * [100 = 256] 00123       468 LBN $3, $1, 0x4321
+     * All labels must be loaded with LBN
+   
+   * NUM - initializes an immediate into memory (Useful for writing glyphs)
+
+      * hex:             NUM 0x123
+      * letters_PLA: NUM 0b011010_010110_001011
+      * decimal:       NUM 1234
+
+      * This is how you can load a letter:
+        * P: NUM 0b011010
+        * LBN $1, $13,  P
+        * load $13, $13 
  
 VGA
  * The duck can move based on CPU instructions. 
