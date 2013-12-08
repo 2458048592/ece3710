@@ -61,8 +61,11 @@ loadPlayerOne: xor $0, $0
 #     $14 location
   LBN $0, $10, loadPlayerTwo
   LBN $0, $11, P
+  load $11, $11
   LBN $0, $12, L
+  load $12, $12
   LBN $0, $13, A
+  load $12, $12
   LBN $2, $14, 0x8654
 
   LBN $2, $15, loadChar
@@ -71,8 +74,11 @@ loadPlayerOne: xor $0, $0
 loadPlayerTwo: xor $0, $0 
   LBN $0, $10, START
   LBN $0, $11, Y
+  load $11, $11
   LBN $0, $12, E
+  load $12, $12
   LBN $0, $13, R
+  load $13, $13
   LBN $2, $14, 0x8655
 
   LBN $2, $15, loadChar
@@ -82,9 +88,6 @@ loadPlayerTwo: xor $0, $0
 ##############################################
 #
 # loadChar
-#    
-#    From 8654 to 8ca6 (8 is for memory map to glyph memory)
-#     1620.to_s(16) => "654" 
 #
 #    Arguments
 #     $10 return address
@@ -414,7 +417,7 @@ checkGun: xor $0, $0
   #  1000 - p2 trig
   xor $5, $5 # reset the bools
 
- 
+  ############# PLAYER 1 ########################
   # P1 sens
   LBN $2, $1_loc, 0x8662
 
@@ -440,10 +443,43 @@ checkGun: xor $0, $0
   LBN $0, $4, G
   load $4, $4
   lshi 6, $4
-  LBN $0, $6, NUM_1
+
+  LBN $0, $3, 0x2000
+  load $3, $3_trig # read trig
+  mov $3, $2
+  lshi 1, $2 # offset for trig to be stored in $5
+  or $2, $5 # save off the state
+  addi 1, $3
+  or $4, $3
+
+  stor $3, $1_loc # display to screen
+
+  ############# PLAYER 2 ########################
+  # P1 sens
+  LBN $2, $1_loc, 0x8664
+
+  LBN $0, $4, S
+  load $4, $4
+  lshi 6, $4
+  LBN $0, $6, NUM_2
   load $6, $6
   lshi 12, $6
   or $6, $4
+
+  LBN $0, $3, 0x2002
+  load $3, $3_sens # read sens
+  or $3, $5 # save off the state
+  addi 1, $3
+  or $4, $3
+
+  stor $3, $1 # display to screen
+
+  # P1 gun
+  LBN $2, $1_loc, 0x8665
+
+  LBN $0, $4, G
+  load $4, $4
+  lshi 6, $4
 
   LBN $0, $3, 0x2000
   load $3, $3_trig # read trig

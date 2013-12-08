@@ -85,7 +85,7 @@ module instruction_FSM ( CLK, CLR, inst, _FLAGS, FLAGS, PC_inc, JAddrSelect, loa
 						endcase
 					end
 					GSTOR: begin
-						NS <= fetch;
+						NS <= stor1;
 					end
 					default: begin
 						NS <= alu;
