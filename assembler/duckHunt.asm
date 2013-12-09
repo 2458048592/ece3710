@@ -486,9 +486,11 @@ checkGun: xor $0, $0
   # $8 holds the trig and sens bools, 
   #  0001 - p1 sens
   #  0010 - p1 trig
+  # $9 holds the trig and sens bools, 
   #  0100 - p2 sens
   #  1000 - p2 trig
   xor $8, $8 # reset the bools
+  xor $9, $9 # reset the bools
 
   ############# PLAYER 1 ########################
   # P1 sens
@@ -542,8 +544,8 @@ checkGun: xor $0, $0
   LBN $0, $3, 0x2003
   load $3, $3_sens # read sens
   mov $3, $2
-  lshi 2, $2 # offset for trig to be stored in $8
-  or $2, $8 # save off the state
+  lshi 2, $2 # offset for trig to be stored in $9
+  or $2, $9 # save off the state
   addi 1, $3
   or $4, $3
 
@@ -559,8 +561,8 @@ checkGun: xor $0, $0
   LBN $0, $3, 0x2002
   load $3, $3_trig # read trig
   mov $3, $2
-  lshi 3, $2 # offset for trig to be stored in $8
-  or $2, $8 # save off the state
+  lshi 3, $2 # offset for trig to be stored in $9
+  or $2, $9 # save off the state
   addi 1, $3
   or $4, $3
 
@@ -592,9 +594,9 @@ checkGun: xor $0, $0
 
   ### PLAYER 2 score #####
 
-  # if ($8 != 0b1100) {
+  # if ($9 != 0b1100) {
     LBN $0, $15, dontIncScore1
-    cmpi 0b1100, $8
+    cmpi 0b1100, $9
     bneq $15
   # }
   # else {
@@ -611,7 +613,7 @@ checkGun: xor $0, $0
     LBN $0, $15, duckDied
     juc $15
 
-  dontIncScore1: xor $8, $8
+  dontIncScore1: xor $9, $9
 
   LBN $0, $15, VAR_checkGunReturn
   load $15, $15
