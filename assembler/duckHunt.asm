@@ -52,37 +52,85 @@ YER: NUM 0b100011_001111_011100
 ########################################################################
 
 # Load in the glyphs for the screen
+VAR_p1ScoreLoc: NUM 0x8657
+VAR_p2ScoreLoc: NUM 0x865c
+Player1: LBN $0, $12, Player2
+  movi 1, $13
+  LBN $0, $14, 0x8654
+  LBN $0, $15, loadPlayer
+  juc $15
 
-loadPlayerOne: xor $0, $0
+Player2: LBN $0, $12, START
+  movi 2, $13
+  LBN $0, $14, 0x8659
+  LBN $0, $15, loadPlayer
+  juc $15
+
+
+
+
+#####################################
+# loadPlayerOne
+#
+#  $12 return address
+#  $13 which player
+#  $14 address of where to write player
+#
+#
+loadPlayerReturn: xor $0, $0
+loadPlayerWhichPlayer: xor $0, $0
+####################################
+loadPlayer: xor $0, $0
+  LBN $0, $1, loadPlayerReturn
+  stor $12, $1
+  LBN $0, $1, loadPlayerWhichPlayer
+  stor $13, $1
 #     $10 return address
 #     $11 Top char
 #     $12 mid char
 #     $13 bottom char
 #     $14 location
-  LBN $0, $10, loadPlayerTwo
+  
+  
+  LBN $0, $10, loadPlayerPart2
   LBN $0, $11, P
   load $11, $11
   LBN $0, $12, L
   load $12, $12
   LBN $0, $13, A
-  load $12, $12
-  LBN $2, $14, 0x8654
-
-  LBN $2, $15, loadChar
-  juc $15
-
-loadPlayerTwo: xor $0, $0 
-  LBN $0, $10, START
-  LBN $0, $11, Y
-  load $11, $11
-  LBN $0, $12, E
-  load $12, $12
-  LBN $0, $13, R
   load $13, $13
-  LBN $2, $14, 0x8655
+  #LBN $2, $14, 0x8654
 
   LBN $2, $15, loadChar
   juc $15
+
+  loadPlayerPart2: xor $0, $0 
+    LBN $0, $10, loadPlayerReturn
+    load $10, $10
+    LBN $0, $11, Y
+    load $11, $11
+    LBN $0, $12, E
+    load $12, $12
+    LBN $0, $13, R
+    load $13, $13
+    #LBN $2, $14, 0x8655
+    addui 1, $14
+
+    # store the player's number
+    LBN $0, $1, loadPlayerWhichPlayer
+    load $1, $1
+    addui 1, $1 # offset for glyph
+    lshi 6, $1
+    LBN $0, $2, COLON
+    load $2, $2
+    or $2, $1
+    addui 1, $14
+    stor $1, $14
+
+    subi 1, $14
+
+    LBN $2, $15, loadChar
+    juc $15
 
 
 ##############################################
@@ -108,37 +156,63 @@ loadChar: xor $0, $0
 
 START: xor $0, $0
 
+offScreenStart: LBN $0, $12_return, topLeftCorner
+  #movi 0, $14_y 
+
+  LBN $0, $13_x, 0x2010
+  LBN $0, $14_y, 0x2f0 
+
+  LBN $0, $15, moveDuck
+  juc $15
 
 topLeftCorner: xor $0, $0
 
-  movi 0, $14_y 
-  movi 0, $13_x
+  #movi 0, $14_y 
+  LBN $0, $14, 0x2008
+  load $14, $14
+  LBN $0, $13, 0x2008
+  load $13, $13
+
+  #movi 0, $13_x
 
   LBN $0, $12_return, bottomRightCorner
 
   LBN $0, $15, moveDuck
   juc $15
 
-topRightCorner: LBN $0, $12_return, topLeftCorner
-  movi 0, $14_y 
 
-  LBN $0, $13_x, 0x240 # x = 640 - 64 = 576 = 0x240
+topRightCorner: LBN $0, $12_return, topLeftCorner
+  #movi 0, $14_y 
+
+  #LBN $0, $13_x, 0x240 # x = 640 - 64 = 576 = 0x240
+  LBN $0, $14, 0x2008
+  load $14, $14
+  LBN $0, $13, 0x2010
+  load $13, $13
 
   LBN $0, $15, moveDuck
   juc $15
 
 bottomRightCorner: LBN $0, $12_return, bottomLeftCorner
-  LBN $0, $13_x, 0x240 # x = 640 - 64 = 576 = 0x240
+  #LBN $0, $13_x, 0x240 # x = 640 - 64 = 576 = 0x240
   
-  LBN $0, $14_y, 0x1A0 # y = 480 - 64 = 416 = 0x1A0
+  #LBN $0, $14_y, 0x1A0 # y = 480 - 64 = 416 = 0x1A0
+  LBN $0, $14, 0x2010
+  load $14, $14
+  LBN $0, $13, 0x2010
+  load $13, $13
   
   LBN $0, $15, moveDuck
   juc $15
 
 bottomLeftCorner: LBN $0, $12_return, topRightCorner
-  movi 0, $13_x 
+  #movi 0, $13_x 
 
-  LBN $0, $14_y, 0x1A0 # y = 480 - 64 = 416 = 0x1A0
+  #LBN $0, $14_y, 0x1A0 # y = 480 - 64 = 416 = 0x1A0
+  LBN $0, $14, 0x2010
+  load $14, $14
+  LBN $0, $13, 0x2008
+  load $13, $13
 
   LBN $0, $15, moveDuck
   juc $15
@@ -300,22 +374,21 @@ moveDuck: xor $0, $0
 
 ##############################################
 #
-# incrementP1Score
+# incrementScore
 #
 #   Adds $13 to p1's score
 #    
 #    Arguments
 #     $12 return address
-#     $14 which player
+#     $13 location on screen address
+#     $14 player score address
 #
 VAR_p1Score: NUM 0b000001_000001 # NUM_0
 VAR_p2Score: NUM 0b000001_000001 # NUM_0
 ##############################################
 incrementScore: xor $0, $0
-  LBN $2, $1_loc, 0x8656
 
-  mov $14, $3
-  load $4, $3
+  load $4, $14
 
 
   # if ( score > A) { # A is 9
@@ -342,9 +415,10 @@ incrementScore: xor $0, $0
 
   doneInc: xor $0, $0
 
-  stor $4, $1 # write to screen
+  load $13, $13
+  stor $4, $13 # write to screen
 
-  stor $4, $3 # save the score
+  stor $4, $14 # save the score
 
   mov $12, $15
   juc $15
@@ -360,8 +434,8 @@ incrementScore: xor $0, $0
 #
 ############################################
 sleep: xor $1, $1
-  sleepLoop: LBN $0, $15, sleepLoop
-  addui 1, $1
+  LBN $0, $15, sleepLoop
+  sleepLoop: addui 1, $1
   cmp $1, $14
   bneq $15
   juc $13
@@ -373,29 +447,40 @@ sleep: xor $1, $1
 #
 #   $12 
 #
+VAR_speedOfDuck: xor $0, $0
 ################################################
 duckDied: xor $0, $0
-  # move duck off screen to pos (800, 800) or (0x320, 0x320)
-  LBN $2, $1, 0x320
+  # move duck off screen to pos 
+  #LBN $0, $1, 0x2010
+  #load $1, $1
 
-  lui 0xc0, $5
-  stor $1, $5_vga_addr # update VGA
-  
-  addui 1, $5
-  stor $1, $5_vga_addr # update VGA
+
+  LBN $0, $3, 0x2Fe
 
   LBN $0, $2, VAR_VGA_currentX
-  stor $1, $2
+  stor $3, $2
   LBN $0, $2, VAR_VGA_currentY
-  stor $1, $2
+  stor $3, $2
+  
+  LBN $0, $2, VAR_VGA_moveToX
+  stor $3, $2
+  LBN $0, $2, VAR_VGA_moveToY
+  stor $3, $2
+
+  
+  lui 0xc0, $5
+  stor $3, $5_vga_addr # update VGA
+  addui 1, $5
+  stor $3, $5_vga_addr # update VGA
+  
 
   LBN $0, $15, sleep
   LBN $0, $13, duckDiedSleepReturn
-  movi 0xff, $14_sleepArg
+  lui 0x21, $14_sleepArg
   juc $15
 
   duckDiedSleepReturn: xor $0, $0
-    LBN $0, $15, topLeftCorner
+    LBN $0, $15, offScreenStart
     juc $15
 
   
@@ -410,12 +495,12 @@ VAR_checkGunReturn: xor $0, $0
 checkGun: xor $0, $0
   LBN $0, $1, VAR_checkGunReturn
   stor $12, $1
-  # $5 holds the trig and sens bools, 
+  # $8 holds the trig and sens bools, 
   #  0001 - p1 sens
   #  0010 - p1 trig
   #  0100 - p2 sens
   #  1000 - p2 trig
-  xor $5, $5 # reset the bools
+  xor $8, $8 # reset the bools
 
   ############# PLAYER 1 ########################
   # P1 sens
@@ -424,14 +509,14 @@ checkGun: xor $0, $0
   LBN $0, $4, S
   load $4, $4
   lshi 6, $4
-  LBN $0, $6, NUM_1
-  load $6, $6
-  lshi 12, $6
-  or $6, $4
+#  LBN $0, $6, NUM_1
+#  load $6, $6
+#  lshi 12, $6
+#  or $6, $4
 
   LBN $0, $3, 0x2001
   load $3, $3_sens # read sens
-  or $3, $5 # save off the state
+  or $3, $8 # save off the state
   addi 1, $3
   or $4, $3
 
@@ -447,58 +532,62 @@ checkGun: xor $0, $0
   LBN $0, $3, 0x2000
   load $3, $3_trig # read trig
   mov $3, $2
-  lshi 1, $2 # offset for trig to be stored in $5
-  or $2, $5 # save off the state
+  lshi 1, $2 # offset for trig to be stored in $8
+  or $2, $8 # save off the state
   addi 1, $3
   or $4, $3
 
   stor $3, $1_loc # display to screen
 
   ############# PLAYER 2 ########################
-  # P1 sens
-  LBN $2, $1_loc, 0x8664
+  # P2 sens
+  LBN $2, $1_loc, 0x8665
 
   LBN $0, $4, S
   load $4, $4
   lshi 6, $4
-  LBN $0, $6, NUM_2
-  load $6, $6
-  lshi 12, $6
-  or $6, $4
+#  LBN $0, $6, NUM_2
+#  load $6, $6
+#  lshi 12, $6
+#  or $6, $4
 
-  LBN $0, $3, 0x2002
+  LBN $0, $3, 0x2003
   load $3, $3_sens # read sens
-  or $3, $5 # save off the state
+  mov $3, $2
+  lshi 2, $2 # offset for trig to be stored in $8
+  or $2, $8 # save off the state
   addi 1, $3
   or $4, $3
 
   stor $3, $1 # display to screen
 
-  # P1 gun
-  LBN $2, $1_loc, 0x8665
+  # P2 gun
+  LBN $2, $1_loc, 0x8666
 
   LBN $0, $4, G
   load $4, $4
   lshi 6, $4
 
-  LBN $0, $3, 0x2000
+  LBN $0, $3, 0x2002
   load $3, $3_trig # read trig
   mov $3, $2
-  lshi 1, $2 # offset for trig to be stored in $5
-  or $2, $5 # save off the state
+  lshi 3, $2 # offset for trig to be stored in $8
+  or $2, $8 # save off the state
   addi 1, $3
   or $4, $3
 
   stor $3, $1_loc # display to screen
 
-  # if ($5 != 3) {
+  ### PLAYER 1 score #####
+
+  # if ($8 != 3) {
     LBN $0, $15, dontIncScore
-    cmpi 0b11, $5
+    cmpi 0b11, $8
     bneq $15
   # }
   # else {
     # increment the score
-    movi 1, $13
+    LBN $2, $13_loc, VAR_p1ScoreLoc
     LBN $0, $14, VAR_p1Score
     LBN $0, $12, incScoreReturn
 
@@ -511,6 +600,30 @@ checkGun: xor $0, $0
     juc $15
 
   dontIncScore: xor $0, $0
+
+
+  ### PLAYER 2 score #####
+
+  # if ($8 != 0b1100) {
+    LBN $0, $15, dontIncScore1
+    cmpi 0b1100, $8
+    bneq $15
+  # }
+  # else {
+    # increment the score
+    LBN $2, $13_loc, VAR_p2ScoreLoc
+    LBN $0, $14, VAR_p2Score
+    LBN $0, $12, incScoreReturn1
+
+    LBN $0, $15, incrementScore
+    juc $15
+  # }
+  
+  incScoreReturn1: xor $8, $8
+    LBN $0, $15, duckDied
+    juc $15
+
+  dontIncScore1: xor $8, $8
 
   LBN $0, $15, VAR_checkGunReturn
   load $15, $15

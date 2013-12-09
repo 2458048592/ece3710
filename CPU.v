@@ -28,7 +28,7 @@ module CPU(
 	
 	reg [26:0] regCLKCount;
 	wire [26:0] LIMIT;
-	assign LIMIT = 500;
+	assign LIMIT = 700;
 	reg regCLK;
 	
 	clockSetting _stepper( regCLK, CLR, STEP, CONTINUE );
@@ -66,6 +66,7 @@ module CPU(
 //	output [15:0] r0out, r1out, r2out, r3out, r4out, r5out, r6out, r7out, r8out, r9out, r10out, r11out, r12out, r13out, r14out, r15out
 //	 );
 	//wire [15:0] A, B;
+
 	wire [4:0] FLAGS;
 	wire [3:0] readRegA, readRegB, loadReg, memAddr;
 	controller_integrated controller(selectCLK,CLR,inst,data_out,b_wr, data_addr, data_in[15:0],FLAGS, A,B,aluOut, PC_inc, set_addr,

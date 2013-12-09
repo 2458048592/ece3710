@@ -2,5 +2,5 @@
 set -e
 
 ruby duck2mem.rb
-ruby duck2mem.rb > duck32.mem
-cp duck32.mem ../../../CPU/
+ruby duck2mem.rb > smallDuck64.mem
+cp smallDuck64.mem ../../../CPU/

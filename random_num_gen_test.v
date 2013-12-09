@@ -29,25 +29,24 @@ module random_num_gen_test;
 	reg rst_n;
 
 	// Outputs
-	wire [7:0] data;
+	wire [9:0] data;
 
 	// Instantiate the Unit Under Test (UUT)
 	random_num_gen uut (
 		.clk(clk), 
-		.rst_n(rst_n), 
+	//	.rst_n(rst_n), 
 		.data(data)
 	);
 
 	initial begin
 		// Initialize Inputs
 		clk = 0;
-		rst_n = 0;
+		rst_n = 1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
        
-		 rst_n = 1;
-		 #600 rst_n = 0;
+		
 		 #1000;
 		 
 		// Add stimulus here
