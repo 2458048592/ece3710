@@ -154,16 +154,9 @@ loadChar: xor $0, $0
   juc $15
 
 
+
+
 START: xor $0, $0
-
-offScreenStart: LBN $0, $12_return, topLeftCorner
-  #movi 0, $14_y 
-
-  LBN $0, $13_x, 0x2010
-  LBN $0, $14_y, 0x2f0 
-
-  LBN $0, $15, moveDuck
-  juc $15
 
 topLeftCorner: xor $0, $0
 
@@ -461,11 +454,6 @@ duckDied: xor $0, $0
   stor $3, $2
   LBN $0, $2, VAR_VGA_currentY
   stor $3, $2
-  
-  LBN $0, $2, VAR_VGA_moveToX
-  stor $3, $2
-  LBN $0, $2, VAR_VGA_moveToY
-  stor $3, $2
 
   
   lui 0xc0, $5
@@ -480,7 +468,7 @@ duckDied: xor $0, $0
   juc $15
 
   duckDiedSleepReturn: xor $0, $0
-    LBN $0, $15, offScreenStart
+    LBN $0, $15, bottomRightCorner
     juc $15
 
   
