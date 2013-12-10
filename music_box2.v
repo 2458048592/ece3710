@@ -589,6 +589,37 @@ end
 
 endmodule
 
+module music(
+    input clk,
+    input clr,
+    input [63:0] clkdivider,
+    output reg speaker
+    );
+   
+   
+    initial begin
+        speaker = 0;
+    end
+   
+    // ***** PLAY THE NOTE ******
+    reg [63:0] counter;
+    always @(posedge clk)begin
+        if(clr) begin
+            counter <= 0;
+            speaker <=0;
+        end
+        else if(counter >= clkdivider) begin
+			counter <= 0;
+			speaker <= ~speaker;
+		end
+		else begin
+			counter <= counter+1;
+			speaker <= speaker;
+		end
+	end
+
+endmodule
+
 // UCF FILE
 /*
 NET "clk" LOC = V10;
