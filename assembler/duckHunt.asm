@@ -499,10 +499,6 @@ checkGun: xor $0, $0
   LBN $0, $4, S
   load $4, $4
   lshi 6, $4
-#  LBN $0, $6, NUM_1
-#  load $6, $6
-#  lshi 12, $6
-#  or $6, $4
 
   LBN $0, $3, 0x2001
   load $3, $3_sens # read sens
@@ -536,10 +532,6 @@ checkGun: xor $0, $0
   LBN $0, $4, S
   load $4, $4
   lshi 6, $4
-#  LBN $0, $6, NUM_2
-#  load $6, $6
-#  lshi 12, $6
-#  or $6, $4
 
   LBN $0, $3, 0x2003
   load $3, $3_sens # read sens
