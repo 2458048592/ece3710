@@ -13,6 +13,7 @@ module CPU(
 	 input p1_sens,
 	 input p2_trigger,
 	 input p2_sens,
+	 output speaker,
 	 output p1_shot,
 	 output p1_hit,
 	 output p2_shot,
@@ -30,6 +31,9 @@ module CPU(
 	wire [26:0] LIMIT;
 	assign LIMIT = 700;
 	reg regCLK;
+	music_box2 music(CLK,1'b0, speaker);
+	
+	
 	
 	clockSetting _stepper( regCLK, CLR, STEP, CONTINUE );
 	

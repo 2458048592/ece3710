@@ -376,11 +376,12 @@ end
 	end
 	
 	// *** NOTES***
-	parameter c_note = 100000000/131/2;
-	parameter d_note = 100000000/147/2;
-	parameter e_note = 100000000/165/2;
-	parameter f_note = 100000000/175/2;
-	parameter g_note = 100000000/196/2;
+	// octave 4
+	parameter c_note = 100000000/262/2;
+	parameter d_note = 100000000/294/2;
+	parameter e_note = 100000000/330/2;
+	parameter f_note = 100000000/350/2;
+	parameter g_note = 100000000/392/2;
 	parameter pause =  2;	
 	// output
 	always@(*) begin
