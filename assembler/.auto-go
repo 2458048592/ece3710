@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-ruby asm.rb duckHunt.asm  > ../../CPU/glyphMove.mem
-ruby asm.rb -v duckHunt.asm  
+ruby asm.rb duckHunt2.0.asm  > ../../CPU/glyphMove.mem
+ruby asm.rb -v duckHunt2.0.asm  
 #ruby asm.rb -v test2.asm
 
 
