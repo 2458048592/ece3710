@@ -20,30 +20,27 @@
 //////////////////////////////////////////////////////////////////////////////////
 module random_num_gen(
   input clk,
-  input rst_n,
-
   output reg [9:0] data);
   wire [4:0] low;
   wire [4:0] high;
   
-  fibonacci_lfsr_5bit first(clk, rst_n, low);
-  fibonacci_lfsr_5bit second(clk, rst_n, high);
+  fibonacci_lfsr_5bit first(clk, low);
   
-  always @(posedge clk or negedge rst_n)
-		if(!rst_n)
-			data <= 5'h1f;
-		else
-			data <= {high,low};
+  always @(posedge clk)
+	begin
+			data <= {low,low};
+	end
+		
 			
 endmodule
 
 module fibonacci_lfsr_5bit(
   input clk,
-  input rst_n,
-
   output reg [4:0] data
 );
-
+initial begin
+	data = 5'h1f;
+end
 reg [4:0] data_next;
 
 always @* begin
@@ -54,10 +51,7 @@ always @* begin
   data_next[0] = data[0]^data_next[2];
 end
 
-always @(posedge clk or negedge rst_n)
-  if(!rst_n)
-    data <= 5'h1f;
-  else
+always @(posedge clk)
     data <= data_next;
 
 endmodule

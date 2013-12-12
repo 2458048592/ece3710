@@ -33,7 +33,8 @@ module memory_map#(
     input   wire                b_wr,
     input   wire    [15:0]  b_addr,
     input   wire    [DATA-1:0]  b_din,
-    output reg     		[DATA-1:0]  b_dout
+    output reg     		[DATA-1:0]  b_dout,
+	 output wire [9:0] rand_out
 	 
  );
  
@@ -48,15 +49,33 @@ module memory_map#(
 	parameter random_number10bit = 16'h2010; //
 
 	wire  [DATA-1:0] b_dout_m;
-	wire [9:0]random_num;
 	reg  [DATA-1:0] b_dout_w;
 	reg select;
+	//wire [9:0]rand_out;
 // output      		[DATA-1:0]  b_dout_m,
 //	   output      reg		[DATA-1:0]  b_dout_w
-	random_num_gen(CLK, 1'b1, random_num); // always enable it 
+//	reg rand;
+//
+// 	 reg 	     clkDivPulse  = 0; // Used to notify every 25MHz clock tick
+//  	 reg [24:0] clkDivCount  = 0; // Used to count to 4 to determine the 25MHz ticks
+//
+//	always@(posedge a_clk) begin
+//			if(CLR) begin
+//				clkDivPulse <= 0;
+//				clkDivCount <= 0;
+//			end
+//			else if(clkDivCount == 100000) begin
+//				clkDivPulse <= 1;
+//				clkDivCount <= 0;
+//			end
+//			else begin
+//				clkDivPulse <= 0;
+//				clkDivCount <= clkDivCount + 1;
+//			end
+//		end
+	random_num_gen generator(a_clk, rand_out); 
 	gun_top guns(CLK, CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit);
  	memory asm_RAM (a_clk, a_wr, a_addr, a_din, a_dout, a_clk, b_wr, b_addr[ADDR-1:0], b_din, b_dout_m);	
-	
 	//mux2_to_1_16bit gun_mux(b_dout_m, b_dout_w, select, b_dout);
 	always @ (*) begin
 		if (select == 1'b1) begin b_dout = b_dout_w; end
@@ -99,14 +118,14 @@ module memory_map#(
 			else if(b_addr[15:14] == VGA1 || b_addr[15:14] == VGA2) begin 
 				b_dout_w <= b_din;
 			end
-			else if(random_number8bit) begin 
-				b_dout_w <= random_num[7:0];
+			else if(b_addr == random_number8bit) begin 
+				b_dout_w <= rand_out[7:0];
 			end
-			else if(random_number9bit) begin 
-				b_dout_w <= random_num[8:0];
+			else if(b_addr == random_number9bit) begin 
+				b_dout_w <= rand_out[8:0];
 			end
-			else if(random_number10bit) begin 
-				b_dout_w <= random_num[9:0];
+			else if(b_addr == random_number10bit) begin 
+				b_dout_w <= rand_out;
 			end
 			else begin
 				b_dout_w <= 18'b0;

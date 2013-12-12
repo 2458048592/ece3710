@@ -50,6 +50,11 @@ YER: NUM 0b100011_001111_011100
 #
 #
 ########################################################################
+# set background to blue
+# 0xc003: display Color (8-bit) 
+LBN $0, $1, 0x2f
+LBN $0, $2, 0xc003
+stor $1, $2
 
 # Load in the glyphs for the screen
 VAR_p1ScoreLoc: NUM 0x8657
@@ -464,7 +469,7 @@ duckDied: xor $0, $0
 
   LBN $0, $15, sleep
   LBN $0, $13, duckDiedSleepReturn
-  lui 0x21, $14_sleepArg
+  lui 0x180, $14_sleepArg
   juc $15
 
   duckDiedSleepReturn: xor $0, $0
@@ -479,6 +484,8 @@ duckDied: xor $0, $0
 #    $12 return address
 #
 VAR_checkGunReturn: xor $0, $0
+VAR_p1GunState: NUM 0 
+VAR_p2GunState: NUM 0 
 ##############################################
 checkGun: xor $0, $0
   LBN $0, $1, VAR_checkGunReturn
@@ -493,20 +500,6 @@ checkGun: xor $0, $0
   xor $9, $9 # reset the bools
 
   ############# PLAYER 1 ########################
-  # P1 sens
-  LBN $2, $1_loc, 0x8662
-
-  LBN $0, $4, S
-  load $4, $4
-  lshi 6, $4
-
-  LBN $0, $3, 0x2001
-  load $3, $3_sens # read sens
-  or $3, $8 # save off the state
-  addi 1, $3
-  or $4, $3
-
-  stor $3, $1 # display to screen
 
   # P1 gun
   LBN $2, $1_loc, 0x8663
@@ -517,33 +510,85 @@ checkGun: xor $0, $0
 
   LBN $0, $3, 0x2000
   load $3, $3_trig # read trig
-  mov $3, $2
-  lshi 1, $2 # offset for trig to be stored in $8
-  or $2, $8 # save off the state
-  addi 1, $3
-  or $4, $3
 
-  stor $3, $1_loc # display to screen
+  LBN $0, $6, VAR_p1GunState
+  load $5, $6
+  lshi 1, $5 
+  or $3, $5
+
+
+  # if { $5 > 2 ) { 
+    LBN $0, $15, p1TriggerPulled
+    cmpi 3, $5
+    beq $15
+
+  # else {
+
+    # Save off the gun state, clear it with and, add gun state 
+    mov $3, $5
+    stor $5, $6
+
+
+
+
+    mov $3, $2
+    lshi 1, $2 # offset for trig to be stored in $8
+    or $2, $8 # save off the state
+    addi 1, $3
+    or $4, $3
+
+    stor $3, $1_loc # display to screen
+    
+    
+    # if ($8 != 0b10) {
+      LBN $0, $15, p1gunReturn
+      cmpi 0b10, $8
+      bneq $15
+    # } 
+    # else {
+    #0xc002: display Black (1-bit)
+
+      LBN $0, $1, 0xc002
+      movi 1, $2
+      stor $2, $1
+      
+      LBN $0, $15, sleep
+      LBN $0, $13, p1gunReturn
+      LBN $0, $14_sleepArg, 0x180
+      juc $15
+    # }
+
+
+    p1gunReturn: xor $0, $0
+
+
+    # P1 sens
+    LBN $2, $1_loc, 0x8662
+
+    LBN $0, $4, S
+    load $4, $4
+    lshi 6, $4
+
+    LBN $0, $3, 0x2001
+    load $3, $3_sens # read sens
+    or $3, $8 # save off the state
+    addi 1, $3
+    or $4, $3
+
+    stor $3, $1 # display to screen
+
+    # turn BG back on
+    LBN $0, $1, 0xc002
+    movi 0, $0
+    stor $0, $1
+  # }
+
+  p1TriggerPulled: xor $0, $0
 
   ############# PLAYER 2 ########################
-  # P2 sens
-  LBN $2, $1_loc, 0x8665
-
-  LBN $0, $4, S
-  load $4, $4
-  lshi 6, $4
-
-  LBN $0, $3, 0x2003
-  load $3, $3_sens # read sens
-  mov $3, $2
-  lshi 2, $2 # offset for trig to be stored in $9
-  or $2, $9 # save off the state
-  addi 1, $3
-  or $4, $3
-
-  stor $3, $1 # display to screen
 
   # P2 gun
+
   LBN $2, $1_loc, 0x8666
 
   LBN $0, $4, G
@@ -552,13 +597,78 @@ checkGun: xor $0, $0
 
   LBN $0, $3, 0x2002
   load $3, $3_trig # read trig
-  mov $3, $2
-  lshi 3, $2 # offset for trig to be stored in $9
-  or $2, $9 # save off the state
-  addi 1, $3
-  or $4, $3
 
-  stor $3, $1_loc # display to screen
+  LBN $0, $6, VAR_p2GunState
+  load $5, $6
+  lshi 1, $5 
+  or $3, $5
+
+
+  # if { $5 > 2 ) { 
+    LBN $0, $15, p2TriggerPulled
+    cmpi 3, $5
+    beq $15
+
+  # else {
+
+    # Save off the gun state
+    mov $3, $5
+    stor $5, $6
+
+    mov $3, $2
+    lshi 3, $2 # offset for trig to be stored in $9
+    or $2, $9 # save off the state
+    addi 1, $3
+    or $4, $3
+
+    stor $3, $1_loc # display to screen
+
+    # if ($9 != 0b1000) {
+      LBN $0, $15, p2gunReturn
+      cmpi 0b1000, $9
+      bneq $15
+    # } 
+    # else {
+    #0xc002: display Black (1-bit)
+
+      LBN $0, $1, 0xc002
+      movi 1, $2
+      stor $2, $1
+      
+      LBN $0, $15, sleep
+      LBN $0, $13, p2gunReturn
+      LBN $0, $14_sleepArg, 0x180
+      juc $15
+    # }
+
+
+    p2gunReturn: xor $0, $0
+
+    # P2 sens
+    LBN $2, $1_loc, 0x8665
+
+    LBN $0, $4, S
+    load $4, $4
+    lshi 6, $4
+
+    LBN $0, $3, 0x2003
+    load $3, $3_sens # read sens
+    mov $3, $2
+    lshi 2, $2 # offset for trig to be stored in $9
+    or $2, $9 # save off the state
+    addi 1, $3
+    or $4, $3
+
+    stor $3, $1 # display to screen
+
+    # turn BG back on
+    LBN $0, $1, 0xc002
+    movi 0, $0
+    stor $0, $1
+  # }
+
+
+  p2TriggerPulled: xor $0, $0
 
   ### PLAYER 1 score #####
 

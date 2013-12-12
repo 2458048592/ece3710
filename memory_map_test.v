@@ -46,6 +46,9 @@ module memory_map_test;
 	wire p2_hit;
 	wire [17:0] a_dout;
 	wire [17:0] b_dout;
+	wire [9:0]rand_out;
+
+
 
 	// Instantiate the Unit Under Test (UUT)
 	memory_map uut (
@@ -67,7 +70,8 @@ module memory_map_test;
 		.b_wr(b_wr), 
 		.b_addr(b_addr), 
 		.b_din(b_din), 
-		.b_dout(b_dout)
+		.b_dout(b_dout),
+		.rand_out(rand_out)
 	);
 
 	initial begin
@@ -90,6 +94,28 @@ module memory_map_test;
 		#3 CLR = 0;
 		
 		p1_trigger = 1;
+		#3p1_trigger = 0;
+		
+		b_addr = 16'h2008;
+		#12;
+		b_addr = 16'h2008;
+		#12;
+		b_addr = 16'h2008;
+		#12;
+		b_addr = 16'h2009;
+		#12;
+		b_addr = 16'h2009;
+		#12;
+		b_addr = 16'h2009;
+		#12;
+		b_addr = 16'h2010;
+		#12;
+		b_addr = 16'h2010;
+		#12;
+		b_addr = 16'h2010;
+		#12;
+		
+		p1_trigger = 1;
 		p1_sens = 1;
 		b_din = 28;
 		#12;
@@ -110,6 +136,7 @@ module memory_map_test;
 	
 	always
 		#1 a_clk = ~a_clk;
+
 
       
 endmodule

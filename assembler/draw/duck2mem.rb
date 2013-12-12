@@ -2,7 +2,7 @@ require 'rubygems'
 require 'RMagick'
 
 pixels = []
-image = Magick::Image.read("duck64.png")[0]
+image = Magick::Image.read("holiDuck.png")[0]
 image.format = 'bgra'
 #blob = image.to_blob
 new_pixel = red = green = blue = alpha = 0
