@@ -38,6 +38,7 @@ PERIOD: NUM 0b100101
 COMMA: NUM 0b100110
 COLON: NUM 0b100111
 EXCLAIMATION: NUM 0b101000 
+BULLET: NUM 0b101001
 PLA: NUM 0b011010_010110_001011
 YER: NUM 0b100011_001111_011100
 
@@ -50,6 +51,28 @@ YER: NUM 0b100011_001111_011100
 #
 #
 ########################################################################
+
+# write all to high
+LBN $0, $1, 0x2020
+# doesn't matter whats in $2
+stor $2, $1 
+addui 1, $1
+stor $2, $1 
+addui 1, $1
+stor $2, $1 
+addui 1, $1
+stor $2, $1 
+addui 1, $1
+stor $2, $1 
+addui 1, $1
+stor $2, $1 
+addui 1, $1
+stor $2, $1 
+addui 1, $1
+stor $2, $1 
+
+
+
 # set background to blue
 # 0xc003: display Color (8-bit) 
 LBN $0, $1, 0x2f
@@ -59,6 +82,8 @@ stor $1, $2
 # Load in the glyphs for the screen
 VAR_p1ScoreLoc: NUM 0x8657
 VAR_p2ScoreLoc: NUM 0x865c
+VAR_p1BulletsLoc: NUM 0x868a
+VAR_p2BulletsLoc: NUM 0x868f
 Player1: LBN $0, $12, Player2
   movi 1, $13
   LBN $0, $14, 0x8654
@@ -86,6 +111,11 @@ loadPlayerReturn: xor $0, $0
 loadPlayerWhichPlayer: xor $0, $0
 ####################################
 loadPlayer: xor $0, $0
+  LBN $0, $1, 0x8689
+  LBN $0, $2, BULLET
+  stor $2, $1
+
+
   LBN $0, $1, loadPlayerReturn
   stor $12, $1
   LBN $0, $1, loadPlayerWhichPlayer
@@ -110,6 +140,9 @@ loadPlayer: xor $0, $0
   juc $15
 
   loadPlayerPart2: xor $0, $0 
+    LBN $0, $1, 0x868e
+    LBN $0, $2, BULLET
+    stor $2, $1
     LBN $0, $10, loadPlayerReturn
     load $10, $10
     LBN $0, $11, Y
@@ -383,6 +416,59 @@ moveDuck: xor $0, $0
 #
 VAR_p1Score: NUM 0b000001_000001 # NUM_0
 VAR_p2Score: NUM 0b000001_000001 # NUM_0
+VAR_p1Bullets: NUM 0b000001_000001 # NUM_0
+VAR_p2Bullets: NUM 0b000001_000001 # NUM_0
+##############################################
+incrementScore: xor $0, $0
+
+  load $4, $14
+
+
+  # if ( score > A) { # A is 9
+    mov $4, $2
+    lshi 12, $2
+    rshi 12, $2 # isolate the ones
+
+    LBN $0, $15, incTens
+    cmpi 0xA, $2
+    bgt $15
+  # } 
+  # else 
+    incOnes: addi 1, $4 # inc the score
+    LBN $0, $15, doneInc
+    juc $15
+  # }
+
+  incTens: rshi 6, $4
+    addi 1, $4
+    lshi 6, $4
+    movi 1, $5
+    or $5, $4 # write a zero
+    
+
+  doneInc: xor $0, $0
+
+  load $13, $13
+  stor $4, $13 # write to screen
+
+  stor $4, $14 # save the score
+
+  mov $12, $15
+  juc $15
+
+##############################################
+#
+# incrementBullets
+#
+#   Adds $13 to p1's score
+#    
+#    Arguments
+#     $12 return address
+#     $13 location on screen address
+#     $14 player score address
+#
+VAR_p1Bullets: NUM 0b000001_000001 # NUM_0
+VAR_p2Bullets: NUM 0b000001_000001 # NUM_0
 ##############################################
 incrementScore: xor $0, $0
 
@@ -444,6 +530,7 @@ sleep: xor $1, $1
 # duckDied
 #
 #   $12 
+#   $13 which player
 #
 VAR_speedOfDuck: xor $0, $0
 ################################################
@@ -452,6 +539,8 @@ duckDied: xor $0, $0
   #LBN $0, $1, 0x2010
   #load $1, $1
 
+  LBN $0, $1, 0x2034
+  stor $0, $1
 
   LBN $0, $3, 0x2Fe
 
@@ -465,15 +554,46 @@ duckDied: xor $0, $0
   stor $3, $5_vga_addr # update VGA
   addui 1, $5
   stor $3, $5_vga_addr # update VGA
+
+  # if ( $13 == 1) {
+    LBN $0, $15, p1Hit
+    cmpi 1, $13
+    beq $15
+  # }
+  # else {
+  # player 2 hit
+  # 0xc003: display Color (8-bit) 
+    LBN $0, $1, 0x1c # green
+    LBN $0, $2, 0xc003
+    stor $1, $2
+    LBN $0, $15, bgChangeDone
+    juc $15
+
+  # }
   
+
+  p1Hit: xor $0, $0
+    LBN $0, $1, 0xe0 # red
+    LBN $0, $2, 0xc003
+    stor $1, $2
+
+  bgChangeDone: xor $0, $0
 
   LBN $0, $15, sleep
   LBN $0, $13, duckDiedSleepReturn
-  lui 0x180, $14_sleepArg
+  lui 0x10, $14_sleepArg
   juc $15
 
   duckDiedSleepReturn: xor $0, $0
-    LBN $0, $15, bottomRightCorner
+  # set bg to normal
+    LBN $0, $1, 0x2f
+    LBN $0, $2, 0xc003
+    stor $1, $2
+    # play duck sound
+    LBN $0, $1, 0x2024
+    stor $0, $1
+
+    LBN $0, $15, topRightCorner
     juc $15
 
   
@@ -551,6 +671,16 @@ checkGun: xor $0, $0
       LBN $0, $1, 0xc002
       movi 1, $2
       stor $2, $1
+
+      # increment the bullet
+      LBN $2, $13_loc, VAR_p1BulletsLoc
+      LBN $0, $14, VAR_p1Bullets
+      LBN $0, $12, p1BulletReturn
+
+    LBN $0, $15, incrementScore
+    juc $15
+
+    p1BulletReturn: xor $0, $0
       
       LBN $0, $15, sleep
       LBN $0, $13, p1gunReturn
@@ -615,6 +745,7 @@ checkGun: xor $0, $0
     mov $3, $5
     stor $5, $6
 
+
     mov $3, $2
     lshi 3, $2 # offset for trig to be stored in $9
     or $2, $9 # save off the state
@@ -634,10 +765,20 @@ checkGun: xor $0, $0
       LBN $0, $1, 0xc002
       movi 1, $2
       stor $2, $1
+
+    # increment the bullet
+    LBN $2, $13_loc, VAR_p2BulletsLoc
+    LBN $0, $14, VAR_p2Bullets
+    LBN $0, $12, p2BulletReturn
+
+    LBN $0, $15, incrementScore
+    juc $15
+
+    p2BulletReturn: xor $0, $0
       
       LBN $0, $15, sleep
       LBN $0, $13, p2gunReturn
-      LBN $0, $14_sleepArg, 0x180
+      LBN $0, $14_sleepArg, 0x120
       juc $15
     # }
 
@@ -688,6 +829,7 @@ checkGun: xor $0, $0
   # }
   
   incScoreReturn: xor $0, $0
+    movi 1, $13
     LBN $0, $15, duckDied
     juc $15
 
@@ -712,6 +854,7 @@ checkGun: xor $0, $0
   # }
   
   incScoreReturn1: xor $8, $8
+    movi 2, $13
     LBN $0, $15, duckDied
     juc $15
 
@@ -725,4 +868,19 @@ checkGun: xor $0, $0
 
 
 
+###########################################
+#
+# drawBullets
+#
+#  $12 return address
+#  $13 location on screen address
+#
+VAR_p1BulletCount: NUM 0 # total bullets shot
+VAR_p2BulletCount: NUM 0 # total bullets shot
+###########################################
 
+LBN $0, $1, VAR_p1BulletCount
+LBN $0, $3, VAR_p1BulletsLoc
+
+LBN $0, $2, VAR_p2BulletCount
+LBN $0, $4, VAR_p2BulletsLoc
