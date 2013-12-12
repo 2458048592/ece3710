@@ -24,12 +24,17 @@ module VGA2( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10,
 	
 	wire [5:0] sprite1HPix, sprite1VPix;
 	reg [9:0] HLocation1, VLocation1;
-	reg displayBlack, sprite1On, sprite1White;
+	reg displayBlack, sprite1On, sprite1White, lights;
 	reg [7:0] displayColor;
 	reg [7:0] textColor;
 	
-	pixelGen5 _pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
-		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, FLAGS, HPix, VPix, displayColor, textColor, displayBlack, RGB_outD );
+	pixelGen5 _pixelGenerator( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, FLAGS, HPix, VPix, displayColor, textColor, displayBlack, RGB_outD, lights );
+	
+	initial begin
+		displayColor = 8'b00000000;
+		textColor = 8'b11111111;
+	end
 	
 	always @ (posedge CLK) begin
 		if (CLR == 1'b1) begin
@@ -149,6 +154,25 @@ module VGA2( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10,
 	assign sprite1VPix = (VPix - VLocation1)%spriteSize;
 	wire [7:0] sprite1;
 	spriteGen _spriteGen(CLK, CLR, sprite1HPix, sprite1VPix, alpha, sprite1);
+	
+	reg [25:0] lightsCount;
+	
+	always @ (posedge CLK) begin
+		if (CLR) begin
+			lights = 1'b0;
+			lightsCount = 26'b0;
+		end
+		else begin
+			if (lightsCount < 50000000) begin
+				lightsCount = lightsCount + 1'b1;
+				lights = lights;
+			end
+			else begin
+				lightsCount = 26'b0;
+				lights = ~lights;
+			end
+		end
+	end
 		
 	always @ (*) begin
 		if (DEBUG == 1'b1) begin

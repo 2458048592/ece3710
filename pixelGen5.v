@@ -11,9 +11,9 @@
 // 4096 memory addresses for this video memory
 // 164 for the alphabet as written, so if we start at address 256,
 // we stop at 1875
-module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
-		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, FLAGS, HPix, VPix, displayColor, textColor, displayBlack, RGB_out );
-	input CLK, CLR, DEBUG;
+module pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15,
+		readRegA, readRegB, loadReg, memAddr, data_addr, data_in, A, B, inst_addr, FLAGS, HPix, VPix, displayColor, textColor, displayBlack, RGB_out, lights );
+	input CLK, CLR, DEBUG, lights;
 	input [17:0] inst;
 	input [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, data_addr, data_in, A, B, inst_addr;
 	input [3:0] readRegA, readRegB, loadReg, memAddr;
@@ -674,6 +674,14 @@ module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6
 						val5 = 6'b010011;
 						val6 = 6'b000000;
 					end
+					GSTOR: begin
+						val1 = 6'b010001;
+						val2 = 6'b011101;
+						val3 = 6'b011110;
+						val4 = 6'b011001;
+						val5 = 6'b011100;
+						val6 = 6'b000000;
+					end
 					default: begin
 						val1 = 6'b000000;
 						val2 = 6'b000000;
@@ -843,28 +851,184 @@ module pixelGen5( CLK, CLR, /*gD_out1,*/ DEBUG, inst, r0, r1, r2, r3, r4, r5, r6
 		end
 	end
 	
+	// current glyph pixel location
+	wire [2:0] currentX, currentY;
+	assign currentX = (HPix - 1'b1) % 8;
+	assign currentY = (VPix - 1'b1) % 8;
+	
+	// This is for the ROM-based light.  DOesn't provide any better performance -- Worse, in fact.
+/*	reg [7:0] blueLight [127:0];
+	
+	initial begin
+		$readmemb("bluelight.mem", blueLight);
+	end
+	
+	wire [6:0] bAddr;
+	assign bAddr = {lights, currentY, currentX};*/
+	
 	// Now we can safely set the pixels
 	always @ (*) begin
 		if (HPix == 0 || VPix == 0) begin RGB_out = 8'b00000000; end 
 		else begin
 			if (DEBUG == 1'b1) begin
-				if (gD_out1[17 - (2 + ((HPix - 1) % 8 + (((VPix - 1) % 2) * 8)))] == 1) begin
+				if (gD_out1[5'd17 - (2'd2 + ((HPix - 1'b1) % 4'd8 + (((VPix - 1'b1) % 2'd2) << 3)))] == 1) begin
 					RGB_out = textColor;
 				end
 				else begin
 					RGB_out = displayColor;
-				end			
+				end	
 			end
 			else begin
 				if (displayBlack == 1'b1) begin
 					RGB_out = 8'b00000000;
 				end
 				else begin
-					if (gD_out1[17 - (2 + ((HPix - 1) % 8 + (((VPix - 1) % 2) * 8)))] == 1) begin
-						RGB_out = textColor;
+					if (gAddr1 > 8'd239) begin
+						if (gAddr1 >= 240 && gAddr1 < 244) begin
+							/*RGB_out = blueLight[bAddr];*/
+							// Characters normally store 2 lines per memory address, so
+							// the minimum height for the patterns will be 2 pixels by 1 pixel.
+							// We can achieve some interesting patterns this way, and store various colors
+							// in up to 8 locations.  This information will be stored in LUTs
+							// on the FPGA (ROM-type memory).  Address 240-243 will be the first non-character glyph
+							// mapped to characters.  This corresponds to Glyph Address 60, or 6'b111100
+							// currentX and currentY will be determining the colors and pattern
+							// This is just a light, no tree background
+							if (lights == 1'b1) begin
+								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
+									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
+									((currentX == 3'd1 || currentX == 3'd2 || currentX == 3'd6 || currentX == 3'd7) && (currentY == 3'd3 || currentY == 3'd4 || currentY == 3'd5))) begin
+									// not 0x2f == 8'b00101111
+									RGB_out = 8'b00000011;
+								end
+								else if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd3 || currentY == 3'd5)) ||
+									((currentX == 3'd3 || currentX == 3'd5) && (currentY == 3'd4))) begin
+									RGB_out = 8'b11011011;
+								end
+								else if (currentX == 3'd4 && currentY == 4) begin
+									RGB_out = 8'b11111111;
+								end
+								else begin
+									RGB_out = displayColor;
+								end
+							end
+							else begin
+								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
+									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
+									((currentX >= 3'd1 && currentX <= 3'd7) && (currentY >= 3'd3 && currentY <= 3'd5))) begin
+									// not 0x2f == 8'b00101111
+									RGB_out = 8'b00000010;
+								end
+								else begin
+									RGB_out = displayColor;
+								end
+							end
+						end
+						else if (gAddr1 >= 244 && gAddr1 < 248) begin
+							if (lights == 1'b1) begin
+								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
+									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
+									((currentX == 3'd1 || currentX == 3'd2 || currentX == 3'd6 || currentX == 3'd7) && (currentY == 3'd3 || currentY == 3'd4 || currentY == 3'd5))) begin
+									// not 0x2f == 8'b00101111
+									RGB_out = 8'b11100000;
+								end
+								else if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd3 || currentY == 3'd5)) ||
+									((currentX == 3'd3 || currentX == 3'd5) && (currentY == 3'd4))) begin
+									RGB_out = 8'b11110110;
+								end
+								else if (currentX == 3'd4 && currentY == 4) begin
+									RGB_out = 8'b11111111;
+								end
+								else begin
+									RGB_out = displayColor;
+								end
+							end
+							else begin
+								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
+									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
+									((currentX >= 3'd1 && currentX <= 3'd7) && (currentY >= 3'd3 && currentY <= 3'd5))) begin
+									// not 0x2f == 8'b00101111
+									RGB_out = 8'b01000000;
+								end
+								else begin
+									RGB_out = displayColor;
+								end
+							end
+						end
+						else if (gAddr1 >= 248 && gAddr1 < 252) begin
+							if (lights == 1'b1) begin
+								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
+									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
+									((currentX == 3'd1 || currentX == 3'd2 || currentX == 3'd6 || currentX == 3'd7) && (currentY == 3'd3 || currentY == 3'd4 || currentY == 3'd5))) begin
+									// not 0x2f == 8'b00101111
+									RGB_out = 8'b11011001;
+								end
+								else if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd3 || currentY == 3'd5)) ||
+									((currentX == 3'd3 || currentX == 3'd5) && (currentY == 3'd4))) begin
+									RGB_out = 8'b11111010;
+								end
+								else if (currentX == 3'd4 && currentY == 4) begin
+									RGB_out = 8'b11111111;
+								end
+								else begin
+									RGB_out = displayColor;
+								end
+							end
+							else begin
+								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
+									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
+									((currentX >= 3'd1 && currentX <= 3'd7) && (currentY >= 3'd3 && currentY <= 3'd5))) begin
+									// not 0x2f == 8'b00101111
+									RGB_out = 8'b10010000;
+								end
+								else begin
+									RGB_out = displayColor;
+								end
+							end
+						end
+						else if (gAddr1 >= 252 && gAddr1 < 256) begin
+							if (lights == 1'b1) begin
+								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
+									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
+									((currentX == 3'd1 || currentX == 3'd2 || currentX == 3'd6 || currentX == 3'd7) && (currentY == 3'd3 || currentY == 3'd4 || currentY == 3'd5))) begin
+									// not 0x2f == 8'b00101111
+									RGB_out = 8'b00011100;
+								end
+								else if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd3 || currentY == 3'd5)) ||
+									((currentX == 3'd3 || currentX == 3'd5) && (currentY == 3'd4))) begin
+									RGB_out = 8'b11011100;
+								end
+								else if (currentX == 3'd4 && currentY == 4) begin
+									RGB_out = 8'b11111111;
+								end
+								else begin
+									RGB_out = displayColor;
+								end
+							end
+							else begin
+								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
+									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
+									((currentX >= 3'd1 && currentX <= 3'd7) && (currentY >= 3'd3 && currentY <= 3'd5))) begin
+									// not 0x2f == 8'b00101111
+									RGB_out = 8'b00010000;
+								end
+								else begin
+									RGB_out = displayColor;
+								end
+							end
+						end
+						else begin
+							// In this case, we don't have any glyphs set up, so display the background color
+							RGB_out = displayColor;
+						end
 					end
 					else begin
-						RGB_out = displayColor;
+						if (gD_out1[5'd17 - (2'd2 + ((HPix - 1'b1) % 4'd8 + (((VPix - 1'b1) % 2'd2) << 3)))] == 1) begin
+							RGB_out = textColor;
+						end
+						else begin
+							RGB_out = displayColor;
+						end			
 					end
 				end
 			end
