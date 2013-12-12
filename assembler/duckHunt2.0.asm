@@ -1,3 +1,4 @@
+SPACE: NUM 0b000000
 NUM_0: NUM 0b000001
 NUM_1: NUM 0b000010
 NUM_2: NUM 0b000011
@@ -92,133 +93,12 @@ Player1: LBN $0, $12, Player2
   LBN $0, $15, loadPlayer
   juc $15
 
-Player2: LBN $0, $12, START
+Player2: LBN $0, $12, MENU
   movi 2, $13
   LBN $0, $14, 0x8659
   LBN $0, $15, loadPlayer
   juc $15
 
-#################################################
-#shootToPlay
-#
-#
-#
-#    $12 return address
-#
-#shootToPlayReturn: xor $0, $0
-#################################################
-#shootToPlay: xor $0, $0
-#  LBN $0, $1, shootToPlayReturn
-#  stor $12, $1
-##     $10 return address
-##     $11 Top char
-##     $12 mid char
-##     $13 bottom char
-##     $14 location
-#  
-#  
-#  LBN $0, $10, shootToPlayPart2
-#  LBN $0, $11, S
-#  load $11, $11
-#  LBN $0, $12, H
-#  load $12, $12
-#  LBN $0, $13, O
-#  load $13, $13
-#
-#  LBN $2, $14, VAR_shootToPlayLoc
-#  load $14, $14
-#
-#  LBN $2, $15, loadChar
-#  juc $15
-#
-#  shootToPlayPart2: xor $0, $0 
-#
-#  LBN $0, $10, shootToPlayPart3
-#  LBN $0, $11, O
-#  load $11, $11
-#  LBN $0, $12, T
-#  load $12, $12
-#  LBN $0, $13, 0
-#  load $13, $13
-#
-#  LBN $2, $14, VAR_shootToPlayLoc
-#  load $14, $14
-#  addui 1, $14
-#
-#  LBN $2, $15, loadChar
-#  juc $15
-#
-#  shootToPlayPart3: xor $0, $0 
-#
-#  LBN $0, $10, shootToPlayPart4
-#  LBN $0, $11, D
-#  load $11, $11
-#  LBN $0, $12, U
-#  load $12, $12
-#  LBN $0, $13, C
-#  load $13, $13
-#
-#  LBN $2, $14, VAR_shootToPlayLoc
-#  load $14, $14
-#  addui 2, $14
-#
-#  LBN $2, $15, loadChar
-#  juc $15
-#
-#  shootToPlayPart4: xor $0, $0 
-#
-#  LBN $0, $10, shootToPlayPart5
-#  LBN $0, $11, K
-#  load $11, $11
-#  LBN $0, $12, 0
-#  load $12, $12
-#  LBN $0, $13, T
-#  load $13, $13
-#
-#  LBN $2, $14, VAR_shootToPlayLoc
-#  load $14, $14
-#  addui 2, $14
-#
-#  LBN $2, $15, loadChar
-#  juc $15
-#
-#  shootToPlayPart5: xor $0, $0 
-#
-#  LBN $0, $10, shootToPlayPart6
-#  LBN $0, $11, O
-#  load $11, $11
-#  LBN $0, $12, 0
-#  load $12, $12
-#  LBN $0, $13, P
-#  load $13, $13
-#
-#  LBN $2, $14, VAR_shootToPlayLoc
-#  load $14, $14
-#  addui 2, $14
-#
-#  LBN $2, $15, loadChar
-#  juc $15
-#
-#  shootToPlayPart6: xor $0, $0 
-#
-#  LBN $0, $10, shootToPlayPart7
-#  LBN $0, $11, L
-#  load $11, $11
-#  LBN $0, $12, A
-#  load $12, $12
-#  LBN $0, $13, Y
-#  load $13, $13
-#
-#  LBN $2, $14, VAR_shootToPlayLoc
-#  load $14, $14
-#  addui 2, $14
-#
-#  LBN $2, $15, loadChar
-#  juc $15
-#  
-#  shootToPlayPart7: xor $0, $0 
-#  LBN $0, $15, shootToPlayReturn
-#  juc $15
 
 #####################################
 # loadPlayerOne
@@ -691,7 +571,22 @@ duckDied: xor $0, $0
     LBN $0, $1, 0x2024
     stor $0, $1
 
+  # if ( isMenu == 1) {
+    LBN $0, $1, VAR_isMenu
+    load $1, $1
+    LBN $0, $15, returnMenu
+    cmpi 1, $1
+    beq $15
+  # }
+  # else {
+
     LBN $0, $15, topRightCorner
+    juc $15
+    # }
+
+    returnMenu: xor $0, $0
+    
+    LBN $0, $15, menuCheckGunReturn
     juc $15
 
   
@@ -988,7 +883,19 @@ LBN $0, $3, VAR_p1BulletsLoc
 LBN $0, $2, VAR_p2BulletCount
 LBN $0, $4, VAR_p2BulletsLoc
 
+##########################################
+#
+# Displays the menu
+#
+#
+#
+VAR_isMenu: NUM 0b1
+##########################################
 MENU: xor $0, $0
+  LBN $0, $1, VAR_isMenu
+  movi 1, $2
+  stor $2, $1
+  
   LBN $0, $13_x, 0x120 # x = 640 - 64 = 576 = 0x120
   LBN $0, $14_y, 0xd0 # y = 240 - 32 = 208 = 0xd0
   lui 0xc0, $5
@@ -996,16 +903,7 @@ MENU: xor $0, $0
   addui 1, $5
   stor $14, $5_vga_addr # update VGA
 
-  # reset scores
-  LBN $0, $2, 0b000001_000001_000001 # NUM_0
-  LBN $0, $1, VAR_p1Score
-  stor $2, $1
-  LBN $0, $1, VAR_p2Score
-  stor $2, $1
-  LBN $0, $1, VAR_p1Bullets
-  stor $2, $1
-  LBN $0, $1, VAR_p2Bullets
-  stor $2, $1
+
 
   # check if the duck was hit
   LBN $0, $12, menuCheckGunReturn
@@ -1033,19 +931,186 @@ MENU: xor $0, $0
   cmpi 2, $1 
   bge $15
 
+  LBN $0, $12, drawResetText
+  LBN $0, $15, shootToPlay
+  juc $15
+
+  drawResetText: xor $0, $0
+
   LBN $0, $15, MENU
   JUC $15
 
   ResetScores: xor $0, $0
-    LBN $0, $2, 0b000001_000001_000001 # NUM_0
+    LBN $0, $1, VAR_isMenu
+    movi 0, $2
+    stor $2, $1
+
+    # reset scores
+    LBN $0, $3, 0b000001_000001_000001 # NUM_0
+    LBN $0, $2, 0b000001_000001 # NUM_0
     LBN $0, $1, VAR_p1Score
+    stor $3, $1
+    LBN $0, $1, VAR_p1ScoreLoc
+    load $1, $1
     stor $2, $1
+
     LBN $0, $1, VAR_p2Score
+    stor $3, $1
+    LBN $0, $1, VAR_p2ScoreLoc
+    load $1, $1
     stor $2, $1
+
     LBN $0, $1, VAR_p1Bullets
+    stor $3, $1
+    LBN $0, $1, VAR_p1BulletsLoc
+    load $1, $1
     stor $2, $1
+
     LBN $0, $1, VAR_p2Bullets
+    stor $3, $1
+    LBN $0, $1, VAR_p2BulletsLoc
+    load $1, $1
     stor $2, $1
+
+    # erase shoot to play
+
+    LBN $2, $14, VAR_shootToPlayLoc
+    load $14, $14
+    xor $0, $0
+    stor $0, $14
+    addui 1, $14
+    stor $0, $14
+    addui 1, $14
+    stor $0, $14
+    addui 1, $14
+    stor $0, $14
+    addui 1, $14
+    stor $0, $14
+    addui 1, $14
+    stor $0, $14
 
     LBN $0, $15, START
     JUC $15
+
+#################################################
+#shootToPlay
+#
+#
+#
+#    $12 return address
+#
+shootToPlayReturn: xor $0, $0
+################################################
+shootToPlay: xor $0, $0
+  LBN $0, $1, shootToPlayReturn
+  stor $12, $1
+#     $10 return address
+#     $11 Top char
+#     $12 mid char
+#     $13 bottom char
+#     $14 location
+  
+  
+  LBN $0, $10, shootToPlayPart2
+  LBN $0, $11, S
+  load $11, $11
+  LBN $0, $12, H
+  load $12, $12
+  LBN $0, $13, O
+  load $13, $13
+
+  LBN $2, $14, VAR_shootToPlayLoc
+  load $14, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  shootToPlayPart2: xor $0, $0 
+
+  LBN $0, $10, shootToPlayPart3
+  LBN $0, $11, O
+  load $11, $11
+  LBN $0, $12, T
+  load $12, $12
+  LBN $0, $13, SPACE
+  load $13, $13
+
+  LBN $2, $14, VAR_shootToPlayLoc
+  load $14, $14
+  addui 1, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  shootToPlayPart3: xor $0, $0 
+
+  LBN $0, $10, shootToPlayPart4
+  LBN $0, $11, D
+  load $11, $11
+  LBN $0, $12, U
+  load $12, $12
+  LBN $0, $13, C
+  load $13, $13
+
+  LBN $2, $14, VAR_shootToPlayLoc
+  load $14, $14
+  addui 2, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  shootToPlayPart4: xor $0, $0 
+
+  LBN $0, $10, shootToPlayPart5
+  LBN $0, $11, K
+  load $11, $11
+  LBN $0, $12, SPACE
+  load $12, $12
+  LBN $0, $13, T
+  load $13, $13
+
+  LBN $2, $14, VAR_shootToPlayLoc
+  load $14, $14
+  addui 3, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  shootToPlayPart5: xor $0, $0 
+
+  LBN $0, $10, shootToPlayPart6
+  LBN $0, $11, O
+  load $11, $11
+  LBN $0, $12, SPACE
+  load $12, $12
+  LBN $0, $13, P
+  load $13, $13
+
+  LBN $2, $14, VAR_shootToPlayLoc
+  load $14, $14
+  addui 4, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  shootToPlayPart6: xor $0, $0 
+
+  LBN $0, $10, shootToPlayPart7
+  LBN $0, $11, L
+  load $11, $11
+  LBN $0, $12, A
+  load $12, $12
+  LBN $0, $13, Y
+  load $13, $13
+
+  LBN $2, $14, VAR_shootToPlayLoc
+  load $14, $14
+  addui 5, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+  
+  shootToPlayPart7: xor $0, $0 
+  LBN $0, $15, shootToPlayReturn
+  load $15, $15
+  juc $15
