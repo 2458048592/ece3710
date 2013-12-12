@@ -20,6 +20,14 @@ module memory_map#(
 	 output 								p1_hit,
 	 output 								p2_shot,
 	 output 								p2_hit,
+	 output reg out_sound0,
+	 output reg out_sound1,
+	 output reg out_sound2,
+	 output reg out_sound3,
+	 output reg out_sound4,
+	 output reg out_sound5,
+	 output reg out_sound6,
+	 output reg out_sound7,
  // Port A
 	
     input   wire                a_clk,
@@ -47,32 +55,30 @@ module memory_map#(
 	parameter random_number8bit = 16'h2008; //
 	parameter random_number9bit = 16'h2009; //
 	parameter random_number10bit = 16'h2010; //
+	parameter sound0 = 16'h2020; //
+	parameter sound1 = 16'h2021; //
+	parameter sound2 = 16'h2022; //
+	parameter sound3 = 16'h2023; //
+	parameter sound4 = 16'h2024; //
+	parameter sound5 = 16'h2025; //
+	parameter sound6 = 16'h2026; //
+	parameter sound7 = 16'h2027; //
+
+	parameter sound0_off = 16'h2030; //
+	parameter sound1_off = 16'h2031; //
+	parameter sound2_off = 16'h2032; //
+	parameter sound3_off = 16'h2033; //
+	parameter sound4_off = 16'h2034; //
+	parameter sound5_off = 16'h2035; //
+	parameter sound6_off = 16'h2036; //
+	parameter sound7_off = 16'h2037; //
+
+	
 
 	wire  [DATA-1:0] b_dout_m;
 	reg  [DATA-1:0] b_dout_w;
 	reg select;
-	//wire [9:0]rand_out;
-// output      		[DATA-1:0]  b_dout_m,
-//	   output      reg		[DATA-1:0]  b_dout_w
-//	reg rand;
-//
-// 	 reg 	     clkDivPulse  = 0; // Used to notify every 25MHz clock tick
-//  	 reg [24:0] clkDivCount  = 0; // Used to count to 4 to determine the 25MHz ticks
-//
-//	always@(posedge a_clk) begin
-//			if(CLR) begin
-//				clkDivPulse <= 0;
-//				clkDivCount <= 0;
-//			end
-//			else if(clkDivCount == 100000) begin
-//				clkDivPulse <= 1;
-//				clkDivCount <= 0;
-//			end
-//			else begin
-//				clkDivPulse <= 0;
-//				clkDivCount <= clkDivCount + 1;
-//			end
-//		end
+	
 	random_num_gen generator(a_clk, rand_out); 
 	gun_top guns(CLK, CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit);
  	memory asm_RAM (a_clk, a_wr, a_addr, a_din, a_dout, a_clk, b_wr, b_addr[ADDR-1:0], b_din, b_dout_m);	
@@ -92,6 +98,10 @@ module memory_map#(
 		else if(b_addr == random_number10bit || b_addr == random_number9bit || b_addr == random_number8bit  ) begin 
 			select = 1'b1;
 		end
+	//	else if (b_addr == sound0 || b_addr == sound1 || b_addr == sound2 || b_addr == sound3
+	//				|| b_addr == sound4 || b_addr == sound5 || b_addr == sound6 || b_addr == sound7) begin
+	//		select = 1'b1;
+	//	end
 		else begin
 			select = 0;
 		end
@@ -105,12 +115,14 @@ module memory_map#(
 		else begin
 			if( b_addr == p1_trig_addr) begin
 				b_dout_w <= p1_shot;
+				out_sound0 <= ~p1_shot;
 			end
 			else if(b_addr == p1_sen_addr) begin 
 				b_dout_w <= p1_hit;
 			end
 			else if( b_addr == p2_trig_addr) begin
 				b_dout_w <= p2_shot;
+				out_sound1 <= ~p2_shot;
 			end
 			else if(b_addr == p2_sen_addr) begin 
 				b_dout_w <= p2_hit;
@@ -126,6 +138,54 @@ module memory_map#(
 			end
 			else if(b_addr == random_number10bit) begin 
 				b_dout_w <= rand_out;
+			end
+			else if (b_addr == sound0) begin 
+				out_sound0 <= 1'b1;
+			end
+			else if (b_addr == sound1) begin 
+				out_sound1 <= 1'b1;
+			end
+			else if (b_addr == sound2) begin 
+				out_sound2 <= 1'b1;
+			end
+			else if (b_addr == sound3) begin 
+				out_sound3 <= 1'b1;
+			end
+			else if (b_addr == sound4) begin 
+				out_sound4 <= 1'b1;
+			end
+			else if (b_addr == sound5) begin 
+				out_sound5 <= 1'b1;
+			end
+			else if (b_addr == sound6) begin 
+				out_sound6 <= 1'b1;
+			end
+			else if (b_addr == sound7) begin 
+				out_sound7 <= 1'b1;
+			end
+			else if (b_addr == sound0_off) begin 
+				out_sound0 <= 1'b0;
+			end
+			else if (b_addr == sound1_off) begin 
+				out_sound1 <= 1'b0;
+			end
+			else if (b_addr == sound2_off) begin 
+				out_sound2 <= 1'b0;
+			end
+			else if (b_addr == sound3_off) begin 
+				out_sound3 <= 1'b0;
+			end
+			else if (b_addr == sound4_off) begin 
+				out_sound4 <= 1'b0;
+			end
+			else if (b_addr == sound5_off) begin 
+				out_sound5 <= 1'b0;
+			end
+			else if (b_addr == sound6_off) begin 
+				out_sound6 <= 1'b0;
+			end
+			else if (b_addr == sound7_off) begin 
+				out_sound7 <= 1'b0;
 			end
 			else begin
 				b_dout_w <= 18'b0;

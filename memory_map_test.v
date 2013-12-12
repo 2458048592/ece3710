@@ -4,7 +4,7 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   12:54:44 11/16/2013
+// Create Date:   19:06:46 12/11/2013
 // Design Name:   memory_map
 // Module Name:   /home/dan/Documents/xilinx_projects/CPU/memory_map_test.v
 // Project Name:  CPU
@@ -25,6 +25,7 @@
 module memory_map_test;
 
 	// Inputs
+	reg CLK;
 	reg CLR;
 	reg p1_trigger;
 	reg p1_sens;
@@ -44,14 +45,21 @@ module memory_map_test;
 	wire p1_hit;
 	wire p2_shot;
 	wire p2_hit;
+	wire out_sound0;
+	wire out_sound1;
+	wire out_sound2;
+	wire out_sound3;
+	wire out_sound4;
+	wire out_sound5;
+	wire out_sound6;
+	wire out_sound7;
 	wire [17:0] a_dout;
 	wire [17:0] b_dout;
-	wire [9:0]rand_out;
-
-
+	wire [9:0] rand_out;
 
 	// Instantiate the Unit Under Test (UUT)
 	memory_map uut (
+		.CLK(CLK), 
 		.CLR(CLR), 
 		.p1_trigger(p1_trigger), 
 		.p1_sens(p1_sens), 
@@ -61,6 +69,14 @@ module memory_map_test;
 		.p1_hit(p1_hit), 
 		.p2_shot(p2_shot), 
 		.p2_hit(p2_hit), 
+		.out_sound0(out_sound0), 
+		.out_sound1(out_sound1), 
+		.out_sound2(out_sound2), 
+		.out_sound3(out_sound3), 
+		.out_sound4(out_sound4), 
+		.out_sound5(out_sound5), 
+		.out_sound6(out_sound6), 
+		.out_sound7(out_sound7), 
 		.a_clk(a_clk), 
 		.a_wr(a_wr), 
 		.a_addr(a_addr), 
@@ -70,12 +86,13 @@ module memory_map_test;
 		.b_wr(b_wr), 
 		.b_addr(b_addr), 
 		.b_din(b_din), 
-		.b_dout(b_dout),
+		.b_dout(b_dout), 
 		.rand_out(rand_out)
 	);
 
 	initial begin
 		// Initialize Inputs
+		CLK = 0;
 		CLR = 0;
 		p1_trigger = 0;
 		p1_sens = 0;
@@ -90,23 +107,23 @@ module memory_map_test;
 		b_addr = 0;
 		b_din = 0;
 
-	#100;		CLR = 1;
+		#100;		CLR = 1;
 		#3 CLR = 0;
 		
 		p1_trigger = 1;
 		#3p1_trigger = 0;
 		
-		b_addr = 16'h2008;
+		b_addr = 16'h2020;
 		#12;
-		b_addr = 16'h2008;
+		b_addr = 16'h2021;
 		#12;
-		b_addr = 16'h2008;
+		b_addr = 16'h2030;
 		#12;
-		b_addr = 16'h2009;
+		b_addr = 16'h2031;
 		#12;
-		b_addr = 16'h2009;
+		b_addr = 16'h2032;
 		#12;
-		b_addr = 16'h2009;
+		b_addr = 16'h2023;
 		#12;
 		b_addr = 16'h2010;
 		#12;
@@ -136,7 +153,6 @@ module memory_map_test;
 	
 	always
 		#1 a_clk = ~a_clk;
-
 
       
 endmodule

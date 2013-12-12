@@ -15,7 +15,7 @@ module spriteGen(CLK, CLR, spriteHPix, spriteVPix, alpha, sprite);
 	
 	initial begin
 		//$readmemb("sprites.mem", _spriteROM);
-		$readmemh("duck64.mem", _spriteROM);
+		$readmemh("smallDuck64.mem", _spriteROM);
 	end
 	
 	always @ (posedge CLK) begin

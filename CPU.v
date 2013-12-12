@@ -18,6 +18,14 @@ module CPU(
 	 output p1_hit,
 	 output p2_shot,
 	 output p2_hit,
+	 output out_sound0,
+	 output out_sound1,
+	 output out_sound2,
+	 output out_sound3,
+	 output out_sound4,
+	 output out_sound5,
+	 output out_sound6,
+	 output out_sound7,
 	 //input button,
 	 output [7:0] RGB_out,
 	 output HSync, VSync
@@ -54,6 +62,7 @@ module CPU(
 	program_counter counter(selectCLK,CLR,set_addr, data_addr[13:0], PC_inc, inst_addr[13:0]);
 	
 	memory_map asm_RAM (CLK, CLR, p1_trigger, p1_sens, p2_trigger, p2_sens, p1_shot, p1_hit, p2_shot, p2_hit,
+								out_sound0, out_sound1, out_sound2, out_sound3, out_sound4, out_sound5, out_sound6, out_sound7,
 								CLK, 1'b0, inst_addr, a_din, inst, regCLK, b_wr, data_addr, data_in, data_out);	
 		
 	//memory asm_RAM (selectCLK, 1'b0, inst_addr, a_din, inst, regCLK, b_wr, data_addr, data_in, data_out);	
