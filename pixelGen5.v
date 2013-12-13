@@ -883,8 +883,49 @@ module pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9,
 					RGB_out = 8'b00000000;
 				end
 				else begin
-					if (gAddr1 > 8'd239) begin
-						if (gAddr1 >= 240 && gAddr1 < 244) begin
+					if (gAddr1 > 8'd211) begin
+						if (gAddr1 >= 224 && gAddr1 < 228) begin
+							if (((currentX == 3'd1 || currentX == 3'd5) && (currentY >= 3'd2 && currentY <= 3'd6)) ||
+								((currentX == 3'd3 || currentX == 3'd7) && (currentY >= 3'd1 && currentY <= 3'd5))) begin
+								RGB_out = 8'b00000000;
+							end
+							else begin
+								RGB_out = 8'b01101000;
+							end
+						end
+						else if (gAddr1 >= 228 && gAddr1 < 232) begin
+							RGB_out = 8'b00010000;
+						end
+						else if (gAddr1 >= 232 && gAddr1 < 236) begin
+							if ((currentX == 3'd0 && currentY == 3'd1) ||
+								((currentX == 3'd0 || currentX == 3'd1) && currentY == 3'd2) ||
+								(currentX >= 3'd0 && currentX <= 3'd2 && currentY == 3'd3) ||
+								(currentX >= 3'd0 && currentX <= 3'd3 && currentY == 3'd4) ||
+								(currentX >= 3'd0 && currentX <= 3'd4 && currentY == 3'd5) ||
+								(currentX >= 3'd0 && currentX <= 3'd5 && currentY == 3'd6) ||
+								(currentX >= 3'd0 && currentX <= 3'd6 && currentY == 3'd7)) begin
+								RGB_out = 8'b00010000;
+							end
+							else begin
+								RGB_out = displayColor;
+							end
+						end
+						else if (gAddr1 >= 236 && gAddr1 < 240) begin
+							// This is a diagonal Tree glyph with the bottom right Green
+							if ((currentX == 3'd7 && currentY == 3'd1) ||
+								((currentX == 3'd6 || currentX == 3'd7) && currentY == 3'd2) ||
+								(currentX >= 3'd5 && currentX <= 3'd7 && currentY == 3'd3) ||
+								(currentX >= 3'd4 && currentX <= 3'd7 && currentY == 3'd4) ||
+								(currentX >= 3'd3 && currentX <= 3'd7 && currentY == 3'd5) ||
+								(currentX >= 3'd2 && currentX <= 3'd7 && currentY == 3'd6) ||
+								(currentX >= 3'd1 && currentX <= 3'd7 && currentY == 3'd7)) begin
+								RGB_out = 8'b00010000;
+							end
+							else begin
+								RGB_out = displayColor;
+							end
+						end
+						else if ((gAddr1 >= 240 && gAddr1 < 244) || (gAddr1 >= 220 && gAddr1 < 224)) begin
 							/*RGB_out = blueLight[bAddr];*/
 							// Characters normally store 2 lines per memory address, so
 							// the minimum height for the patterns will be 2 pixels by 1 pixel.
@@ -909,7 +950,12 @@ module pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9,
 									RGB_out = 8'b11111111;
 								end
 								else begin
-									RGB_out = displayColor;
+									if (gAddr1 >= 220 && gAddr1 < 224) begin
+										RGB_out = 8'b00010000;
+									end
+									else begin
+										RGB_out = displayColor;
+									end
 								end
 							end
 							else begin
@@ -920,11 +966,16 @@ module pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9,
 									RGB_out = 8'b00000010;
 								end
 								else begin
-									RGB_out = displayColor;
+									if (gAddr1 >= 220 && gAddr1 < 224) begin
+										RGB_out = 8'b00010000;
+									end
+									else begin
+										RGB_out = displayColor;
+									end
 								end
 							end
 						end
-						else if (gAddr1 >= 244 && gAddr1 < 248) begin
+						else if ((gAddr1 >= 244 && gAddr1 < 248) || (gAddr1 >= 216 && gAddr1 < 220)) begin
 							if (lights == 1'b1) begin
 								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
 									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
@@ -940,7 +991,12 @@ module pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9,
 									RGB_out = 8'b11111111;
 								end
 								else begin
-									RGB_out = displayColor;
+									if (gAddr1 >= 216 && gAddr1 < 220) begin
+										RGB_out = 8'b00010000;
+									end
+									else begin
+										RGB_out = displayColor;
+									end
 								end
 							end
 							else begin
@@ -951,11 +1007,16 @@ module pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9,
 									RGB_out = 8'b01000000;
 								end
 								else begin
-									RGB_out = displayColor;
+									if (gAddr1 >= 216 && gAddr1 < 220) begin
+										RGB_out = 8'b00010000;
+									end
+									else begin
+										RGB_out = displayColor;
+									end
 								end
 							end
 						end
-						else if (gAddr1 >= 248 && gAddr1 < 252) begin
+						else if ((gAddr1 >= 248 && gAddr1 < 252) || (gAddr1 >= 212 && gAddr1 < 216)) begin
 							if (lights == 1'b1) begin
 								if (((currentX >= 3'd3 && currentX <= 3'd5) && (currentY == 3'd1 || currentY == 3'd7)) || 
 									((currentX >= 3'd2 && currentX <= 3'd6) && (currentY == 3'd2 || currentY == 3'd6)) || 
@@ -971,7 +1032,12 @@ module pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9,
 									RGB_out = 8'b11111111;
 								end
 								else begin
-									RGB_out = displayColor;
+									if (gAddr1 >= 212 && gAddr1 < 216) begin
+										RGB_out = 8'b00010000;
+									end
+									else begin
+										RGB_out = displayColor;
+									end
 								end
 							end
 							else begin
@@ -982,7 +1048,12 @@ module pixelGen5( CLK, CLR, DEBUG, inst, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9,
 									RGB_out = 8'b10010000;
 								end
 								else begin
-									RGB_out = displayColor;
+									if (gAddr1 >= 212 && gAddr1 < 216) begin
+										RGB_out = 8'b00010000;
+									end
+									else begin
+										RGB_out = displayColor;
+									end
 								end
 							end
 						end

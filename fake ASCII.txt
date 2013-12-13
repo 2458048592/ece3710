@@ -40,3 +40,14 @@
 6'b100111 = :
 6'b101000 = !
 6'b101001 = <bullet>
+6'b110111 = BLUE
+6'b110110 = RED
+6'b110101 = YELLOW
+6'b111000 = <TREE Wood Brown>
+6'b111001 = <TREE Solid Green>
+6'b111010 = <TREE Bottom Left Diagonal>
+6'b111011 = <TREE Bottom Right Diagonal>
+6'b111100 = <BLUE>
+6'b111101 = <RED>
+6'b111110 = <YELLOW>
+6'b111111 = <GREEN>
