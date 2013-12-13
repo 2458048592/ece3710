@@ -513,7 +513,17 @@ incrementScore: xor $0, $0
   doneInc: xor $0, $0
 
   load $13, $13
-  stor $4, $13 # write to screen
+  # if ( isMenu == 1) {
+    LBN $0, $1, VAR_isMenu
+    load $1, $1
+    LBN $0, $15, menuDontUpdateScore
+    cmpi 1, $1
+    beq $15
+  # }
+  # else {
+    stor $4, $13 # write to screen
+  # }
+    menuDontUpdateScore: xor $0, $0
 
   stor $4, $14 # save the score
 
