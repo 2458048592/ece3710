@@ -2,7 +2,7 @@
 
 counter = 0
 for i in 1620 .. 3239
-  printf "%04x \n", i
+  printf "%04d \n", i
   counter += 1
 end
 

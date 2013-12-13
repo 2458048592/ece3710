@@ -40,6 +40,10 @@ COMMA: NUM 0b100110
 COLON: NUM 0b100111
 EXCLAIMATION: NUM 0b101000 
 BULLET: NUM 0b101001
+BLUE_LIGHT: NUM 0b111100
+RED_LIGHT: NUM 0b111101
+YELLOW_LIGHT: NUM 0b111110
+GREEN_LIGHT: NUM 0b111111
 PLA: NUM 0b011010_010110_001011
 YER: NUM 0b100011_001111_011100
 
@@ -52,25 +56,10 @@ YER: NUM 0b100011_001111_011100
 #
 #
 ########################################################################
-
-# write all to high
-LBN $0, $1, 0x2020
-# doesn't matter whats in $2
-stor $2, $1 
-addui 1, $1
-stor $2, $1 
-addui 1, $1
-stor $2, $1 
-addui 1, $1
-stor $2, $1 
-addui 1, $1
-stor $2, $1 
-addui 1, $1
-stor $2, $1 
-addui 1, $1
-stor $2, $1 
-addui 1, $1
-stor $2, $1 
+  LBN $0, $1, 0x2023
+  stor $0, $1
+  LBN $0, $1, 0x2024
+  stor $0, $1
 
 
 
@@ -80,22 +69,48 @@ LBN $0, $1, 0x2f
 LBN $0, $2, 0xc003
 stor $1, $2
 
-VAR_p1ScoreLoc: NUM 0x8657
-VAR_p2ScoreLoc: NUM 0x865c
-VAR_p1BulletsLoc: NUM 0x868b
-VAR_p2BulletsLoc: NUM 0x8690
+VAR_p1ScoreLoc: NUM 0x868e
+VAR_p2ScoreLoc: NUM 0x8693
+VAR_p1BulletsLoc: NUM 0x86c2
+VAR_p2BulletsLoc: NUM 0x86c7
 VAR_shootToPlayLoc: NUM 0x88c7
+VAR_winScore: NUM 0x5
+
+DrawLights: xor $0, $0
+  #    $12 return address
+  #    $13 start loc 
+  LBN $0, $12, drawLightsReturn
+  LBN $0, $13, 0x8654
+  LBN $0, $15, drawChristmasLights
+  JUC $15
+
+  drawLightsReturn: xor $0, $0
+    LBN $0, $12, drawLightsReturn1
+    LBN $0, $13, 0x86f6
+    LBN $0, $15, drawChristmasLights
+    JUC $15
+    drawLightsReturn1: xor $0, $0
+      LBN $0, $12, drawLightsReturn2
+      LBN $0, $13, 0x86fc
+      LBN $0, $15, drawChristmasLights
+      JUC $15
+    drawLightsReturn2: xor $0, $0
+      LBN $0, $12, drawLightsReturn3
+      LBN $0, $13, 0x865a
+      LBN $0, $15, drawChristmasLights
+      JUC $15
+    drawLightsReturn3: xor $0, $0
 
 # Load in the glyphs for the screen
 Player1: LBN $0, $12, Player2
   movi 1, $13
-  LBN $0, $14, 0x8654
+  LBN $0, $14, 0x868b
   LBN $0, $15, loadPlayer
   juc $15
 
-Player2: LBN $0, $12, MENU
+Player2: LBN $0, $12, MENU_MUSIC
   movi 2, $13
-  LBN $0, $14, 0x8659
+  LBN $0, $14, 0x8690
   LBN $0, $15, loadPlayer
   juc $15
 
@@ -112,7 +127,9 @@ loadPlayerReturn: xor $0, $0
 loadPlayerWhichPlayer: xor $0, $0
 ####################################
 loadPlayer: xor $0, $0
-  LBN $0, $1, 0x868a
+  LBN $0, $1, VAR_p1BulletsLoc
+  load $1, $1
+  subi 1, $1
   LBN $0, $2, BULLET
   load $2, $2
   stor $2, $1
@@ -142,7 +159,9 @@ loadPlayer: xor $0, $0
   juc $15
 
   loadPlayerPart2: xor $0, $0 
-    LBN $0, $1, 0x868f
+    LBN $0, $1, VAR_p2BulletsLoc
+    load $1, $1
+    subi 1, $1
     LBN $0, $2, BULLET
     load $2, $2
     stor $2, $1
@@ -201,6 +220,10 @@ loadChar: xor $0, $0
 START: xor $0, $0
 
 topLeftCorner: xor $0, $0
+  LBN $0, $1, 0x2023
+  stor $0, $1
+  LBN $0, $1, 0x2024
+  stor $0, $1
 
   #movi 0, $14_y 
   LBN $0, $14, 0x2008
@@ -217,6 +240,10 @@ topLeftCorner: xor $0, $0
 
 
 topRightCorner: LBN $0, $12_return, topLeftCorner
+  LBN $0, $1, 0x2023
+  stor $0, $1
+  LBN $0, $1, 0x2024
+  stor $0, $1
   #movi 0, $14_y 
 
   #LBN $0, $13_x, 0x240 # x = 640 - 64 = 576 = 0x240
@@ -229,6 +256,10 @@ topRightCorner: LBN $0, $12_return, topLeftCorner
   juc $15
 
 bottomRightCorner: LBN $0, $12_return, bottomLeftCorner
+  LBN $0, $1, 0x2023
+  stor $0, $1
+  LBN $0, $1, 0x2024
+  stor $0, $1
   #LBN $0, $13_x, 0x240 # x = 640 - 64 = 576 = 0x240
   
   #LBN $0, $14_y, 0x1A0 # y = 480 - 64 = 416 = 0x1A0
@@ -241,6 +272,10 @@ bottomRightCorner: LBN $0, $12_return, bottomLeftCorner
   juc $15
 
 bottomLeftCorner: LBN $0, $12_return, topRightCorner
+  LBN $0, $1, 0x2023
+  stor $0, $1
+  LBN $0, $1, 0x2024
+  stor $0, $1
   #movi 0, $13_x 
 
   #LBN $0, $14_y, 0x1A0 # y = 480 - 64 = 416 = 0x1A0
@@ -517,8 +552,6 @@ duckDied: xor $0, $0
   #LBN $0, $1, 0x2010
   #load $1, $1
 
-  LBN $0, $1, 0x2034
-  stor $0, $1
 
   LBN $0, $3, 0x2Fe
 
@@ -551,12 +584,34 @@ duckDied: xor $0, $0
   
 
   p1Hit: xor $0, $0
-    LBN $0, $1, 0xe0 # red
+    LBN $0, $1, 0xc0 # red
     LBN $0, $2, 0xc003
     stor $1, $2
 
   bgChangeDone: xor $0, $0
 
+  ################################
+  # End game screen
+  # 
+  LBN $0, $3, VAR_winScore
+  load $3, $3
+  LBN $0, $1, VAR_p1Score_actual
+  load $1, $1
+
+  LBN $0, $15, MENU_MUSIC
+  cmp $3, $1 
+  beq $15
+
+  LBN $0, $1, VAR_p2Score_actual
+  load $1, $1
+
+  LBN $0, $15, MENU_MUSIC
+  cmp $3, $1 
+  beq $15
+
+
+
+  
   LBN $0, $15, sleep
   LBN $0, $13, duckDiedSleepReturn
   lui 0x10, $14_sleepArg
@@ -567,9 +622,6 @@ duckDied: xor $0, $0
     LBN $0, $1, 0x2f
     LBN $0, $2, 0xc003
     stor $1, $2
-    # play duck sound
-    LBN $0, $1, 0x2024
-    stor $0, $1
 
   # if ( isMenu == 1) {
     LBN $0, $1, VAR_isMenu
@@ -579,6 +631,9 @@ duckDied: xor $0, $0
     beq $15
   # }
   # else {
+    # play duck sound
+  LBN $0, $1, 0x2034
+  stor $0, $1
 
     LBN $0, $15, topRightCorner
     juc $15
@@ -813,10 +868,10 @@ checkGun: xor $0, $0
   # }
   # else {
     # increment the score
-#    LBN $0, $2, VAR_p1Score_actual
-#    load $1, $2
-#    addui 1, $1
-#    stor $1, $2
+    LBN $0, $2, VAR_p1Score_actual
+    load $1, $2
+    addui 1, $1
+    stor $1, $2
 
     LBN $2, $13_loc, VAR_p1ScoreLoc
     LBN $0, $14, VAR_p1Score
@@ -846,6 +901,11 @@ checkGun: xor $0, $0
     LBN $2, $13_loc, VAR_p2ScoreLoc
     LBN $0, $14, VAR_p2Score
     LBN $0, $12, incScoreReturn1
+
+    LBN $0, $2, VAR_p2Score_actual
+    load $1, $2
+    addui 1, $1
+    stor $1, $2
 
     LBN $0, $15, incrementScore
     juc $15
@@ -891,6 +951,9 @@ LBN $0, $4, VAR_p2BulletsLoc
 #
 VAR_isMenu: NUM 0b1
 ##########################################
+MENU_MUSIC: xor $0, $0
+  LBN $0, $1, 0x2033
+  stor $0, $1
 MENU: xor $0, $0
   LBN $0, $1, VAR_isMenu
   movi 1, $2
@@ -904,6 +967,38 @@ MENU: xor $0, $0
   stor $14, $5_vga_addr # update VGA
 
 
+    # reset scores
+    LBN $0, $1, VAR_p1Score_actual
+    xor $0, $0
+    stor $0, $1 
+    LBN $0, $1, VAR_p2Score_actual
+    xor $0, $0
+    stor $0, $1 
+    LBN $0, $3, 0b000001_000001_000001 # NUM_0
+    LBN $0, $2, 0b000001_000001 # NUM_0
+    LBN $0, $1, VAR_p1Score
+    stor $3, $1
+   # LBN $0, $1, VAR_p1ScoreLoc
+   # load $1, $1
+   # stor $2, $1
+
+    LBN $0, $1, VAR_p2Score
+    stor $3, $1
+   # LBN $0, $1, VAR_p2ScoreLoc
+   # load $1, $1
+   # stor $2, $1
+
+    LBN $0, $1, VAR_p1Bullets
+    stor $3, $1
+   # LBN $0, $1, VAR_p1BulletsLoc
+   # load $1, $1
+   # stor $2, $1
+
+    LBN $0, $1, VAR_p2Bullets
+    stor $3, $1
+   # LBN $0, $1, VAR_p2BulletsLoc
+   # load $1, $1
+   # stor $2, $1
 
   # check if the duck was hit
   LBN $0, $12, menuCheckGunReturn
@@ -946,6 +1041,12 @@ MENU: xor $0, $0
     stor $2, $1
 
     # reset scores
+    LBN $0, $1, VAR_p1Score_actual
+    xor $0, $0
+    stor $0, $1 
+    LBN $0, $1, VAR_p2Score_actual
+    xor $0, $0
+    stor $0, $1 
     LBN $0, $3, 0b000001_000001_000001 # NUM_0
     LBN $0, $2, 0b000001_000001 # NUM_0
     LBN $0, $1, VAR_p1Score
@@ -1114,3 +1215,138 @@ shootToPlay: xor $0, $0
   LBN $0, $15, shootToPlayReturn
   load $15, $15
   juc $15
+
+#################################################
+#drawChristmasLights
+#
+#
+#
+#    $12 return address
+#    $13 start loc 
+#
+VAR_drawChristmasLightsReturn: xor $0, $0
+VAR_drawChristmasLightsSavedLoc: xor $0, $0
+################################################
+drawChristmasLights: xor $0, $0
+  LBN $0, $1, VAR_drawChristmasLightsReturn
+  stor $12, $1
+  LBN $0, $1, VAR_drawChristmasLightsSavedLoc
+  stor $13, $1
+#     $10 return address
+#     $11 Top char
+#     $12 mid char
+#     $13 bottom char
+#     $14 location
+  
+  
+  LBN $0, $10, christmasLightsPart2
+  LBN $0, $11, BLUE_LIGHT
+  load $11, $11
+  LBN $0, $12, SPACE
+  load $12, $12
+  LBN $0, $13, RED_LIGHT
+  load $13, $13
+
+  LBN $2, $14, VAR_drawChristmasLightsSavedLoc
+  load $14, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  christmasLightsPart2: xor $0, $0 
+
+  LBN $0, $10, christmasLightsPart3
+  LBN $0, $11, SPACE
+  load $11, $11
+  LBN $0, $12, YELLOW_LIGHT
+  load $12, $12
+  LBN $0, $13, SPACE
+  load $13, $13
+
+  LBN $2, $14, VAR_drawChristmasLightsSavedLoc
+  load $14, $14
+  addui 1, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  christmasLightsPart3: xor $0, $0 
+
+  LBN $0, $10, christmasLightsPart4
+  LBN $0, $11, GREEN_LIGHT
+  load $11, $11
+  LBN $0, $12, SPACE
+  load $12, $12
+  LBN $0, $13, RED_LIGHT
+  load $13, $13
+
+  LBN $2, $14, VAR_drawChristmasLightsSavedLoc
+  load $14, $14
+  addui 2, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  christmasLightsPart4: xor $0, $0 
+
+  LBN $0, $10, christmasLightsPart5
+  LBN $0, $11, SPACE
+  load $11, $11
+  LBN $0, $12, BLUE_LIGHT
+  load $12, $12
+  LBN $0, $13, SPACE
+  load $13, $13
+
+  LBN $2, $14, VAR_drawChristmasLightsSavedLoc
+  load $14, $14
+  addui 3, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  christmasLightsPart5: xor $0, $0 
+
+  LBN $0, $10, christmasLightsPart6
+  LBN $0, $11, GREEN_LIGHT
+  load $11, $11
+  LBN $0, $12, SPACE
+  load $12, $12
+  LBN $0, $13, RED_LIGHT
+  load $13, $13
+
+  LBN $2, $14, VAR_drawChristmasLightsSavedLoc
+  load $14, $14
+  addui 4, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+
+  christmasLightsPart6: xor $0, $0 
+
+  LBN $0, $10, christmasLightsPart7
+  LBN $0, $11, SPACE
+  load $11, $11
+  LBN $0, $12, YELLOW_LIGHT
+  load $12, $12
+  LBN $0, $13, SPACE
+  load $13, $13
+
+  LBN $2, $14, VAR_drawChristmasLightsSavedLoc
+  load $14, $14
+  addui 5, $14
+
+  LBN $2, $15, loadChar
+  juc $15
+  
+  christmasLightsPart7: xor $0, $0 
+  LBN $0, $15, VAR_drawChristmasLightsReturn
+  load $15, $15
+  juc $15
+
+
+#########################################33
+#
+#
+#  playerWins
+#######################################
+
