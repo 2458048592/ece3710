@@ -565,10 +565,10 @@ duckDied: xor $0, $0
 
   LBN $0, $3, 0x2Fe
 
-  LBN $0, $2, VAR_VGA_currentX
-  stor $3, $2
-  LBN $0, $2, VAR_VGA_currentY
-  stor $3, $2
+   LBN $0, $2, VAR_VGA_currentX
+   stor $3, $2
+   LBN $0, $2, VAR_VGA_currentY
+   stor $3, $2
 
   
   lui 0xc0, $5
