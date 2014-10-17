@@ -1,7 +1,10 @@
 ece3710
 =======
 
+
 Plan B for the win!
+
+http://youtu.be/6sCwvldRFy4?list=PLfr5ukXKcvW04poumQgg2G38HHhs1_QcG
 
 Nexys 3
   * http://www.digilentinc.com/Products/Detail.cfm?Prod=NEXYS3
